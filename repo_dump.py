@@ -90,7 +90,7 @@ class Repo:
 
 
 if __name__ == "__main__":
-    repo = Repo("dev", "d9861a4e204fbb3904e489aff02771e0")
+    repo = Repo("dev", "")
 
     repo.fetch_latest_dict()
     repo.unzip_latest_dict()
