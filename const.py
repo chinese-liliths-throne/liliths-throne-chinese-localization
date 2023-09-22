@@ -12,8 +12,10 @@ GITHUB_PUBLIC_ACCESS_TOKEN = "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"
 
 
 
-DOWNLOAD_DIR	= "./downloads"
-ROOT_DIR		= "./"
-SOURCE_DIR		= "./liliths-throne-public-"
-NEW_DICT_DIR	= "./new_dict"
-OLD_DICT_DIR	= "./old_dict"
+DOWNLOAD_DIR		= "./downloads"
+ROOT_DIR			= "./"
+SOURCE_DIR			= "./liliths-throne-public-"
+NEW_DICT_DIR		= "./new_dict"
+OLD_DICT_DIR		= "./old_dict"
+
+OUTDATE_DIR_NAME	= "过时词条"

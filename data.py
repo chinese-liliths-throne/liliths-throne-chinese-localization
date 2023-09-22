@@ -6,8 +6,9 @@ from pathlib import Path
 @dataclass
 class Entry:
     file: str
-    original_text: str
-    translated_text: str
+    original: str
+    translation: str
+    stage: int
 
     def to_json(self) -> dict:
         pass
@@ -25,18 +26,19 @@ class XmlEntry(Entry):
     def from_json(file: Path, entry_json: Dict[str, str]) -> "XmlEntry":
         return XmlEntry(
             file=file.as_posix(),
-            original_text=entry_json["original"],
-            translated_text=entry_json["translation"],
+            original=entry_json["original"],
+            translation=entry_json["translation"],
             node_tag=entry_json["key"].split('_')[0],
             attribute=entry_json["key"].split('_')[1] if entry_json["key"].split('_')[
-                1] != "text" else None
+                1] != "text" else None,
+            stage=entry_json['stage'] if entry_json.get("stage") is not None else 0
         )
 
     def to_json(self) -> Dict:
         return {
             "key": self.to_id(),
-            "original": self.original_text,
-            "translation": self.translated_text,
+            "original": self.original,
+            "translation": self.translation,
             "context": ""
         }
 
@@ -52,16 +54,17 @@ class CodeEntry(Entry):
     def from_json(file: Path, entry_json: Dict[str, str]) -> "CodeEntry":
         return CodeEntry(
             file=file.as_posix(),
-            original_text=entry_json["original"],
-            translated_text=entry_json["translation"],
-            line=int(entry_json["key"])
+            original=entry_json["original"],
+            translation=entry_json["translation"],
+            line=int(entry_json["key"]),
+            stage=entry_json['stage'] if entry_json.get("stage") is not None else 0
         )
 
     def to_json(self) -> Dict:
         return {
             "key": self.to_id(),
-            "original": self.original_text,
-            "translation": self.translated_text,
+            "original": self.original,
+            "translation": self.translation,
             "context": ""
         }
 

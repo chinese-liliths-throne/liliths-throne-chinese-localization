@@ -11,7 +11,14 @@ from data import XmlEntry, CodeEntry, FilePair
 
 def try_xml_entry_attrib(file: str, element: etree._Element, attr: str) -> Optional[XmlEntry]:
     if element.attrib.get(attr):
-        return XmlEntry(file, element.attrib.get(attr), "", element.tag, attr)
+        return XmlEntry(
+            file=file,
+            original=element.attrib.get(attr),
+            translation="",
+            node_tag=element.tag,
+            attribute=attr,
+            stage=0
+        )
     else:
         return None
 
@@ -23,7 +30,14 @@ def try_xml_entry_text(file: str, element: etree._Element) -> Optional[XmlEntry]
     if element.text.strip() == "":
         return None
 
-    return XmlEntry(file, element.text, "", element.tag, None)
+    return XmlEntry(
+        file=file,
+        original=element.text,
+        translation="",
+        node_tag=element.tag,
+        attribute=None,
+        stage=0
+        )
 
 
 class Extractor:
@@ -36,11 +50,13 @@ class Extractor:
         if not self.target_dir.is_dir():
             self.target_dir.mkdir()
 
-    async def extract(self):
-        await self.extract_res()
-        await self.extract_src()
+    def extract(self):
+        self.extract_res()
+        self.extract_src()
 
-    async def extract_res(self):
+    def extract_res(self):
+        loop = asyncio.get_event_loop()
+
         res_path = self.root.joinpath("res")
 
         file_pairs: List[FilePair] = []
@@ -57,13 +73,7 @@ class Extractor:
             self.extract_xml_gather(file.original_file, file.entry_file) for file in file_pairs
         ]
 
-        await asyncio.gather(*tasks)
-
-        # for file_pair in file_pairs:
-        #     file, result_file = file_pair.original_file , file_pair.entry_file
-        #     result_list = self.extract_xml(file)
-        #     with open(result_file, "w", encoding="utf-8") as f:
-        #         json.dump(result_list, f, ensure_ascii=False, indent=4)
+        loop.run_until_complete(asyncio.gather(*tasks))
 
     async def extract_xml_gather(self, xml_path, entry_path):
         entry_list = await self.extract_xml(xml_path)
@@ -416,7 +426,9 @@ class Extractor:
 
         return entry_list
 
-    async def extract_src(self):
+    def extract_src(self):
+        loop = asyncio.get_event_loop()
+
         src_path = self.root.joinpath("src")
 
         file_pairs: List[FilePair] = []
@@ -429,21 +441,11 @@ class Extractor:
             if not result_path.parent.exists():
                 result_path.parent.mkdir(parents=True)
 
-        # tasks = [
-        #     self.extract_java_gather(file.original_file, file.entry_file) for file in list(filter(lambda file: "Main" in file.original_file.name,file_pairs))
-        # ]
-
         tasks = [
             self.extract_java_gather(file.original_file, file.entry_file) for file in file_pairs
         ]
 
-        asyncio.gather(*tasks)
-
-        # for file_pair in file_pairs:
-        #     file, result_file = file_pair.original_file , file_pair.entry_file
-        #     result_list = self.extract_java(file)
-        #     with open(result_file, "w", encoding="utf-8") as f:
-        #         json.dump(result_list, f, ensure_ascii=False, indent=4)
+        loop.run_until_complete(asyncio.gather(*tasks))
 
     async def extract_java_gather(self, java_path, entry_path):
         entry_list = await self.extract_java(java_path)
@@ -513,7 +515,13 @@ class Extractor:
 
             if extract_flag:
                 entry_list.append(
-                    CodeEntry(file, line, "", idx).to_json()
+                    CodeEntry(
+                        file=file,
+                        original=line, 
+                        translation="", 
+                        line=idx,
+                        stage=0
+                    ).to_json()
                 )
 
         return entry_list
@@ -551,7 +559,7 @@ class JavaExtractor:
             self.interest_line = True
         elif re.search(r"^\s*[A-Z_]+\(", line):   # 枚举项
             self.interest_line = True
-        elif "new String[]" in line:
+        elif "new String[]" in line or "static String[]" in line:
             self.interest_line = True
         elif re.search(r"returnValue\s*=\s*", line) is not None:
             self.interest_line = True
@@ -705,6 +713,12 @@ class JavaExtractor:
             self.interest_line = False
         elif "@Override" in line:  # 有效？
             self.interest_line = False
+        
+        if re.search(r"^(/\*|\*)", line) is not None:
+            self.interest_line = False
+            return False
+        elif re.search(r"(getMandatoryFirstOf|getAllOf|getAttribute)", line) is not None:
+            return False
 
         # print(line, re.search(r"\".+\"", line))
         if line.find(r"//") != -1:

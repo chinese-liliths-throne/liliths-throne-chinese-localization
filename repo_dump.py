@@ -63,7 +63,7 @@ class Repo:
 
         file_path = path / f"dict-latest.zip"
         if file_path.exists():
-            shutil.rmtree(file_path)
+            os.remove(file_path)
         
         opener = request.build_opener()
         opener.addheaders = [('Authorization', self.paratranz_access_token)]
@@ -79,14 +79,17 @@ class Repo:
 
     def unzip_latest_dict(self) -> None:
         zip_path = Path(DOWNLOAD_DIR) / f"dict-latest.zip"
-        extract_path = Path(OLD_DICT_DIR)
-
-        if extract_path.exists():
-            shutil.rmtree(extract_path)
-        extract_path.mkdir()
+        extract_path = Path(ROOT_DIR)
+        old_dict_dir = Path(OLD_DICT_DIR)
 
         with zipfile.ZipFile(zip_path, "r") as zip_ref:
             zip_ref.extractall(extract_path)
+
+        if old_dict_dir.exists():
+            shutil.rmtree(old_dict_dir)
+
+        shutil.move(extract_path / "utf8", old_dict_dir)
+        shutil.rmtree(extract_path / "raw")
 
 
 if __name__ == "__main__":

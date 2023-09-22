@@ -53,13 +53,13 @@ class Applier:
                 logger.warning(f"\t****{original_file.relative_to(self.root)}: 节点{tag}数量({len(nodes)})与字典数量({len(entry_cluster)})不匹配")
                 continue
             for entry, node in zip(entry_cluster, nodes):
-                if len(entry.translated_text) <= 0 or entry.translated_text == entry.original_text:  # 暂无汉化或无需修改
+                if len(entry.translation) <= 0 or entry.translation == entry.original:  # 暂无汉化或无需修改
                     continue
 
                 if entry.attribute is not None:
-                    node.set(entry.attribute, entry.translated_text)
+                    node.set(entry.attribute, entry.translation)
                 else:
-                    node.text = entry.translated_text
+                    node.text = entry.translation
                     node.text = etree.CDATA(node.text)
 
         
@@ -89,20 +89,20 @@ class Applier:
         
         for entry in entry_list:
             line_text = text[entry.line]
-            applied_text = self.apply_java_line(line_text, entry.original_text, entry.translated_text)
+            applied_text = self.apply_java_line(line_text, entry.original, entry.translation)
             text[entry.line] = applied_text
         
         with open(original_file, "w", encoding="utf-8") as f:
             f.writelines(text)
 
 
-    def apply_java_line(self, text: str, original_text: str, translated_text: str) -> str:
-        if len(translated_text) <= 0:
+    def apply_java_line(self, text: str, original: str, translation: str) -> str:
+        if len(translation) <= 0:
             return text
-        index = text.find(original_text)
+        index = text.find(original)
         if index == -1:
             logger.warning("\t****原文本无匹配！")
             return text
         else:
-            text = text[:index] + translated_text + text[index + len(original_text):]
+            text = text[:index] + translation + text[index + len(original):]
             return text
