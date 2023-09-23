@@ -16,6 +16,26 @@ class Applier:
     def apply(self) -> None:
         self.apply_res()
         self.apply_src()
+        self.apply_special() # 对于其他优化游戏的文件进行调整
+
+    def apply_special(self) -> None:
+        self.modify_css()
+    
+    def modify_css(self) -> None:
+        for file in self.root.glob("**/*.css"):
+            with open(file, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+            
+            for idx, line in enumerate(lines):
+                if line.strip().startswith("-fx-font-family") or line.strip().startswith("font-family"):
+                    item = line.split(":")
+                    fonts = item[1].split(",")
+                    fonts.insert(0, "Microsoft YaHei")
+                    item[1] = ",".join(fonts)
+                    lines[idx] = ":".join(item)
+            
+            with open(file, 'w', encoding='utf-8') as f:
+                f.writelines(lines)
 
     def apply_res(self) -> None:
         original_files = [file for file in self.root.glob("**/*.xml")]
@@ -97,6 +117,9 @@ class Applier:
 
 
     def apply_java_line(self, text: str, original: str, translation: str) -> str:
+        # 常见错误检测
+        if translation.count("\"") % 2 == 1:
+            logger.warning("\t****翻译文本有奇数个双引号！")
         if len(translation) <= 0:
             return text
         index = text.find(original)
@@ -106,3 +129,7 @@ class Applier:
         else:
             text = text[:index] + translation + text[index + len(original):]
             return text
+
+if __name__ == "__main__":
+    applier = Applier("./liliths-throne-public-dev", "./new_dict")
+    applier.apply_special()

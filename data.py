@@ -39,7 +39,8 @@ class XmlEntry(Entry):
             "key": self.to_id(),
             "original": self.original,
             "translation": self.translation,
-            "context": ""
+            "context": "",
+            "stage": self.stage
         }
 
     def to_id(self) -> str:
@@ -65,7 +66,8 @@ class CodeEntry(Entry):
             "key": self.to_id(),
             "original": self.original,
             "translation": self.translation,
-            "context": ""
+            "context": "",
+            "stage": self.stage
         }
 
     def to_id(self) -> str:

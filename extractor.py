@@ -485,8 +485,8 @@ class Extractor:
                 java_extractor.parse_character(line)
             elif file.parent.name == "moves":
                 java_extractor.parse_moves(line)
-            elif file.parent.name == "dialogues" or file.parent.parent.name == "dialogues":
-                java_extractor.parse_dialogues(line)
+            elif file.parent.name == "dialogue" or file.parent.parent.name == "dialogue":
+                java_extractor.parse_dialogue(line)
             elif file.parent.name == "clothing":
                 java_extractor.parse_clothing(line)
             elif file.parent.name == "enchanting":
@@ -545,7 +545,7 @@ class JavaExtractor:
             self.interest_line = True
         elif "getTextEndStringBuilder().append" in line:
             self.interest_line = True
-        elif re.search(r"[d|D]escription\s*=\s*", line) is not None:
+        elif re.search(r"[d|D]escript(ion|or)\s*=\s*", line) is not None:
             self.interest_line = True
         elif re.search(r"[t|T]itle\s*=\s*", line) is not None:
             self.interest_line = True
@@ -717,7 +717,7 @@ class JavaExtractor:
         if re.search(r"^(/\*|\*)", line) is not None:
             self.interest_line = False
             return False
-        elif re.search(r"(getMandatoryFirstOf|getAllOf|getAttribute)", line) is not None:
+        elif re.search(r"(getMandatoryFirstOf|getAllOf|getAttribute|parseFromXMLFile)", line) is not None:
             return False
 
         # print(line, re.search(r"\".+\"", line))

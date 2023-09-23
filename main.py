@@ -26,7 +26,7 @@ def main():
     logger.info("==== 正在下载最新版本游戏源码 ====")
     # repo.fetch_latest_version()
     logger.info("==== 正在解压最新版本游戏源码 ====")
-    # repo.unzip_latest_version()
+    repo.unzip_latest_version()
 
     root = repo.source_dir
     
@@ -37,7 +37,7 @@ def main():
     extractor.extract()
 
     logger.info("==== 正在下载最新字典文件 ====")
-    # repo.fetch_latest_dict()
+    repo.fetch_latest_dict()
     logger.info("==== 正在解压最新字典文件 ====")
     repo.unzip_latest_dict()
 

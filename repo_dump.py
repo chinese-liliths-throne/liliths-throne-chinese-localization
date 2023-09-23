@@ -42,7 +42,7 @@ class Repo:
                         f"repo-latest-{self.latest_commit}.zip")
 
     def unzip_latest_version(self) -> None:
-        zip_path = Path(DOWNLOAD_DIR) / f"repo-latest-{self.latest_commit}.zip"
+        zip_path = list(Path(DOWNLOAD_DIR).glob("**/repo-latest-*.zip"))[0]
         extract_path = Path(self.source_dir)
 
         if extract_path.exists():

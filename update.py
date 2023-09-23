@@ -41,38 +41,35 @@ async def update_dict_file(old_dict_file: Path, new_dict_file: Path, outdated_fi
     with open(old_dict_file, 'r') as old_dict:
         old_dict_data: List[Dict] = json.load(old_dict)
 
+    no_file = False
     # 若在新提取中该文件已不存在
     if not new_dict_file.exists():
-        await update_outdated_file(old_dict_data, outdated_file)
-        return
+        logger.info(f'在新提取中该文件已不存在：{old_dict_file}')
+        outdated_data = old_dict_data
+        no_file = True
+    else:
+        with open(new_dict_file, 'r') as new_dict:
+            new_dict_data: List[Dict] = json.load(new_dict)
 
-    with open(new_dict_file, 'r') as new_dict:
-        new_dict_data: List[Dict] = json.load(new_dict)
+        old_dict_data = await update_data(old_dict_data, new_dict_data)
 
-    await update_data(old_dict_data, new_dict_data)
+        with open(new_dict_file, 'w') as new_dict:
+            json.dump(new_dict_data, new_dict, indent=4, ensure_ascii=False)
 
-    with open(new_dict_file, 'w') as new_dict:
-        json.dump(new_dict_data, new_dict, indent=4, ensure_ascii=False)
-
-    old_dict_data = list(filter(lambda entry: entry is not None, old_dict_data))
-    await update_outdated_file(old_dict_data, outdated_file)
-
-
-async def update_outdated_file(entries_remained: List[Dict[str, str]], outdated_file: Path):
-    if len(entries_remained) <= 0:
-        return
-
+        outdated_data = list(filter(lambda entry: entry is not None, old_dict_data))
     
+    # 过时条目融合
     if outdated_file.exists():
         with open(outdated_file, "r", encoding="utf-8") as f:
-            outdated_data = json.load(f)
+            prev_outdated_data = json.load(f)
     else:
-        outdated_data = []
+        prev_outdated_data = []
+    
+    await update_data(outdated_data, prev_outdated_data)
 
-    await update_data(entries_remained, outdated_data, outdated=True)
-
-    if len(outdated_data) <= 0:
-        logger.warning(f" - 文件不再包含任何条目：{outdated_file}")
+    if len(prev_outdated_data) <= 0:
+        if no_file:
+            logger.warning(f" - 文件不再包含任何条目：{outdated_file}")
         return
     
     if not outdated_file.parent.exists():
@@ -82,7 +79,7 @@ async def update_outdated_file(entries_remained: List[Dict[str, str]], outdated_
         json.dump(outdated_data, f, ensure_ascii=False, indent=4)
 
 
-async def update_data(old_dict_data: List[Dict[str, str]], new_dict_data: List[Dict[str, str]], outdated: bool = False):
+async def update_data(old_dict_data: List[Dict[str, str]], new_dict_data: List[Dict[str, str]], outdated: bool = False) -> List[Dict[str, str]]:
     new_dict_map: Dict[str, List[int]] = {}  # [原文文本, new_dict_data列表中对应序号]
     old_dict_map: Dict[str, List[int]] = {}  # [原文文本, old_dict_data列表中对应序号]
 
@@ -128,3 +125,5 @@ async def update_data(old_dict_data: List[Dict[str, str]], new_dict_data: List[D
                             ]["stage"] = old_dict_data[old_idx]["stage"]
                 # 移除被迁移的旧词条
                 old_dict_data[old_idx] = None
+    return old_dict_data
+    
