@@ -41,7 +41,7 @@ def try_xml_entry_text(file: str, element: etree._Element) -> Optional[XmlEntry]
 
 
 class Extractor:
-    def __init__(self, root: str, new_dict_path: str):
+    def __init__(self, root: str, new_dict_path: str, commit_sha: str):
         self.root = Path(root)
         self.target_dir = Path(new_dict_path)
 
@@ -106,6 +106,8 @@ class Extractor:
             # insert_entry(e)
             # e = try_xml_entry_attrib(file, name, "nameMasculine")
             # insert_entry(e)
+            if name.getparent().tag == "formattingNames":
+                continue
             e = try_xml_entry_text(file, name)
             insert_entry(e)
 
@@ -563,9 +565,7 @@ class JavaExtractor:
             self.interest_line = True
         elif re.search(r"returnValue\s*=\s*", line) is not None:
             self.interest_line = True
-        elif "Names.add" in line or "names.add" in line:
-            self.interest_line = True
-        elif "Descriptions.add" in line or "descriptions.add" in line:
+        elif re.search(r"([d|D]escript(ion|or)s|[N|n]ames).add", line) is not None:
             self.interest_line = True
         elif "super(" in line:
             self.interest_line = True

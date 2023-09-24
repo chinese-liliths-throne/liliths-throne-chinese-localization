@@ -24,13 +24,13 @@ def main():
 
     repo = Repo("dev", PARATRANZ_ACCESS_TOKEN)
     logger.info("==== 正在下载最新版本游戏源码 ====")
-    # repo.fetch_latest_version()
+    repo.fetch_latest_version()
     logger.info("==== 正在解压最新版本游戏源码 ====")
     repo.unzip_latest_version()
 
     root = repo.source_dir
     
-    extractor = Extractor(root, new_dict_dir)
+    extractor = Extractor(root, new_dict_dir, repo.latest_commit)
     applier = Applier(root, new_dict_dir)
 
     logger.info("==== 正在提取翻译条目 ====")
@@ -45,7 +45,7 @@ def main():
     update_dict(old_dict_dir, new_dict_dir)
 
     logger.info("==== 正在应用字典 ====")
-    # applier.apply()
+    applier.apply()
 
 
 if __name__ == "__main__":

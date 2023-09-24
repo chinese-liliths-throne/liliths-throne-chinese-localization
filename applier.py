@@ -7,6 +7,13 @@ import re
 from data import XmlEntry, CodeEntry
 from logger import logger
 
+def valid_element(element: etree._Element) -> bool:
+    if element.text is None or len(element.text.strip())==0:
+        return False
+    elif element.getparent().tag == "formattingNames":
+        return False
+    
+    return True
 
 class Applier:
     def __init__(self, root: str, dict_dir: str) -> None:
@@ -68,7 +75,7 @@ class Applier:
 
         for tag, entry_cluster in entry_dict.items():
             nodes: List[etree._Element] = list(tree.iter(tag))
-            nodes = list(filter(lambda node: not(node.text is None or len(node.text.strip())==0) , nodes))
+            nodes = list(filter(lambda node: valid_element(node), nodes))
             if len(entry_cluster) != len(nodes):
                 logger.warning(f"\t****{original_file.relative_to(self.root)}: 节点{tag}数量({len(nodes)})与字典数量({len(entry_cluster)})不匹配")
                 continue

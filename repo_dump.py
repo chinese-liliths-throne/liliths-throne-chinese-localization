@@ -14,6 +14,7 @@ class Repo:
         self.branch = branch
         self.source_dir = SOURCE_DIR + self.branch
         self.paratranz_access_token = paratranz_access_token
+        self.latest_commit = ""
 
     def fetch_latest_version(self) -> None:
         download_url = PROXY_URL + REPO_BASE_URL + \
@@ -43,6 +44,8 @@ class Repo:
 
     def unzip_latest_version(self) -> None:
         zip_path = list(Path(DOWNLOAD_DIR).glob("**/repo-latest-*.zip"))[0]
+        if self.latest_commit == "":
+            self.latest_commit = zip_path.stem.split("-")[-1]
         extract_path = Path(self.source_dir)
 
         if extract_path.exists():
