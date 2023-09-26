@@ -51,11 +51,19 @@ jobs:
     - name: Zip
       run: |
         zip -r staging-win staging-win
+    - name: Set Release version env variable
+      run: |
+        echo "RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+    - name: "Build & test"
+      run: |
+        echo "done!"
     - name: Automatic Releases
       uses: marvinpinto/action-automatic-releases@v1.2.1
       with:
         repo_token: "{{ $secrets.GH_TOKEN }}"
+        automatic_release_tag: "${{ env.RELEASE_VERSION }}"
         prerelease: false
+        title: "Release ${{ env.RELEASE_VERSION }}"
         files: ./*.zip
 
   # build-win:
