@@ -60,7 +60,7 @@ jobs:
     - name: Automatic Releases
       uses: marvinpinto/action-automatic-releases@v1.2.1
       with:
-        repo_token: "{{ $secrets.GH_TOKEN }}"
+        repo_token: "${{ secrets.GH_TOKEN }}"
         automatic_release_tag: "${{ env.RELEASE_VERSION }}"
         prerelease: false
         title: "Release ${{ env.RELEASE_VERSION }}"
