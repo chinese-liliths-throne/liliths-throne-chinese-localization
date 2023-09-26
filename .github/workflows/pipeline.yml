@@ -21,7 +21,7 @@ jobs:
     - name: Set up JDK latest
       uses: actions/setup-java@v3
       with:
-        version: '17'
+        java-version: '17'
         distribution: 'temurin'
         cache: maven
     - name: Set up Python 3.10
