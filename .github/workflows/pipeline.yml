@@ -33,8 +33,7 @@ jobs:
         PARATRANZ_TOKEN: ${{ secrets.PARATRANZ_TOKEN }} 
     - name: Move to folder
       run: |
-        ls
-        cd ./lilith-throne-public-dev
+        cd ${{ variables.REPO_PATH }}
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
