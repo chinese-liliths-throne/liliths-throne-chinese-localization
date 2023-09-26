@@ -17,8 +17,13 @@ class Repo:
         self.latest_commit = ""
 
     def fetch_latest_version(self) -> None:
-        download_url = PROXY_URL + REPO_BASE_URL + \
+        if os.environ.get('USE_GITHUB_ACTION') is not None:
+            download_url = ""
+        else:
+            download_url = PROXY_URL
+        download_url = download_url + REPO_BASE_URL + \
             f"/archive/refs/heads/{self.branch}.zip"
+        
         api_url = REPO_API_URL + f"/commits"
 
         path = Path(DOWNLOAD_DIR)
