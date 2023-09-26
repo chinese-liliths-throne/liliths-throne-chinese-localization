@@ -46,7 +46,7 @@ jobs:
         mvn package
     - run: |
         mkdir staging
-        cp -r ${{ vars.REPO_PATH }}/target/* staging
+        cp -r ${{ vars.ALL_TARGET_FILE }} staging
     - uses: actions/upload-artifact@v3
       with:
         name: Package
