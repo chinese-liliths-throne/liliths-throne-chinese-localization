@@ -12,7 +12,7 @@ from update import *
 from logger import logger
 
 
-PARATRANZ_ACCESS_TOKEN = ""
+PARATRANZ_ACCESS_TOKEN = "" if os.environ.get('PARATRANZ_TOKEN') is None else os.environ.get('PARATRANZ_TOKEN')
 
 def main():
     new_dict_dir = Path(NEW_DICT_DIR)
@@ -24,7 +24,7 @@ def main():
 
     repo = Repo("dev", PARATRANZ_ACCESS_TOKEN)
     logger.info("==== 正在下载最新版本游戏源码 ====")
-    repo.fetch_latest_version()
+    # repo.fetch_latest_version()
     logger.info("==== 正在解压最新版本游戏源码 ====")
     repo.unzip_latest_version()
 

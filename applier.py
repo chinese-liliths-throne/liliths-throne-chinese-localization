@@ -7,6 +7,19 @@ import re
 from data import XmlEntry, CodeEntry
 from logger import logger
 
+FONT_SIZE_REGEX = r"font-size\s*:\s*(\d+)\s*(?:px|pt)"
+LINE_HEIGHT_REGEX = r"(?:line-)?height\s*:\s*(\d+)\s*(?:px|pt)"
+
+def ui_value_modify(line: str, regex: str) -> str:
+    matches = re.search(regex, line)
+    if matches is not None:
+        for group in matches.groups():
+            value = int(group)
+            value = int(value * 0.8)
+            line = line.replace(group, str(value))
+
+    return line
+
 def valid_element(element: etree._Element) -> bool:
     if element.text is None or len(element.text.strip())==0:
         return False
@@ -27,10 +40,11 @@ class Applier:
 
     def apply_special(self) -> None:
         self.modify_css()
+        self.modify_java()
     
     def modify_css(self) -> None:
         for file in self.root.glob("**/*.css"):
-            with open(file, 'r', encoding='utf-8') as f:
+            with open(file, mode='r', encoding='utf-8') as f:
                 lines = f.readlines()
             
             for idx, line in enumerate(lines):
@@ -39,7 +53,32 @@ class Applier:
                     fonts = item[1].split(",")
                     fonts.insert(0, "Microsoft YaHei")
                     item[1] = ",".join(fonts)
-                    lines[idx] = ":".join(item)
+                    line = ":".join(item)
+                
+                line = ui_value_modify(line, FONT_SIZE_REGEX)
+                line = ui_value_modify(line, LINE_HEIGHT_REGEX)
+
+                lines[idx] = line
+            
+            with open(file, 'w', encoding='utf-8') as f:
+                f.writelines(lines)
+
+    def modify_java(self) -> None:
+        for file in self.root.glob("**/*.java"):
+            with open(file, mode='r', encoding='utf-8') as f:
+                lines = f.readlines()
+
+            for idx, line in enumerate(lines):
+                line = ui_value_modify(line, FONT_SIZE_REGEX)
+                line = ui_value_modify(line, LINE_HEIGHT_REGEX)
+
+                if file.name == "Game.java":
+                    line = line.replace("public static final int FONT_SIZE_NORMAL = 18;", "public static final int FONT_SIZE_NORMAL = 15;")
+                elif file.name == "Properties.java":
+                    line = line.replacec("public int fontSize = 18;", "public int fontSize = 15;")
+
+                lines[idx] = line
+
             
             with open(file, 'w', encoding='utf-8') as f:
                 f.writelines(lines)
@@ -116,19 +155,24 @@ class Applier:
         
         for entry in entry_list:
             line_text = text[entry.line]
-            applied_text = self.apply_java_line(line_text, entry.original, entry.translation)
+            applied_text = self.apply_java_line(line_text, entry.original, entry.translation, dict_file, entry.line)
             text[entry.line] = applied_text
         
         with open(original_file, "w", encoding="utf-8") as f:
             f.writelines(text)
 
 
-    def apply_java_line(self, text: str, original: str, translation: str) -> str:
-        # 常见错误检测
-        if translation.count("\"") % 2 == 1:
-            logger.warning("\t****翻译文本有奇数个双引号！")
+    def apply_java_line(self, text: str, original: str, translation: str, file: Path, line: int) -> str:
         if len(translation) <= 0:
             return text
+        
+        # 常见错误检测
+        if translation.count("\"") % 2 == 1:
+            logger.warning(f"\t****{line},{file.as_posix()}:翻译文本有奇数个双引号！") 
+        if "\\n" in translation:
+            logger.warning(f"\t****{line},{file.as_posix()}:翻译文本有额外换行符！")
+            translation.replace("\\n", "")
+
         index = text.find(original)
         if index == -1:
             logger.warning("\t****原文本无匹配！")

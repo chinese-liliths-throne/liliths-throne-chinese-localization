@@ -708,6 +708,12 @@ class JavaExtractor:
     def general_string_parse(self, line: str) -> bool:
         if not self.interest_line:
             return False
+        
+        # print(line, re.search(r"\".+\"", line))
+        if line.find(r"//") != -1:
+            match = re.search(r"(?<!s:)//", line)
+            if match is not None:
+                line = line[:match.start()]
 
         if line.endswith(';'):
             self.interest_line = False
@@ -720,9 +726,6 @@ class JavaExtractor:
         elif re.search(r"(getMandatoryFirstOf|getAllOf|getAttribute|parseFromXMLFile)", line) is not None:
             return False
 
-        # print(line, re.search(r"\".+\"", line))
-        if line.find(r"//") != -1:
-            line = line[:line.find(r"//")]
         if re.search(r"\"[^\"]+\"(?!\")", line) is not None:
             return True
         return False
