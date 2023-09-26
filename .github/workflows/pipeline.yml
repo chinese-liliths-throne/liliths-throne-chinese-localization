@@ -31,6 +31,7 @@ jobs:
         python main.py
       env:
         PARATRANZ_TOKEN: ${{ secrets.PARATRANZ_TOKEN }} 
+        USE_GITHUB_ACTION: ${{ vars.USE_GITHUB_ACTION }}
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
