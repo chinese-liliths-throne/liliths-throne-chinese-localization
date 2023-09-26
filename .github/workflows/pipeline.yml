@@ -42,6 +42,7 @@ jobs:
         cache: maven
     - name: Run the Maven
       run: |
+        ls
         mvn package
     - run: mkdir staging && cp -r target/* staging
     - uses: actions/upload-artifact@v3
