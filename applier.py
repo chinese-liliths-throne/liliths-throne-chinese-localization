@@ -76,6 +76,11 @@ class Applier:
                     line = line.replace("public static final int FONT_SIZE_NORMAL = 18;", "public static final int FONT_SIZE_NORMAL = 15;")
                 elif file.name == "Properties.java":
                     line = line.replace("public int fontSize = 18;", "public int fontSize = 15;")
+                elif file.name == "UtilText.java":
+                    if "import jdk.nashorn" in line:
+                        line = "//" + line
+                    if "import org.openjdk.nashorn" in line:
+                        line = line[2:]
 
                 lines[idx] = line
 
