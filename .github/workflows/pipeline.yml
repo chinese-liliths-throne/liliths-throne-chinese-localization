@@ -43,8 +43,7 @@ jobs:
         cd ${{ vars.REPO_PATH }}
         mvn package
     - run: |
-        mkdir staging
-        cp -r "${{ vars.TARGET_PATH }}"/* staging
+        mv "${{ vars.TARGET_PATH }}" staging
     - uses: actions/upload-artifact@v3
       with:
         name: Package
