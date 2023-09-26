@@ -43,11 +43,12 @@ jobs:
         cd ${{ vars.REPO_PATH }}
         mvn package
     - name: Move to staging
-    - run: |
+      run: |
         cd ./liliths-throne-public-dev
         cd target
         ls
         mv "./liliths-throne-public-dev/target/Lilith's Throne (win)" staging
+    - name: Packaging
     - uses: actions/upload-artifact@v3
       with:
         name: Package
