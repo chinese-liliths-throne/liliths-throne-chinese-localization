@@ -33,7 +33,7 @@ jobs:
         PARATRANZ_TOKEN: ${{ secrets.PARATRANZ_TOKEN }} 
     - name: Move to folder
       run: |
-        cd ${{ variables.REPO_PATH }}
+        cd ${{ vars.REPO_PATH }}
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
