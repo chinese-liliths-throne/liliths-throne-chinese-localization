@@ -49,7 +49,7 @@ jobs:
         ls
         mv "./liliths-throne-public-dev/target/Lilith's Throne (win)" staging
     - name: Packaging
-    - uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v3
       with:
         name: Package
         path: staging
