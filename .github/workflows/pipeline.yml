@@ -32,12 +32,6 @@ jobs:
       env:
         PARATRANZ_TOKEN: ${{ secrets.PARATRANZ_TOKEN }} 
         USE_GITHUB_ACTION: ${{ vars.USE_GITHUB_ACTION }}
-
-  build-win:
-    runs-on: ubuntu-latest
-    needs: update-apply
-
-    steps:
     - name: Move to repo
       run: |
         cd ${{ vars.REPO_PATH }}
@@ -58,42 +52,74 @@ jobs:
     - name: Zip
       run: |
         zip -r staging-win staging-win
-
-  build-linux:
-    runs-on: ubuntu-latest
-    needs: update-apply
-
-    steps:
-    - name: Move to repo
-      run: |
-        cd ${{ vars.REPO_PATH }}
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: 'maven'
-    - name: Run the Maven
-      run: |
-        cd ${{ vars.REPO_PATH }}
-        mvn package
-    - name: Move to staging
-      run: |
-        mv "./liliths-throne-public-dev/target/Lilith's Throne (linux)" staging-linux
-    - name: Zip
-      run: |
-        zip -r staging-linux staging-linux
-  
-  release:
-    runs-on: ubuntu-latest
-    needs: [build-win, build-linux]
-
-    steps:
     - name: Automatic Releases
       uses: marvinpinto/action-automatic-releases@v1.2.1
       with:
         repo_token: "{{ $secrets.GH_TOKEN }}"
         prerelease: false
         files: ./*.zip
+
+  # build-win:
+  #   runs-on: ubuntu-latest
+  #   needs: update-apply
+
+  #   steps:
+  #   - name: Move to repo
+  #     run: |
+  #       cd ${{ vars.REPO_PATH }}
+  #   - uses: actions/checkout@v3
+  #   - name: Set up JDK 17
+  #     uses: actions/setup-java@v3
+  #     with:
+  #       java-version: '17'
+  #       distribution: 'temurin'
+  #       cache: 'maven'
+  #   - name: Run the Maven
+  #     run: |
+  #       cd ${{ vars.REPO_PATH }}
+  #       mvn package -Dtarget.platform=win -Dexclude.platform=linux
+  #   - name: Move to staging
+  #     run: |
+  #       mv "./liliths-throne-public-dev/target/Lilith's Throne (win)" staging-win
+  #   - name: Zip
+  #     run: |
+  #       zip -r staging-win staging-win
+
+  # build-linux:
+  #   runs-on: ubuntu-latest
+  #   needs: update-apply
+
+  #   steps:
+  #   - name: Move to repo
+  #     run: |
+  #       cd ${{ vars.REPO_PATH }}
+  #   - uses: actions/checkout@v3
+  #   - name: Set up JDK 17
+  #     uses: actions/setup-java@v3
+  #     with:
+  #       java-version: '17'
+  #       distribution: 'temurin'
+  #       cache: 'maven'
+  #   - name: Run the Maven
+  #     run: |
+  #       cd ${{ vars.REPO_PATH }}
+  #       mvn package
+  #   - name: Move to staging
+  #     run: |
+  #       mv "./liliths-throne-public-dev/target/Lilith's Throne (linux)" staging-linux
+  #   - name: Zip
+  #     run: |
+  #       zip -r staging-linux staging-linux
+  
+  # release:
+  #   runs-on: ubuntu-latest
+  #   needs: [build-win, build-linux]
+
+  #   steps:
+  #   - name: Automatic Releases
+  #     uses: marvinpinto/action-automatic-releases@v1.2.1
+  #     with:
+  #       repo_token: "{{ $secrets.GH_TOKEN }}"
+  #       prerelease: false
+  #       files: ./*.zip
     
