@@ -75,7 +75,7 @@ class Applier:
                 if file.name == "Game.java":
                     line = line.replace("public static final int FONT_SIZE_NORMAL = 18;", "public static final int FONT_SIZE_NORMAL = 15;")
                 elif file.name == "Properties.java":
-                    line = line.replacec("public int fontSize = 18;", "public int fontSize = 15;")
+                    line = line.replace("public int fontSize = 18;", "public int fontSize = 15;")
 
                 lines[idx] = line
 
