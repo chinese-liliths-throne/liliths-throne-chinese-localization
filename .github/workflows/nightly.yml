@@ -45,10 +45,10 @@ jobs:
         mvn package
     - name: Move to staging
       run: |
-        mv "./liliths-throne-public-dev/target/Lilith's Throne (linux)" liliths-throne(linux)
+        mv "./liliths-throne-public-dev/target/Lilith's Throne (linux)" "liliths-throne(linux)"
     - name: Zip
       run: |
-        zip -r liliths-throne(linux) liliths-throne(linux)
+        zip -r "liliths-throne(linux)" "liliths-throne(linux)"
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.3
       with: 
@@ -90,10 +90,10 @@ jobs:
         mvn package -Dtarget.platform=win -Dexclude.platform=linux
     - name: Move to staging
       run: |
-        mv "./liliths-throne-public-dev/target/Lilith's Throne (win)" liliths-throne(win)
+        mv "./liliths-throne-public-dev/target/Lilith's Throne (win)" "liliths-throne(win)"
     - name: Zip
       run: |
-        zip -r liliths-throne(win) liliths-throne(win)
+        zip -r "liliths-throne(win)" "liliths-throne(win)"
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.3
       with: 
@@ -109,11 +109,11 @@ jobs:
     - name: Download a Linux Artifact
       uses: actions/download-artifact@v2.1.1
       with:
-        name: liliths-throne(linux)
+        name: "liliths-throne(linux)"
     - name: Download a Win Artifact
       uses: actions/download-artifact@v2.1.1
       with:
-        name: liliths-throne(win)
+        name: "liliths-throne(win)"
     - name: Set Release version env variable
       run: |
         echo "RELEASE_VERSION=$(date "+%y.%m.%d")" >> $GITHUB_ENV
