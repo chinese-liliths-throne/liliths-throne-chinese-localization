@@ -45,15 +45,15 @@ jobs:
         mvn package
     - name: Move to staging
       run: |
-        mv "./liliths-throne-public-dev/target/Lilith's Throne (linux)" "liliths-throne(linux)"
+        mv "./liliths-throne-public-dev/target/Lilith's Throne (linux)" "liliths-throne-linux"
     - name: Zip
       run: |
-        zip -r "liliths-throne(linux)" "liliths-throne(linux)"
+        zip -r "liliths-throne-linux" "liliths-throne-linux"
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.3
       with: 
-        name: "liliths-throne(linux)"
-        path: "liliths-throne(linux).zip"
+        name: "liliths-throne-linux"
+        path: "liliths-throne-linux.zip"
         retention-days: 7
         
   build-win:
@@ -90,15 +90,15 @@ jobs:
         mvn package -Dtarget.platform=win -Dexclude.platform=linux
     - name: Move to staging
       run: |
-        mv "./liliths-throne-public-dev/target/Lilith's Throne (win)" "liliths-throne(win)"
+        mv "./liliths-throne-public-dev/target/Lilith's Throne (win)" "liliths-throne-win"
     - name: Zip
       run: |
-        zip -r "liliths-throne(win)" "liliths-throne(win)"
+        zip -r "liliths-throne-win" "liliths-throne-win"
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.3
       with: 
-        name: "liliths-throne(win)"
-        path: "liliths-throne(win).zip"
+        name: "liliths-throne-win"
+        path: "liliths-throne-win.zip"
         retention-days: 7
 
   release:
@@ -109,11 +109,11 @@ jobs:
     - name: Download a Linux Artifact
       uses: actions/download-artifact@v2.1.1
       with:
-        name: "liliths-throne(linux)"
+        name: "liliths-throne-linux"
     - name: Download a Win Artifact
       uses: actions/download-artifact@v2.1.1
       with:
-        name: "liliths-throne(win)"
+        name: "liliths-throne-win"
     - run: |
         ls
     - name: Set Release version env variable
