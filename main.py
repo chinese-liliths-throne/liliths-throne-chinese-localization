@@ -12,7 +12,9 @@ from update import *
 from logger import logger
 
 
-PARATRANZ_ACCESS_TOKEN = "" if os.environ.get('PARATRANZ_TOKEN') is None else os.environ.get('PARATRANZ_TOKEN')
+PARATRANZ_ACCESS_TOKEN = "" if os.environ.get(
+    'PARATRANZ_TOKEN') is None else os.environ.get('PARATRANZ_TOKEN')
+
 
 def main():
     new_dict_dir = Path(NEW_DICT_DIR)
@@ -29,7 +31,7 @@ def main():
     repo.unzip_latest_version()
 
     root = repo.source_dir
-    
+
     extractor = Extractor(root, new_dict_dir, repo.latest_commit)
     applier = Applier(root, new_dict_dir)
 

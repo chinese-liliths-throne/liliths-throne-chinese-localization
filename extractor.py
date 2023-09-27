@@ -7,6 +7,7 @@ import asyncio
 from lxml import etree
 
 from data import XmlEntry, CodeEntry, FilePair
+from const import BLACKLIST_FILE
 
 
 def try_xml_entry_attrib(file: str, element: etree._Element, attr: str) -> Optional[XmlEntry]:
@@ -37,7 +38,7 @@ def try_xml_entry_text(file: str, element: etree._Element) -> Optional[XmlEntry]
         node_tag=element.tag,
         attribute=None,
         stage=0
-        )
+    )
 
 
 class Extractor:
@@ -449,7 +450,7 @@ class Extractor:
 
         loop.run_until_complete(asyncio.gather(*tasks))
 
-    async def extract_java_gather(self, java_path, entry_path):
+    async def extract_java_gather(self, java_path: Path, entry_path: Path):
         entry_list = await self.extract_java(java_path)
         if len(entry_list) <= 0:
             return
@@ -457,6 +458,8 @@ class Extractor:
             json.dump(entry_list, f, ensure_ascii=False, indent=4)
 
     async def extract_java(self, file: Path):
+        if file.name in BLACKLIST_FILE:
+            return []
         java_extractor = JavaExtractor()
         entry_list = []
 
@@ -519,8 +522,8 @@ class Extractor:
                 entry_list.append(
                     CodeEntry(
                         file=file,
-                        original=line, 
-                        translation="", 
+                        original=line,
+                        translation="",
                         line=idx,
                         stage=0
                     ).to_json()
@@ -708,7 +711,7 @@ class JavaExtractor:
     def general_string_parse(self, line: str) -> bool:
         if not self.interest_line:
             return False
-        
+
         # print(line, re.search(r"\".+\"", line))
         if line.find(r"//") != -1:
             match = re.search(r"(?<!s:)//", line)
@@ -719,7 +722,7 @@ class JavaExtractor:
             self.interest_line = False
         elif "@Override" in line:  # 有效？
             self.interest_line = False
-        
+
         if re.search(r"^(/\*|\*)", line) is not None:
             self.interest_line = False
             return False

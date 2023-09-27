@@ -8,7 +8,8 @@ from data import XmlEntry, CodeEntry
 from logger import logger
 
 FONT_SIZE_REGEX = r"font-size\s*:\s*(\d+)\s*(?:px|pt)"
-LINE_HEIGHT_REGEX = r"(?:line-)?height\s*:\s*(\d+)\s*(?:px|pt)"
+LINE_HEIGHT_REGEX = r"line-height\s*:\s*(\d+)\s*(?:px|pt)"
+
 
 def ui_value_modify(line: str, regex: str) -> str:
     matches = re.search(regex, line)
@@ -20,13 +21,15 @@ def ui_value_modify(line: str, regex: str) -> str:
 
     return line
 
+
 def valid_element(element: etree._Element) -> bool:
-    if element.text is None or len(element.text.strip())==0:
+    if element.text is None or len(element.text.strip()) == 0:
         return False
     elif element.getparent().tag == "formattingNames":
         return False
-    
+
     return True
+
 
 class Applier:
     def __init__(self, root: str, dict_dir: str) -> None:
@@ -36,17 +39,17 @@ class Applier:
     def apply(self) -> None:
         self.apply_res()
         self.apply_src()
-        self.apply_special() # 对于其他优化游戏的文件进行调整
+        self.apply_special()  # 对于其他优化游戏的文件进行调整
 
     def apply_special(self) -> None:
         self.modify_css()
         self.modify_java()
-    
+
     def modify_css(self) -> None:
         for file in self.root.glob("**/*.css"):
             with open(file, mode='r', encoding='utf-8') as f:
                 lines = f.readlines()
-            
+
             for idx, line in enumerate(lines):
                 if line.strip().startswith("-fx-font-family") or line.strip().startswith("font-family"):
                     item = line.split(":")
@@ -54,12 +57,12 @@ class Applier:
                     fonts.insert(0, "Microsoft YaHei")
                     item[1] = ",".join(fonts)
                     line = ":".join(item)
-                
+
                 line = ui_value_modify(line, FONT_SIZE_REGEX)
                 line = ui_value_modify(line, LINE_HEIGHT_REGEX)
 
                 lines[idx] = line
-            
+
             with open(file, 'w', encoding='utf-8') as f:
                 f.writelines(lines)
 
@@ -72,10 +75,15 @@ class Applier:
                 line = ui_value_modify(line, FONT_SIZE_REGEX)
                 line = ui_value_modify(line, LINE_HEIGHT_REGEX)
 
+                # 使用中文Locale
+                line = line.replace("Locale.ENGLISH", "Locale.CHINESE")
+
                 if file.name == "Game.java":
-                    line = line.replace("public static final int FONT_SIZE_NORMAL = 18;", "public static final int FONT_SIZE_NORMAL = 15;")
+                    line = line.replace("public static final int FONT_SIZE_NORMAL = 18;",
+                                        "public static final int FONT_SIZE_NORMAL = 15;")
                 elif file.name == "Properties.java":
-                    line = line.replace("public int fontSize = 18;", "public int fontSize = 15;")
+                    line = line.replace(
+                        "public int fontSize = 18;", "public int fontSize = 15;")
                 elif file.name == "UtilText.java":
                     if "import jdk.nashorn" in line:
                         line = "//" + line
@@ -84,7 +92,6 @@ class Applier:
 
                 lines[idx] = line
 
-            
             with open(file, 'w', encoding='utf-8') as f:
                 f.writelines(lines)
 
@@ -105,7 +112,7 @@ class Applier:
 
         entry_list = [XmlEntry.from_json(
             original_file, entry) for entry in entry_list]
-        
+
         parser = etree.XMLParser(strip_cdata=False)
 
         tree: etree._Element = etree.parse(str(original_file), parser)
@@ -121,7 +128,8 @@ class Applier:
             nodes: List[etree._Element] = list(tree.iter(tag))
             nodes = list(filter(lambda node: valid_element(node), nodes))
             if len(entry_cluster) != len(nodes):
-                logger.warning(f"\t****{original_file.relative_to(self.root)}: 节点{tag}数量({len(nodes)})与字典数量({len(entry_cluster)})不匹配")
+                logger.warning(
+                    f"\t****{original_file.relative_to(self.root)}: 节点{tag}数量({len(nodes)})与字典数量({len(entry_cluster)})不匹配")
                 continue
             for entry, node in zip(entry_cluster, nodes):
                 if len(entry.translation) <= 0 or entry.translation == entry.original:  # 暂无汉化或无需修改
@@ -130,10 +138,8 @@ class Applier:
                 if entry.attribute is not None:
                     node.set(entry.attribute, entry.translation)
                 else:
-                    node.text = entry.translation
+                    node.text = entry.translation.replace("\\n", "\n")
                     node.text = etree.CDATA(node.text)
-
-        
 
         tree.write(original_file.as_posix(), encoding="utf-8",
                    xml_declaration=True, pretty_print=True, standalone=False)
@@ -148,7 +154,7 @@ class Applier:
                 continue
 
             self.apply_java(original_file, dict_file)
-            
+
     def apply_java(self, original_file: Path, dict_file: Path) -> None:
         with open(dict_file, "r", encoding="utf-8") as f:
             entry_list = json.load(f)
@@ -157,23 +163,23 @@ class Applier:
 
         entry_list = [CodeEntry.from_json(
             original_file, entry) for entry in entry_list]
-        
+
         for entry in entry_list:
             line_text = text[entry.line]
-            applied_text = self.apply_java_line(line_text, entry.original, entry.translation, dict_file, entry.line)
+            applied_text = self.apply_java_line(
+                line_text, entry.original, entry.translation, dict_file, entry.line)
             text[entry.line] = applied_text
-        
+
         with open(original_file, "w", encoding="utf-8") as f:
             f.writelines(text)
-
 
     def apply_java_line(self, text: str, original: str, translation: str, file: Path, line: int) -> str:
         if len(translation) <= 0:
             return text
-        
+
         # 常见错误检测
         if translation.count("\"") % 2 == 1:
-            logger.warning(f"\t****{line},{file.as_posix()}:翻译文本有奇数个双引号！") 
+            logger.warning(f"\t****{line},{file.as_posix()}:翻译文本有奇数个双引号！")
         if "\\n" in translation:
             logger.warning(f"\t****{line},{file.as_posix()}:翻译文本有额外换行符！")
             translation.replace("\\n", "")
@@ -185,6 +191,7 @@ class Applier:
         else:
             text = text[:index] + translation + text[index + len(original):]
             return text
+
 
 if __name__ == "__main__":
     applier = Applier("./liliths-throne-public-dev", "./new_dict")

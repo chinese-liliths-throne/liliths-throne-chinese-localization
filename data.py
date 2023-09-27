@@ -31,7 +31,8 @@ class XmlEntry(Entry):
             node_tag=entry_json["key"].split('_')[0],
             attribute=entry_json["key"].split('_')[1] if entry_json["key"].split('_')[
                 1] != "text" else None,
-            stage=entry_json['stage'] if entry_json.get("stage") is not None else 0
+            stage=entry_json['stage'] if entry_json.get(
+                "stage") is not None else 0
         )
 
     def to_json(self) -> Dict:
@@ -58,7 +59,8 @@ class CodeEntry(Entry):
             original=entry_json["original"],
             translation=entry_json["translation"],
             line=int(entry_json["key"]),
-            stage=entry_json['stage'] if entry_json.get("stage") is not None else 0
+            stage=entry_json['stage'] if entry_json.get(
+                "stage") is not None else 0
         )
 
     def to_json(self) -> Dict:

@@ -37,6 +37,7 @@ def update_dict(old_dict_path: Path, new_dict_path: Path):
 
     loop.run_until_complete(asyncio.gather(*tasks))
 
+
 async def update_dict_file(old_dict_file: Path, new_dict_file: Path, outdated_file: Path):
     with open(old_dict_file, 'r') as old_dict:
         old_dict_data: List[Dict] = json.load(old_dict)
@@ -56,30 +57,33 @@ async def update_dict_file(old_dict_file: Path, new_dict_file: Path, outdated_fi
         with open(new_dict_file, 'w') as new_dict:
             json.dump(new_dict_data, new_dict, indent=4, ensure_ascii=False)
 
-        outdated_data = list(filter(lambda entry: entry is not None, old_dict_data))
-    
+        outdated_data = list(
+            filter(lambda entry: entry is not None, old_dict_data))
+        if len(outdated_data) > 0:
+            logger.info(f'在新提取中该文件存在遗失条目：{old_dict_file}')
+
     # 过时条目融合
     if outdated_file.exists():
         with open(outdated_file, "r", encoding="utf-8") as f:
             prev_outdated_data = json.load(f)
     else:
         prev_outdated_data = []
-    
-    await update_data(outdated_data, prev_outdated_data)
+
+    await update_data(outdated_data, prev_outdated_data, version="0.4.8.9")
 
     if len(prev_outdated_data) <= 0:
         if no_file:
             logger.warning(f" - 文件不再包含任何条目：{outdated_file}")
         return
-    
+
     if not outdated_file.parent.exists():
         outdated_file.parent.mkdir(parents=True)
 
     with open(outdated_file, "w", encoding="utf-8") as f:
-        json.dump(outdated_data, f, ensure_ascii=False, indent=4)
+        json.dump(prev_outdated_data, f, ensure_ascii=False, indent=4)
 
 
-async def update_data(old_dict_data: List[Dict[str, str]], new_dict_data: List[Dict[str, str]], outdated: bool = False) -> List[Dict[str, str]]:
+async def update_data(old_dict_data: List[Dict[str, str]], new_dict_data: List[Dict[str, str]], version: str = "") -> List[Dict[str, str]]:
     new_dict_map: Dict[str, List[int]] = {}  # [原文文本, new_dict_data列表中对应序号]
     old_dict_map: Dict[str, List[int]] = {}  # [原文文本, old_dict_data列表中对应序号]
 
@@ -102,28 +106,34 @@ async def update_data(old_dict_data: List[Dict[str, str]], new_dict_data: List[D
 
     for key, value in old_dict_map.items():
         new_idx_list = new_dict_map.get(key)
-        if outdated:
+        if version != "":
             for idx, old_idx in enumerate(value):
                 # 若旧字典的汉化与原文一致（即无需汉化）则无视
                 if old_dict_data[old_idx]["original"] == old_dict_data[old_idx]["translation"]:
                     continue
                 if new_idx_list is None:
                     new_dict_data.append(old_dict_data[old_idx])
+                    new_dict_data[-1]["key"] += f"_{version}"
                     continue
                 new_dict_data[new_idx_list[idx]
-                            ]["translation"] = old_dict_data[old_idx]["translation"]
+                              ]["translation"] = old_dict_data[old_idx]["translation"]
                 new_dict_data[new_idx_list[idx]
-                            ]["stage"] = old_dict_data[old_idx]["stage"]
+                              ]["stage"] = old_dict_data[old_idx]["stage"]
+                if "." in new_dict_data[new_idx_list[idx]]["key"].split("_")[-1]:
+                    new_dict_data[new_idx_list[idx]]["key"] = "_".join(
+                        new_dict_data[new_idx_list[idx]]["key"].split("_")[:-1] + [f"_{version}"])
+                else:
+                    new_dict_data[new_idx_list[idx]
+                                  ]["key"] += f"_{version}"
         elif new_idx_list is not None:
             for idx, old_idx in enumerate(
                 value[:min(len(value), len(new_idx_list))]
             ):
                 # 保留汉化内容及当前阶段
                 new_dict_data[new_idx_list[idx]
-                            ]["translation"] = old_dict_data[old_idx]["translation"]
+                              ]["translation"] = old_dict_data[old_idx]["translation"]
                 new_dict_data[new_idx_list[idx]
-                            ]["stage"] = old_dict_data[old_idx]["stage"]
+                              ]["stage"] = old_dict_data[old_idx]["stage"]
                 # 移除被迁移的旧词条
                 old_dict_data[old_idx] = None
     return old_dict_data
-    

@@ -23,7 +23,7 @@ class Repo:
             download_url = PROXY_URL
         download_url = download_url + REPO_BASE_URL + \
             f"/archive/refs/heads/{self.branch}.zip"
-        
+
         api_url = REPO_API_URL + f"/commits"
 
         path = Path(DOWNLOAD_DIR)
@@ -45,7 +45,7 @@ class Repo:
             for existing_file in path.glob("repo-latest-*.zip"):
                 os.remove(existing_file)
             request.urlretrieve(download_url, path /
-                        f"repo-latest-{self.latest_commit}.zip")
+                                f"repo-latest-{self.latest_commit}.zip")
 
     def unzip_latest_version(self) -> None:
         zip_path = list(Path(DOWNLOAD_DIR).glob("**/repo-latest-*.zip"))[0]
@@ -61,9 +61,9 @@ class Repo:
             zip_ref.extractall(extract_path.parent)
 
     def fetch_latest_dict(self) -> None:
-        output_url = PARATRANZ_API_URL + "/artifacts" # use post
+        output_url = PARATRANZ_API_URL + "/artifacts"  # use post
         download_url = PARATRANZ_API_URL + "/artifacts/download"
-        
+
         path = Path(DOWNLOAD_DIR)
 
         if not path.exists():
@@ -72,14 +72,14 @@ class Repo:
         file_path = path / f"dict-latest.zip"
         if file_path.exists():
             os.remove(file_path)
-        
+
         opener = request.build_opener()
         opener.addheaders = [('Authorization', self.paratranz_access_token)]
         request.install_opener(opener)
 
         req = request.Request(url=output_url, method="POST")
         response = request.urlopen(req)
-        
+
         if response.status == 200:
             request.urlretrieve(download_url, file_path)
         else:
