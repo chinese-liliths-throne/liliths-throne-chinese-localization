@@ -387,6 +387,8 @@ class Extractor:
         # name
         # description
         for effect in root.iter("effect"):
+            if effect.getparent().tag == "statusEffects":
+                continue
             e = try_xml_entry_text(file, effect)
             insert_entry(e)
 
@@ -532,6 +534,12 @@ class Extractor:
         return entry_list
 
 SB_REGEX = r"([sS][bB]|StringBuilder)(\(\))?"
+ADJ_REGEX = r"[a|A]djectives?"
+TEXT_REGEX = r"[t|T]exts?"
+NAME_REGEX = r"[n|N]ames?"
+TITLE_REGEX = r"[t|T]itles?"
+DESC_REGEX = r"[d|D]escript(ion|or)s?"
+ASSIGN_REGEX = r"\s*\+?=\s*"
 
 class JavaExtractor:
     def __init__(self):
@@ -543,21 +551,15 @@ class JavaExtractor:
 
         if "return" in line:
             self.interest_line = True
-        elif re.search(SB_REGEX + r"(\.append|\s*=\s*)", line) is not None:
+        elif re.search(rf"({SB_REGEX}|output)\.append", line) is not None:
             self.interest_line = True
         elif "new Response" in line:
             self.interest_line = True
         elif ".setInformation" in line:
             self.interest_line = True
-        elif re.search(r"[d|D]escript(ion|or)\s*=\s*", line) is not None:
+        elif re.search(rf"({SB_REGEX}|{ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}|{TITLE_REGEX}|{DESC_REGEX}|returnValue|String){ASSIGN_REGEX}", line) is not None:
             self.interest_line = True
-        elif re.search(r"[t|T]itle\s*=\s*", line) is not None:
-            self.interest_line = True
-        elif re.search(r"[n|N]ame\s*=\s*", line) is not None:
-            self.interest_line = True
-        elif re.search(r"[t|T]ext\s*=\s*", line) is not None:
-            self.interest_line = True
-        elif re.search(r"[a|A]djectives\s*=\s*", line) is not None:
+        elif re.search(rf"({ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}|{TITLE_REGEX}|{DESC_REGEX}|Effects?).add", line) is not None:
             self.interest_line = True
         # elif "System.err.println" in line:
         #     self.interest_line = True
@@ -566,10 +568,6 @@ class JavaExtractor:
         elif re.search(r"^\s*[A-Z_]+\(", line):   # 枚举项
             self.interest_line = True
         elif "new String[]" in line or "static String[]" in line:
-            self.interest_line = True
-        elif re.search(r"returnValue\s*=\s*", line) is not None:
-            self.interest_line = True
-        elif re.search(r"([d|D]escript(ion|or)s|[N|n]ames|[a|A]djectives|Effects).add", line) is not None:
             self.interest_line = True
         elif "super(" in line:
             self.interest_line = True
@@ -588,8 +586,6 @@ class JavaExtractor:
         elif "new EventLogEntry" in line:
             self.interest_line = True
         elif "new DialogueNode" in line:
-            self.interest_line = True
-        elif re.search(r"String\s*=\s*", line) is not None:
             self.interest_line = True
 
     def parse_tooltips(self, line: str):

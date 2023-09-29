@@ -36,6 +36,8 @@ def valid_element(element: etree._Element) -> bool:
         return False
     elif element.getparent().tag == "formattingNames":
         return False
+    elif element.getparent().tag == "statusEffects":
+        return False
 
     return True
 
@@ -127,11 +129,17 @@ class Applier:
                                         "protected void loadFonts() {\n"
                                         + "\t\tif (Font.loadFont(toUri(\"res/fonts/Source Han/SourceHanSansCN-Regular.otf\"), 12) != null) {\n"
                                         + "\t\t\tFont.loadFont(toUri(\"res/fonts/Source Han/SourceHanSansCN-Bold.otf\"), 12);\n"
-                                        + "\t\t\tFont.loadFont(toUri(\"res/fonts/Source Han/SourceHanSansCN-Light.otf\"), 12);\n"
                                         + "\t\t} else {\n"
                                         + "\t\t\tSystem.err.println(\"Source Han Sans font could not be loaded.\");\n"
                                         + "\t\t}\n"
                                         )
+                elif file.name == "Util.java":
+                    # 替换intToString为输出阿拉伯数字
+                    line = line.replace("public static String intToString(int integer) {",
+                                        "public static String intToString(int integer) {\n"
+                                        + "\t\treturn Integer.toString(integer);\n"
+                                        + "\t}\n"
+                                        + "\tpublic static String intToStringOld(int integer){")
 
                 lines[idx] = line
 
