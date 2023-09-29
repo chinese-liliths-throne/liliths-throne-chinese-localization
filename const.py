@@ -16,8 +16,11 @@ ROOT_DIR = "./"
 SOURCE_DIR = "./liliths-throne-public-"
 NEW_DICT_DIR = "./new_dict"
 OLD_DICT_DIR = "./old_dict"
+FONT_DIR = "./font"
+FONT_TARGET_DIR = "./res/fonts"
 
 OUTDATE_DIR_NAME = "过时词条"
+FONT_DIR_NAME = "Source Han"
 
 
 BLACKLIST_FILE = [

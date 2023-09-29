@@ -3,21 +3,30 @@ from lxml import etree
 from typing import List, Dict
 import json
 import re
+import shutil
 
 from data import XmlEntry, CodeEntry
 from logger import logger
+from const import *
 
 FONT_SIZE_REGEX = r"font-size\s*:\s*(\d+)\s*(?:px|pt)"
 LINE_HEIGHT_REGEX = r"line-height\s*:\s*(\d+)\s*(?:px|pt)"
 
 
-def ui_value_modify(line: str, regex: str) -> str:
+def ui_value_modify(line: str, regex: str, multiplier: float) -> str:
     matches = re.search(regex, line)
     if matches is not None:
         for group in matches.groups():
-            value = int(group)
-            value = int(value * 0.8)
-            line = line.replace(group, str(value))
+            if group.isdigit():
+                value = int(group)
+                if value <= 16:
+                    value = int(value * min(multiplier+0.1, 1))
+                else:
+                    value = int(value * multiplier)
+                line = line.replace(group, str(value))
+            else:
+                multiplier = int(multiplier*10)
+                line = line.replace(group, f"({group})*{str(multiplier)}/10")
 
     return line
 
@@ -44,6 +53,12 @@ class Applier:
     def apply_special(self) -> None:
         self.modify_css()
         self.modify_java()
+        self.add_files()
+
+    def add_files(self) -> None:
+        # 复制字体文件
+        shutil.copytree(Path(ROOT_DIR) / FONT_DIR / FONT_DIR_NAME,
+                        self.root / FONT_TARGET_DIR / FONT_DIR_NAME)
 
     def modify_css(self) -> None:
         for file in self.root.glob("**/*.css"):
@@ -54,12 +69,12 @@ class Applier:
                 if line.strip().startswith("-fx-font-family") or line.strip().startswith("font-family"):
                     item = line.split(":")
                     fonts = item[1].split(",")
-                    fonts.insert(0, "Microsoft YaHei")
+                    fonts.insert(0, "\"Source Han Sans CN\"")
                     item[1] = ",".join(fonts)
                     line = ":".join(item)
 
-                line = ui_value_modify(line, FONT_SIZE_REGEX)
-                line = ui_value_modify(line, LINE_HEIGHT_REGEX)
+                line = ui_value_modify(line, FONT_SIZE_REGEX, 0.8)
+                line = ui_value_modify(line, LINE_HEIGHT_REGEX, 0.8)
 
                 lines[idx] = line
 
@@ -72,23 +87,51 @@ class Applier:
                 lines = f.readlines()
 
             for idx, line in enumerate(lines):
-                line = ui_value_modify(line, FONT_SIZE_REGEX)
-                line = ui_value_modify(line, LINE_HEIGHT_REGEX)
+                # 调整字体和行高
+                line = ui_value_modify(line, FONT_SIZE_REGEX, 0.8)
+                line = ui_value_modify(line, LINE_HEIGHT_REGEX, 0.8)
 
                 # 使用中文Locale
                 line = line.replace("Locale.ENGLISH", "Locale.CHINESE")
 
                 if file.name == "Game.java":
+                    # 修改默认字体
                     line = line.replace("public static final int FONT_SIZE_NORMAL = 18;",
                                         "public static final int FONT_SIZE_NORMAL = 15;")
                 elif file.name == "Properties.java":
+                    # 修改默认字体
                     line = line.replace(
                         "public int fontSize = 18;", "public int fontSize = 15;")
                 elif file.name == "UtilText.java":
+                    # 高版本jdk不再自带nashorn
                     if "import jdk.nashorn" in line:
                         line = "//" + line
                     if "import org.openjdk.nashorn" in line:
                         line = line[2:]
+                elif file.name == "AbstractAttribute.java":
+                    # Attribute的name同时被用于逻辑和显示，故使用类似的nameAbbreviation暂时替代
+                    line = line.replace(
+                        "return name;", "return nameAbbreviation;")
+                    line = line.replace("return \"<\"+tag+\" style='color:\"+this.getColour().toWebHexString()+\";'>\"+name+\"</\"+tag+\">\";",
+                                        "return \"<\"+tag+\" style='color:\"+this.getColour().toWebHexString()+\";'>\"+nameAbbreviation+\"</\"+tag+\">\";")
+                elif file.name == "MainController.java":
+                    line = line.replace("webviewTooltip.setMaxHeight(height);",
+                                        "webviewTooltip.setMaxHeight(height);\n"
+                                        + "\t\twebviewTooltip.setPrefHeight(height);")
+                    line = line.replace("tooltip.setMaxHeight(height);",
+                                        "tooltip.setMaxHeight(height);\n" +
+                                        "\t\ttooltip.setPrefHeight(height);")
+                elif file.name == "Main.java":
+                    # 内置字体导入
+                    line = line.replace("protected void loadFonts() {",
+                                        "protected void loadFonts() {\n"
+                                        + "\t\tif (Font.loadFont(toUri(\"res/fonts/Source Han/SourceHanSansCN-Regular.otf\"), 12) != null) {\n"
+                                        + "\t\t\tFont.loadFont(toUri(\"res/fonts/Source Han/SourceHanSansCN-Bold.otf\"), 12);\n"
+                                        + "\t\t\tFont.loadFont(toUri(\"res/fonts/Source Han/SourceHanSansCN-Light.otf\"), 12);\n"
+                                        + "\t\t} else {\n"
+                                        + "\t\t\tSystem.err.println(\"Source Han Sans font could not be loaded.\");\n"
+                                        + "\t\t}\n"
+                                        )
 
                 lines[idx] = line
 
