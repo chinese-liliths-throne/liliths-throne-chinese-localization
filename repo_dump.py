@@ -19,28 +19,28 @@ class Repo:
     def fetch_latest_version(self) -> None:
         if os.environ.get('USE_GITHUB_ACTION') is not None:
             download_url = ""
-            api_url = ""
         else:
             download_url = PROXY_URL
-            api_url = PROXY_URL
         download_url += REPO_BASE_URL + \
             f"/archive/refs/heads/{self.branch}.zip"
 
-        api_url += REPO_API_URL + f"/commits"
+        api_url = REPO_API_URL + f"/commits"
 
         path = Path(DOWNLOAD_DIR)
 
         if not path.exists():
             path.mkdir()
-
-        with requests.get(api_url, stream=True, headers={
-            "Accept": "application/vnd.github+json",
-            "Authorization": GITHUB_PUBLIC_ACCESS_TOKEN
-        }) as r:
-            if r.status_code == 200 and len(r.content) > 0:
-                self.latest_commit = r.json()[0]["sha"]
-            else:
-                self.latest_commit = "unknown"
+        try:
+            with requests.get(api_url, stream=True, headers={
+                "Accept": "application/vnd.github+json",
+                "Authorization": GITHUB_PUBLIC_ACCESS_TOKEN
+            }) as r:
+                if r.status_code == 200 and len(r.content) > 0:
+                    self.latest_commit = r.json()[0]["sha"]
+                else:
+                    self.latest_commit = "unknown"
+        except:
+            self.latest_commit = "unknown"
 
         file_path = path / f"repo-latest-{self.latest_commit}.zip"
         if not file_path.exists():
@@ -109,5 +109,5 @@ if __name__ == "__main__":
     # repo.fetch_latest_dict()
     # repo.unzip_latest_dict()
 
-    repo.fetch_latest_version()
+    # repo.fetch_latest_version()
     # repo.unzip_latest_version()
