@@ -80,13 +80,7 @@ class Repo:
         opener.addheaders = [('Authorization', self.paratranz_access_token)]
         request.install_opener(opener)
 
-        req = request.Request(url=output_url, method="POST")
-        response = request.urlopen(req)
-
-        if response.status == 200:
-            request.urlretrieve(download_url, file_path)
-        else:
-            logger.error("\t****Paratranz字典打包错误")
+        request.urlretrieve(download_url, file_path)
 
     def unzip_latest_dict(self) -> None:
         zip_path = Path(DOWNLOAD_DIR) / f"dict-latest.zip"
@@ -106,7 +100,7 @@ class Repo:
 if __name__ == "__main__":
     repo = Repo("dev", "")
 
-    # repo.fetch_latest_dict()
+    repo.fetch_latest_dict()
     # repo.unzip_latest_dict()
 
     # repo.fetch_latest_version()
