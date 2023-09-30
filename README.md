@@ -14,7 +14,7 @@ pip install -r requirements.txt
 ```
 安装所需依赖
 
-使用
+首先打开**main.py**在PARATRANZ_ACCESS_TOKEN处填入从paratranz获取的API TOKEN(个人页面-设置)，再使用
 ``` shell
 python main.py
 ```

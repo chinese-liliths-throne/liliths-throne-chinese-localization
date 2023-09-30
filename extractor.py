@@ -40,6 +40,59 @@ def try_xml_entry_text(file: str, element: etree._Element) -> Optional[XmlEntry]
         stage=0
     )
 
+def split_htmlContent(file: str, element: etree._Element) -> Optional[List[XmlEntry]]:
+    if element.text is None:
+        return None
+
+    if element.text.strip() == "":
+        return None
+    
+    extractor = HtmlContentExtractor()
+    
+    extract_lines = []
+
+    splited_text = element.text.split("\n")
+    for idx, line in enumerate(splited_text):
+        if extractor.need_translation(line.strip()):
+            extract_lines.append(idx)
+
+    return [
+        XmlEntry(
+            file=file,
+            original=splited_text[line],
+            translation="",
+            node_tag=element.tag,
+            attribute=element.get('tag').replace("_","-") + f"_{line}",
+            stage=0
+        )
+        for line in extract_lines
+    ]
+
+class HtmlContentExtractor:
+    def __init__(self):
+        self.interest_line: bool = True
+
+    def need_translation(self, line: str) -> bool:
+        if line == "":
+            return False
+        
+        if "#VAR" in line:
+            self.interest_line = False
+        elif "#ENDVAR" in line:
+            self.interest_line = True
+            return False
+        
+        if line == "#THEN" or line == "#ELSE" or line == "#ENDIF":
+            return False
+        elif re.search(r"#IF(?!\()", line) is not None:
+            return False
+        elif re.search(r"^#(ELSE)?IF\(.*\)$", line) is not None:
+            return False
+        elif re.search(r"^<.*>$", line) is not None:
+            return False
+        
+        if self.interest_line:
+            return True
 
 class Extractor:
     def __init__(self, root: str, new_dict_path: str, commit_sha: str):
@@ -316,6 +369,11 @@ class Extractor:
 
         # bookText
         for htmlContent in root.iter("htmlContent"):
+            """ 将htmlContent拆分成小段 """
+            # e_list = split_htmlContent(file, htmlContent)
+            # [insert_entry(e) for e in e_list]
+            
+            """ 保留大段文本 """
             e = try_xml_entry_text(file, htmlContent)
             insert_entry(e)
 
