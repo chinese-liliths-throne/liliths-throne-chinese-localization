@@ -230,9 +230,9 @@ class Applier:
 
         # 常见错误检测
         if translation.count("\"") % 2 == 1:
-            logger.warning(f"\t****{line},{file.as_posix()}:翻译文本有奇数个双引号！")
+            logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本有奇数个双引号！")
         if "\\n" in translation:
-            logger.warning(f"\t****{line},{file.as_posix()}:翻译文本有额外换行符！")
+            logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本有额外换行符！")
             translation.replace("\\n", "")
 
         index = text.find(original)

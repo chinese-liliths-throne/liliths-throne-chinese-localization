@@ -39,7 +39,7 @@ def update_dict(old_dict_path: Path, new_dict_path: Path):
 
 
 async def update_dict_file(old_dict_file: Path, new_dict_file: Path, outdated_file: Path):
-    with open(old_dict_file, 'r') as old_dict:
+    with open(old_dict_file, 'r', encoding='utf-8') as old_dict:
         old_dict_data: List[Dict] = json.load(old_dict)
 
     no_file = False
@@ -49,12 +49,12 @@ async def update_dict_file(old_dict_file: Path, new_dict_file: Path, outdated_fi
         outdated_data = old_dict_data
         no_file = True
     else:
-        with open(new_dict_file, 'r') as new_dict:
+        with open(new_dict_file, 'r', encoding='utf-8') as new_dict:
             new_dict_data: List[Dict] = json.load(new_dict)
 
         old_dict_data = await update_data(old_dict_data, new_dict_data)
 
-        with open(new_dict_file, 'w') as new_dict:
+        with open(new_dict_file, 'w', encoding='utf-8') as new_dict:
             json.dump(new_dict_data, new_dict, indent=4, ensure_ascii=False)
 
         outdated_data = list(

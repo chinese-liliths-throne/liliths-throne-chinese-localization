@@ -22,4 +22,9 @@ python main.py
 ``` shell
 mvn package
 ```
-完成编译。该版本推荐使用java17及以上版本编译，而非原仓库推荐的java8。
+完成编译。
+ - 使用maven编译请先前往[官方网站](https://maven.apache.org/install.html)下载并配置路径。
+ - 使用其他方法编译请详见源码中的*lilithsThroneBuildTutorial.md*
+ - 该版本推荐使用java17及以上版本编译，而非原仓库推荐的java8。
+     - [openjdk微软源](https://learn.microsoft.com/zh-cn/java/openjdk/download)
+	 - [openjdk Oracle源](https://www.oracle.com/java/technologies/downloads/#jdk17-windows)
