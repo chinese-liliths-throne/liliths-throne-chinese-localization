@@ -46,7 +46,6 @@ class Repo:
         if not file_path.exists():
             for existing_file in path.glob("repo-latest-*.zip"):
                 os.remove(existing_file)
-            print(download_url)
             request.urlretrieve(download_url, path /
                                 f"repo-latest-{self.latest_commit}.zip")
 

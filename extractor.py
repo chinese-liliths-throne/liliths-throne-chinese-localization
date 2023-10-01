@@ -372,7 +372,7 @@ class Extractor:
             """ 将htmlContent拆分成小段 """
             # e_list = split_htmlContent(file, htmlContent)
             # [insert_entry(e) for e in e_list]
-            
+
             """ 保留大段文本 """
             e = try_xml_entry_text(file, htmlContent)
             insert_entry(e)
@@ -528,7 +528,6 @@ class Extractor:
 
         for idx, line in enumerate(lines):
             line = line.strip()
-            extract_flag = False
 
             if file.parent.name == "tooltips":
                 java_extractor.parse_tooltips(line)
@@ -540,7 +539,7 @@ class Extractor:
                 java_extractor.parse_body(line)
             elif file.parent.name == "effects":
                 java_extractor.parse_effects(line)
-            elif file.parent.name == "fetishs":
+            elif file.parent.name == "fetishes":
                 java_extractor.parse_fetishs(line)
             elif file.parent.name == "npc":
                 java_extractor.parse_npc(line)
@@ -576,9 +575,6 @@ class Extractor:
             java_extractor.parse_normal(line)
 
             if java_extractor.general_string_parse(line):
-                extract_flag = True
-
-            if extract_flag:
                 entry_list.append(
                     CodeEntry(
                         file=file,
@@ -777,7 +773,7 @@ class JavaExtractor:
         if re.search(r"^(/\*|\*)", line) is not None:
             self.interest_line = False
             return False
-        elif re.search(r"(getMandatoryFirstOf|getAllOf|getAttribute|parseFromXMLFile)", line) is not None:
+        elif re.search(r"(getMandatoryFirstOf|getAllOf|parseFromXMLFile)", line) is not None:
             return False
 
         if re.search(r"\"[^\"]+\"(?!\")", line) is not None:

@@ -76,7 +76,7 @@ class Applier:
                     line = ":".join(item)
 
                 line = ui_value_modify(line, FONT_SIZE_REGEX, 0.8)
-                line = ui_value_modify(line, LINE_HEIGHT_REGEX, 0.8)
+                line = ui_value_modify(line, LINE_HEIGHT_REGEX, 0.9)
 
                 lines[idx] = line
 
@@ -100,6 +100,9 @@ class Applier:
                     # 修改默认字体
                     line = line.replace("public static final int FONT_SIZE_NORMAL = 18;",
                                         "public static final int FONT_SIZE_NORMAL = 15;")
+                    # 调整日期格式
+                    line = line.replace("return date.substring(0, date.length()-5);",
+                                        "return date.substring(5, date.length());")
                 elif file.name == "Properties.java":
                     # 修改默认字体
                     line = line.replace(
@@ -140,6 +143,12 @@ class Applier:
                                         + "\t\treturn Integer.toString(integer);\n"
                                         + "\t}\n"
                                         + "\tpublic static String intToStringOld(int integer){")
+                elif file.name == "Units.java":
+                    # 调整日期格式
+                    line = line.replace("DateTimeFormatter.ofPattern(Main.getProperties().hasValue(PropertyValue.internationalDate) ? \"dd.MM.yy\" : \"MM/dd/yy\")",
+                                        "DateTimeFormatter.ofPattern(Main.getProperties().hasValue(PropertyValue.internationalDate) ? \"yy.MM.dd\" : \"yy.MM.dd\")")
+                    line = line.replace("DateTimeFormatter.ofPattern(\"d'%o %m' yyyy\")",
+                                        "DateTimeFormatter.ofPattern(\"yyyy年MM月dd日\")")
 
                 lines[idx] = line
 
@@ -229,7 +238,7 @@ class Applier:
             return text
 
         # 常见错误检测
-        if translation.count("\"") % 2 == 1:
+        if translation.count("\"") % 2 == 1 and "//" not in translation:
             logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本有奇数个双引号！")
         if "\\n" in translation:
             logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本有额外换行符！")
