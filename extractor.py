@@ -486,6 +486,9 @@ class Extractor:
         for missText in root.iter("missText"):
             e = try_xml_entry_text(file, missText)
             insert_entry(e)
+        for onCriticalHitEffect in root.iter("onCriticalHitEffect"):
+            e = try_xml_entry_text(file, onCriticalHitEffect)
+            insert_entry(e)
 
         return entry_list
 
@@ -593,11 +596,15 @@ TEXT_REGEX = r"[t|T]exts?"
 NAME_REGEX = r"[n|N]ames?"
 TITLE_REGEX = r"[t|T]itles?"
 DESC_REGEX = r"[d|D]escript(ion|or)s?"
+DETER_REGEX = r"[d|D]terminers?"
+STRING_REGEX = r"[s|S]trings?"
+PREFIX_REGEX = r"[p|P]refixes?"
 ASSIGN_REGEX = r"\s*\+?=\s*"
 
 class JavaExtractor:
     def __init__(self):
         self.interest_line: bool = False
+        self.comment: bool = False
 
     def parse_normal(self, line: str):
         if self.interest_line:
@@ -611,7 +618,7 @@ class JavaExtractor:
             self.interest_line = True
         elif ".setInformation" in line:
             self.interest_line = True
-        elif re.search(rf"({SB_REGEX}|{ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}|{TITLE_REGEX}|{DESC_REGEX}|returnValue|String){ASSIGN_REGEX}", line) is not None:
+        elif re.search(rf"({SB_REGEX}|{ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}|{TITLE_REGEX}|{DESC_REGEX}|returnValue|{PREFIX_REGEX}|{STRING_REGEX}|{DETER_REGEX}){ASSIGN_REGEX}", line) is not None:
             self.interest_line = True
         elif re.search(rf"({ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}|{TITLE_REGEX}|{DESC_REGEX}|Effects?).add", line) is not None:
             self.interest_line = True
@@ -619,7 +626,9 @@ class JavaExtractor:
         #     self.interest_line = True
         elif "new Value<>" in line:
             self.interest_line = True
-        elif re.search(r"^\s*[A-Z_]+\(", line):   # 枚举项
+        elif "public enum" in line:    # 枚举项
+            self.interest_line = True
+        elif re.search(r"^\s*[A-Z_]+\(", line) is not None:   # 枚举项
             self.interest_line = True
         elif "new String[]" in line or "static String[]" in line:
             self.interest_line = True
@@ -759,6 +768,17 @@ class JavaExtractor:
         if not self.interest_line:
             return False
 
+        if re.search(r"^/\*", line) is not None:
+            if "*/" not in line:
+                self.comment = True
+            return False
+        elif self.comment and "*/" in line:
+            self.comment = False
+            return False
+
+        if self.comment:
+            return False
+
         # print(line, re.search(r"\".+\"", line))
         if line.find(r"//") != -1:
             match = re.search(r"(?<!s:)//", line)
@@ -770,10 +790,8 @@ class JavaExtractor:
         elif "@Override" in line:  # 有效？
             self.interest_line = False
 
-        if re.search(r"^(/\*|\*)", line) is not None:
-            self.interest_line = False
-            return False
-        elif re.search(r"(getMandatoryFirstOf|getAllOf|parseFromXMLFile)", line) is not None:
+        
+        if re.search(r"(getMandatoryFirstOf|getAllOf|parseFromXMLFile)", line) is not None:
             return False
 
         if re.search(r"\"[^\"]+\"(?!\")", line) is not None:

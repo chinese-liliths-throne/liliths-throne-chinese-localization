@@ -111,7 +111,7 @@ async def update_data(old_dict_data: List[Dict[str, str]], new_dict_data: List[D
                 # 若旧字典的汉化与原文一致（即无需汉化）则无视
                 if old_dict_data[old_idx]["original"] == old_dict_data[old_idx]["translation"]:
                     continue
-                if new_idx_list is None:
+                if new_idx_list is None or len(new_idx_list) == 0:
                     new_dict_data.append(old_dict_data[old_idx])
                     new_dict_data[-1]["key"] += f"_{version}"
                     continue
