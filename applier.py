@@ -151,7 +151,7 @@ class Applier:
                                         + "\t\t\t\tcontinue;\n"
                                         + "\t\t\t}\n"
                                         + "\t\t\tint num = intStr.charAt(i) - '0';\n"
-                                        + "\t\t\tif (num == 0 && sb.charAt(sb.length()-1) == '零') continue;\n"
+                                        + "\t\t\tif (num == 0 && sb.length() > 0 && sb.charAt(sb.length()-1) == '零') continue;\n"
                                         + "\t\t\tString digit = digits[num];\n"
                                         + "\t\t\tif (num == 2 && n == 1) digit = \"两\";\n"
                                         + "\t\t\tif (i != n - 1 && num != 0) {\n"
@@ -160,6 +160,7 @@ class Applier:
                                         + "\t\t\t\tsb.append(digit);\n"
                                         + "\t\t\t}\n"
                                         + "\t\t}\n"
+                                        + "\t\tif (sb.length() == 0) return \"\";\n"
                                         + "\t\tif (sb.charAt(sb.length()-1) == '零') sb.deleteCharAt(sb.length()-1);\n"
                                         + "\t\treturn sb.toString();\n"
                                         + "\t}\n"
@@ -270,6 +271,14 @@ class Applier:
         if "\\n" in translation:
             logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本有额外换行符！")
             translation.replace("\\n", "")
+        
+        if original.endswith(',') and not translation.endswith(','):
+            logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本末尾无逗号！")
+            translation += ","
+        elif original.endswith(';') and not translation.endswith(';'):
+            logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本末尾无分号！")
+            translation += ";"
+
 
         index = text.find(original)
         if index == -1:
