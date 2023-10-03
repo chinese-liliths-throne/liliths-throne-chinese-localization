@@ -97,7 +97,7 @@ class Applier:
                 line = line.replace("Locale.ENGLISH", "Locale.CHINESE")
 
                 if file.name == "Game.java":
-                    # 修改默认字体
+                    # 修改默认字体大小
                     line = line.replace("public static final int FONT_SIZE_NORMAL = 18;",
                                         "public static final int FONT_SIZE_NORMAL = 15;")
                     # 调整日期格式
@@ -140,7 +140,28 @@ class Applier:
                     # 替换intToString为输出阿拉伯数字
                     line = line.replace("public static String intToString(int integer) {",
                                         "public static String intToString(int integer) {\n"
-                                        + "\t\treturn Integer.toString(integer);\n"
+                                        + "\t\tString[] digits = {\"零\",\"一\",\"二\",\"三\",\"四\",\"五\",\"六\",\"七\",\"八\",\"九\"};\n"
+                                        + "\t\tString[] caps   = {\"十\",\"百\",\"千\",\"万\",\"十\",\"百\",\"千\",\"亿\",\"十\",\"百\",\"千\"};\n"
+                                        + "\t\tStringBuilder sb = new StringBuilder();\n"
+                                        + "\t\tString intStr = Integer.toString(integer);\n"
+                                        + "\t\tint n = intStr.length();\n"
+                                        + "\t\tfor (int i = 0; i < n; i++) {\n"
+                                        + "\t\t\tif (intStr.charAt(i) == '-') {\n"
+                                        + "\t\t\t\tsb.append(\"负\");\n"
+                                        + "\t\t\t\tcontinue;\n"
+                                        + "\t\t\t}\n"
+                                        + "\t\t\tint num = intStr.charAt(i) - '0';\n"
+                                        + "\t\t\tif (num == 0 && sb.charAt(sb.length()-1) == '零') continue;\n"
+                                        + "\t\t\tString digit = digits[num];\n"
+                                        + "\t\t\tif (num == 2 && n == 1) digit = \"两\";\n"
+                                        + "\t\t\tif (i != n - 1 && num != 0) {\n"
+                                        + "\t\t\t\tsb.append(digit).append(caps[n - 2 - i]);\n"
+                                        + "\t\t\t} else {\n"
+                                        + "\t\t\t\tsb.append(digit);\n"
+                                        + "\t\t\t}\n"
+                                        + "\t\t}\n"
+                                        + "\t\tif (sb.charAt(sb.length()-1) == '零') sb.deleteCharAt(sb.length()-1);\n"
+                                        + "\t\treturn sb.toString();\n"
                                         + "\t}\n"
                                         + "\tpublic static String intToStringOld(int integer){")
                 elif file.name == "Units.java":
@@ -149,7 +170,13 @@ class Applier:
                                         "DateTimeFormatter.ofPattern(Main.getProperties().hasValue(PropertyValue.internationalDate) ? \"yy.MM.dd\" : \"yy.MM.dd\")")
                     line = line.replace("DateTimeFormatter.ofPattern(\"d'%o %m' yyyy\")",
                                         "DateTimeFormatter.ofPattern(\"yyyy年MM月dd日\")")
-
+                    # 调整时间格式
+                    line = line.replace("DateTimeFormatter.ofPattern(Main.getProperties().hasValue(PropertyValue.twentyFourHourTime) ? \"HH:mm\" : \"hh:mm a\")",
+                                        "DateTimeFormatter.ofPattern(Main.getProperties().hasValue(PropertyValue.twentyFourHourTime) ? \"HH:mm\" : \"hh:mm a\").withLocale(Locale.ENGLISH)")
+                elif file.name == "AbstractFluidType.java":
+                    # 调整精液前缀判断方法
+                    line = line.replace("if(name.endsWith(\"-\")) {",
+                                        "if(baseFluidType.getNames().contains(name)) {")
                 lines[idx] = line
 
             with open(file, 'w', encoding='utf-8') as f:
