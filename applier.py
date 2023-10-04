@@ -266,16 +266,18 @@ class Applier:
             return text
 
         # 常见错误检测
-        if translation.count("\"") % 2 == 1 and "//" not in translation:
+        quote_count = translation.count("\"")
+        if quote_count % 2 == 1 and "//" not in translation:
             logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本有奇数个双引号！")
+            print(text)
         if "\\n" in translation:
             logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本有额外换行符！")
-            translation.replace("\\n", "")
+            translation = translation.replace("\\n", "")
         
-        if original.endswith(',') and not translation.endswith(','):
+        if original.endswith(',') and not translation.endswith(',') and not translation.strip().endswith(','):
             logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本末尾无逗号！")
             translation += ","
-        elif original.endswith(';') and not translation.endswith(';'):
+        elif original.endswith(';') and not translation.endswith(';') and not translation.strip().endswith(';'):
             logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本末尾无分号！")
             translation += ";"
 

@@ -73,7 +73,7 @@ class CodeEntry(Entry):
         }
 
     def to_id(self) -> str:
-        return "{:0>4}".format(self.line)
+        return "{:0>5}".format(self.line)
 
 
 @dataclass

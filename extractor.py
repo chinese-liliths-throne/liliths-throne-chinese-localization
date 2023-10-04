@@ -598,7 +598,8 @@ TITLE_REGEX = r"[t|T]itles?"
 DESC_REGEX = r"[d|D]escript(ion|or)s?"
 DETER_REGEX = r"[d|D]terminers?"
 STRING_REGEX = r"[s|S]trings?"
-PREFIX_REGEX = r"[p|P]refixes?"
+PREFIX_REGEX = r"[p|P]refixe?s?"
+EFFECT_REGEX = r"[e|E]ffects?"
 ASSIGN_REGEX = r"\s*\+?=\s*"
 
 class JavaExtractor:
@@ -620,7 +621,7 @@ class JavaExtractor:
             self.interest_line = True
         elif re.search(rf"({SB_REGEX}|{ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}|{TITLE_REGEX}|{DESC_REGEX}|returnValue|{PREFIX_REGEX}|{STRING_REGEX}|{DETER_REGEX}){ASSIGN_REGEX}", line) is not None:
             self.interest_line = True
-        elif re.search(rf"({ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}|{TITLE_REGEX}|{DESC_REGEX}|Effects?).add", line) is not None:
+        elif re.search(rf"({ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}|{TITLE_REGEX}|{DESC_REGEX}|{EFFECT_REGEX}|modifiersList).add", line) is not None:
             self.interest_line = True
         # elif "System.err.println" in line:
         #     self.interest_line = True
@@ -765,9 +766,6 @@ class JavaExtractor:
             self.interest_line = True
 
     def general_string_parse(self, line: str) -> bool:
-        if not self.interest_line:
-            return False
-
         if re.search(r"^/\*", line) is not None:
             if "*/" not in line:
                 self.comment = True
@@ -777,6 +775,9 @@ class JavaExtractor:
             return False
 
         if self.comment:
+            return False
+        
+        if not self.interest_line:
             return False
 
         # print(line, re.search(r"\".+\"", line))
@@ -792,6 +793,8 @@ class JavaExtractor:
 
         
         if re.search(r"(getMandatoryFirstOf|getAllOf|parseFromXMLFile)", line) is not None:
+            return False
+        elif "SVGImageSB.append" in line:
             return False
 
         if re.search(r"\"[^\"]+\"(?!\")", line) is not None:
