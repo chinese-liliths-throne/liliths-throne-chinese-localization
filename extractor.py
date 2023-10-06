@@ -595,12 +595,15 @@ ADJ_REGEX = r"[a|A]djectives?"
 TEXT_REGEX = r"[t|T]exts?"
 NAME_REGEX = r"[n|N]ames?"
 TITLE_REGEX = r"[t|T]itles?"
-DESC_REGEX = r"[d|D]escript(ion|or)s?"
+DESC_REGEX = r"[d|D]esc(ription|riptor)?s?"
 DETER_REGEX = r"[d|D]terminers?"
 STRING_REGEX = r"[s|S]trings?"
 PREFIX_REGEX = r"[p|P]refixe?s?"
+SUFFIX_REGEX = r"[s|S]uffixe?s?"
 EFFECT_REGEX = r"[e|E]ffects?"
+
 ASSIGN_REGEX = r"\s*\+?=\s*"
+ADD_REGEX    = r"(List)?.add"
 
 class JavaExtractor:
     def __init__(self):
@@ -613,15 +616,15 @@ class JavaExtractor:
 
         if "return" in line:
             self.interest_line = True
-        elif re.search(rf"({SB_REGEX}|output)\.append", line) is not None:
+        elif re.search(rf"({SB_REGEX}|{DESC_REGEX}|output)\.append", line) is not None:
             self.interest_line = True
         elif "new Response" in line:
             self.interest_line = True
         elif ".setInformation" in line:
             self.interest_line = True
-        elif re.search(rf"({SB_REGEX}|{ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}|{TITLE_REGEX}|{DESC_REGEX}|returnValue|{PREFIX_REGEX}|{STRING_REGEX}|{DETER_REGEX}){ASSIGN_REGEX}", line) is not None:
+        elif re.search(rf"({SB_REGEX}|{ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}|{TITLE_REGEX}|{DESC_REGEX}|returnValue|{PREFIX_REGEX}|{SUFFIX_REGEX}|{STRING_REGEX}|{DETER_REGEX}){ASSIGN_REGEX}", line) is not None:
             self.interest_line = True
-        elif re.search(rf"({ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}|{TITLE_REGEX}|{DESC_REGEX}|{EFFECT_REGEX}|modifiersList).add", line) is not None:
+        elif re.search(rf"({ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}|{TITLE_REGEX}|{DESC_REGEX}|{EFFECT_REGEX}|modifiersList){ADD_REGEX}", line) is not None:
             self.interest_line = True
         # elif "System.err.println" in line:
         #     self.interest_line = True
@@ -629,7 +632,7 @@ class JavaExtractor:
             self.interest_line = True
         elif "public enum" in line:    # 枚举项
             self.interest_line = True
-        elif re.search(r"^\s*[A-Z_]+\(", line) is not None:   # 枚举项
+        elif re.search(r"^\s*[A-Z_0-9]+\(", line) is not None:   # 枚举项
             self.interest_line = True
         elif "new String[]" in line or "static String[]" in line:
             self.interest_line = True
@@ -643,9 +646,7 @@ class JavaExtractor:
             self.interest_line = True
         elif "new NameTriplet" in line:
             self.interest_line = True
-        elif "UtilText.returnStringAtRandom" in line:
-            self.interest_line = True
-        elif "UtilText.parse" in line:
+        elif "UtilText.parse" in line or "Util.capitaliseSentence" in line or "UtilText.returnStringAtRandom" in line or "Util.randomItemFromValues" in line:
             self.interest_line = True
         elif "new EventLogEntry" in line:
             self.interest_line = True
@@ -786,7 +787,7 @@ class JavaExtractor:
             if match is not None:
                 line = line[:match.start()]
 
-        if line.endswith(';'):
+        if line.strip().endswith(';'):
             self.interest_line = False
         elif "@Override" in line:  # 有效？
             self.interest_line = False
