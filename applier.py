@@ -266,11 +266,11 @@ class Applier:
             return text
 
         # 常见错误检测
-        quote_count = translation.count("\"")
-        if quote_count % 2 == 1 and "//" not in translation:
+        quote_count = translation.count("\"") - translation.count("\\\"")
+        if quote_count % 2 == 1 and "//" not in translation and "/*" not in translation:
             logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本有奇数个双引号！")
             print(text)
-        if "\\n" in translation:
+        if "\\n" in translation and "\\n" not in original:
             logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本有额外换行符！")
             translation = translation.replace("\\n", "")
         

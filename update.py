@@ -98,7 +98,10 @@ async def update_data(old_dict_data: List[Dict[str, str]], new_dict_data: List[D
         if data["stage"] == 0:  # 旧字典无汉化
             old_dict_data[idx] = None
             continue
-        original = data["original"].replace("\\n", "\n")
+        original = data["original"]
+        # 是否为xml文件
+        if not data['key'][0].isdigit():
+            original = original.replace("\\n","\n")
         if not old_dict_map.get(original):
             old_dict_map[original] = [idx]
         else:
@@ -119,6 +122,7 @@ async def update_data(old_dict_data: List[Dict[str, str]], new_dict_data: List[D
                               ]["translation"] = old_dict_data[old_idx]["translation"]
                 new_dict_data[new_idx_list[idx]
                               ]["stage"] = old_dict_data[old_idx]["stage"]
+                
                 if "." in new_dict_data[new_idx_list[idx]]["key"].split("_")[-1]:
                     new_dict_data[new_idx_list[idx]]["key"] = "_".join(
                         new_dict_data[new_idx_list[idx]]["key"].split("_")[:-1] + [f"_{version}"])

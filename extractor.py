@@ -530,7 +530,15 @@ class Extractor:
             lines = f.readlines()
 
         for idx, line in enumerate(lines):
+
             line = line.strip()
+            original_line = line
+            
+            line = java_extractor.process_comment(line)
+            line = line.strip()
+
+            if len(line) == 0:
+                continue  
 
             if file.parent.name == "tooltips":
                 java_extractor.parse_tooltips(line)
@@ -553,7 +561,7 @@ class Extractor:
             elif file.parent.name == "moves":
                 java_extractor.parse_moves(line)
             elif file.parent.name == "dialogue" or file.parent.parent.name == "dialogue":
-                java_extractor.parse_dialogue(line)
+                java_extractor.parse_dialogue(file.name, line)
             elif file.parent.name == "clothing":
                 java_extractor.parse_clothing(line)
             elif file.parent.name == "enchanting":
@@ -581,7 +589,7 @@ class Extractor:
                 entry_list.append(
                     CodeEntry(
                         file=file,
-                        original=line,
+                        original=original_line,
                         translation="",
                         line=idx,
                         stage=0
@@ -596,11 +604,11 @@ TEXT_REGEX = r"[t|T]exts?"
 NAME_REGEX = r"[n|N]ames?"
 TITLE_REGEX = r"[t|T]itles?"
 DESC_REGEX = r"[d|D]esc(ription|riptor)?s?"
-DETER_REGEX = r"[d|D]terminers?"
+DETER_REGEX = r"[d|D]eterminers?"
 STRING_REGEX = r"[s|S]trings?"
 PREFIX_REGEX = r"[p|P]refixe?s?"
 SUFFIX_REGEX = r"[s|S]uffixe?s?"
-EFFECT_REGEX = r"[e|E]ffects?"
+EFFECT_REGEX = r"[e|E]ff(ect)?s?"
 
 ASSIGN_REGEX = r"\s*\+?=\s*"
 ADD_REGEX    = r"(List)?.add"
@@ -616,15 +624,15 @@ class JavaExtractor:
 
         if "return" in line:
             self.interest_line = True
-        elif re.search(rf"({SB_REGEX}|{DESC_REGEX}|output)\.append", line) is not None:
+        elif re.search(rf"({SB_REGEX}|{DESC_REGEX}|[o|O]utput)\.append", line) is not None:
             self.interest_line = True
         elif "new Response" in line:
             self.interest_line = True
         elif ".setInformation" in line:
             self.interest_line = True
-        elif re.search(rf"({SB_REGEX}|{ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}|{TITLE_REGEX}|{DESC_REGEX}|returnValue|{PREFIX_REGEX}|{SUFFIX_REGEX}|{STRING_REGEX}|{DETER_REGEX}){ASSIGN_REGEX}", line) is not None:
+        elif re.search(rf"({SB_REGEX}|{ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}|{TITLE_REGEX}|{DESC_REGEX}|returnValue|{PREFIX_REGEX}|{SUFFIX_REGEX}|{STRING_REGEX}|{DETER_REGEX}|[o|O]utput){ASSIGN_REGEX}", line) is not None:
             self.interest_line = True
-        elif re.search(rf"({ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}|{TITLE_REGEX}|{DESC_REGEX}|{EFFECT_REGEX}|modifiersList){ADD_REGEX}", line) is not None:
+        elif re.search(rf"({ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}(Plural)?|{TITLE_REGEX}|{DESC_REGEX}|{EFFECT_REGEX}|modifiersList){ADD_REGEX}", line) is not None:
             self.interest_line = True
         # elif "System.err.println" in line:
         #     self.interest_line = True
@@ -652,6 +660,8 @@ class JavaExtractor:
             self.interest_line = True
         elif "new DialogueNode" in line:
             self.interest_line = True
+        elif ".flashMessage" in line:
+            self.interest_line = True
 
     def parse_tooltips(self, line: str):
         if "tooltipSB.append" in line:
@@ -674,6 +684,8 @@ class JavaExtractor:
         elif "new AbstractBodyCoveringType" in line:
             self.interest_line = True
         elif re.search(r"new Abstract\w+Type", line) is not None:
+            self.interest_line = True
+        elif "faceBodyDescriptionFeral = " in line:
             self.interest_line = True
 
     def parse_effects(self, line: str):
@@ -703,6 +715,8 @@ class JavaExtractor:
             self.interest_line = True
         elif "new GenderAppearance" in line:
             self.interest_line = True
+        elif "_CALCULATION = " in line:
+            self.interest_line = True
 
     def parse_moves(self, line: str):
         if "new AbstractCombatMove" in line:
@@ -710,7 +724,11 @@ class JavaExtractor:
         elif "formatAttackOutcome" in line:
             self.interest_line = True
 
-    def parse_dialogue(self, line: str):
+    def parse_dialogue(self, filename: str, line: str):
+        if filename == "PrologueDialogue.java":
+            if "demonstoneImages = " in line or "demonstoneEnergy = " in line:
+                self.interest_line = True
+        
         if "purchaseAvailability.append" in line:
             self.interest_line = True
         elif re.search(r"(Cry|Reaction|Speech)\s*=\s*", line) is not None:
@@ -766,26 +784,9 @@ class JavaExtractor:
         if "new AbstractWorldType" in line:
             self.interest_line = True
 
-    def general_string_parse(self, line: str) -> bool:
-        if re.search(r"^/\*", line) is not None:
-            if "*/" not in line:
-                self.comment = True
-            return False
-        elif self.comment and "*/" in line:
-            self.comment = False
-            return False
-
-        if self.comment:
-            return False
-        
+    def general_string_parse(self, line: str) -> bool:      
         if not self.interest_line:
             return False
-
-        # print(line, re.search(r"\".+\"", line))
-        if line.find(r"//") != -1:
-            match = re.search(r"(?<!s:)//", line)
-            if match is not None:
-                line = line[:match.start()]
 
         if line.strip().endswith(';'):
             self.interest_line = False
@@ -801,3 +802,29 @@ class JavaExtractor:
         if re.search(r"\"[^\"]+\"(?!\")", line) is not None:
             return True
         return False
+
+    def process_comment(self, line: str) -> str:
+        '''
+        处理多行注释
+        '''
+        if re.search(r"^/\*", line) is not None:
+            if "*/" not in line:
+                self.comment = True
+            else:
+                return line[:line.find("/*")]
+        elif self.comment and "*/" in line:
+            self.comment = False
+            return line[:line.find("*/")]
+        
+        # 处于多行注释内部则返回空字符串
+        if self.comment:
+            return ""
+        
+        # 移除单行注释
+        if line.find(r"//") != -1:
+            match = re.search(r"(?<!s:)//", line)
+            if match is not None:
+                return line[:match.start()]
+        
+        # 返回原字符串
+        return line
