@@ -6,7 +6,7 @@ name: One-way Pipeline (Nightly)
 on:
   workflow_dispatch:
   schedule:
-     - cron: '30 12 * * *'
+     - cron: '40 12 * * *'
 
 permissions: write-all
 
