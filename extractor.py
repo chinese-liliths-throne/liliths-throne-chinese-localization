@@ -609,6 +609,7 @@ STRING_REGEX = r"[s|S]trings?"
 PREFIX_REGEX = r"[p|P]refixe?s?"
 SUFFIX_REGEX = r"[s|S]uffixe?s?"
 EFFECT_REGEX = r"[e|E]ff(ect)?s?"
+MOD_REGEX = r"[m|M]od(ifier)?s?"
 
 ASSIGN_REGEX = r"\s*\+?=\s*"
 ADD_REGEX    = r"(List)?.add"
@@ -632,7 +633,7 @@ class JavaExtractor:
             self.interest_line = True
         elif re.search(rf"({SB_REGEX}|{ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}|{TITLE_REGEX}|{DESC_REGEX}|returnValue|{PREFIX_REGEX}|{SUFFIX_REGEX}|{STRING_REGEX}|{DETER_REGEX}|[o|O]utput){ASSIGN_REGEX}", line) is not None:
             self.interest_line = True
-        elif re.search(rf"({ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}(Plural)?|{TITLE_REGEX}|{DESC_REGEX}|{EFFECT_REGEX}|modifiersList){ADD_REGEX}", line) is not None:
+        elif re.search(rf"({ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}(Plural)?|{TITLE_REGEX}|{DESC_REGEX}|{EFFECT_REGEX}|{MOD_REGEX}){ADD_REGEX}", line) is not None:
             self.interest_line = True
         # elif "System.err.println" in line:
         #     self.interest_line = True

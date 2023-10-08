@@ -1,7 +1,7 @@
 # liliths-throne-localization
-该项目致力于“Lilith's Throne”(莉莉丝的王座)的汉化计划，并提供了一步到位的源码下载、字典下载、字典更新、条目提取、源码替换方式。
+该项目致力于“Lilith's Throne”(莉莉丝的王座)的汉化计划，并提供了一步到位的源码下载、字典下载、字典更新、条目提取、源码替换方法。
 
-目前计划每天UTC 12:30进行自动打包生成jar，供汉化测试使用，支持windows和linux。
+目前计划每天UTC 12:40进行自动打包生成jar，供汉化测试使用，支持windows和linux。
 
 ## 使用方法
 ### 打包jar下载
@@ -18,11 +18,18 @@ pip install -r requirements.txt
 ``` shell
 python main.py
 ```
-程序运行完毕后，进入liliths-throne-public-dev路径下，通过命令
+
+若希望同时获得exe文件，请在编译前先运行
 ``` shell
+python exe_bundle.py
+```
+
+程序运行完毕后，进入liliths-throne-public-dev路径下，通过命令完成编译。
+``` shell
+cd liliths-throne-public-dev
 mvn package
 ```
-完成编译。
+
  - 使用maven编译请先前往[官方网站](https://maven.apache.org/install.html)下载并配置路径。
      - 一般来说maven编译时需要下载依赖，且速度较慢，推荐国内用户设置镜像
 	 - 具体方法可以参见[这里](https://developer.aliyun.com/mirror/maven)

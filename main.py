@@ -24,7 +24,7 @@ def main():
     shutil.rmtree(new_dict_dir, ignore_errors=True)
     shutil.rmtree(old_dict_dir, ignore_errors=True)
 
-    repo = Repo("dev", PARATRANZ_ACCESS_TOKEN)
+    repo = Repo(REPO_BRANCH, PARATRANZ_ACCESS_TOKEN)
     logger.info("==== 正在下载最新版本游戏源码 ====")
     repo.fetch_latest_version()
     logger.info("==== 正在解压最新版本游戏源码 ====")

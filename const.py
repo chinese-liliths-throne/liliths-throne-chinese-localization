@@ -1,8 +1,9 @@
 PROXY_URL = "https://ghproxy.com/"
 
 REPO_BASE_URL = "https://github.com/Innoxia/liliths-throne-public"
-
 REPO_API_URL = "https://api.github.com/repos/Innoxia/liliths-throne-public"
+
+REPO_BRANCH = "dev"
 
 PARATRANZ_API_BASE_URL = "https://paratranz.cn/api"
 PARATRANZ_PROJECT_ID = "8288"
@@ -18,6 +19,8 @@ NEW_DICT_DIR = "./new_dict"
 OLD_DICT_DIR = "./old_dict"
 FONT_DIR = "./font"
 FONT_TARGET_DIR = "./res/fonts"
+
+EXE_PLUGIN_PATH = "./exe-plugin.xml"
 
 OUTDATE_DIR_NAME = "过时词条"
 FONT_DIR_NAME = "Source Han"
