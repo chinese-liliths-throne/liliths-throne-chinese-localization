@@ -84,10 +84,16 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: 'maven'
+    - name: Modify pom file
+      run: |
+        python exe_bundle.py
     - name: Run the Maven
       run: |
         cd ${{ vars.REPO_PATH }}
         mvn package -Dtarget.platform=win -Dexclude.platform=linux
+    - name: Add JRE
+      run: |
+          jlink --module-path $JAVA_HOME/jmods/ --add-modules ALL-MODULE-PATH --output "./liliths-throne-public-dev/target/Lilith's Throne (win)/jre"
     - name: Move to staging
       run: |
         mv "./liliths-throne-public-dev/target/Lilith's Throne (win)" "liliths-throne-win"
@@ -114,8 +120,6 @@ jobs:
       uses: actions/download-artifact@v2.1.1
       with:
         name: "liliths-throne-win"
-    - run: |
-        ls
     - name: Set Release version env variable
       run: |
         echo "RELEASE_VERSION=$(date "+%y.%m.%d")" >> $GITHUB_ENV
