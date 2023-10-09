@@ -138,33 +138,68 @@ class Applier:
                                         )
                 elif file.name == "Util.java":
                     # 替换intToString为输出阿拉伯数字
-                    line = line.replace("public static String intToString(int integer) {",
-                                        "public static String intToString(int integer) {\n"
-                                        + "\t\tString[] digits = {\"零\",\"一\",\"二\",\"三\",\"四\",\"五\",\"六\",\"七\",\"八\",\"九\"};\n"
-                                        + "\t\tString[] caps   = {\"十\",\"百\",\"千\",\"万\",\"十\",\"百\",\"千\",\"亿\",\"十\",\"百\",\"千\"};\n"
+                    line = line.replace("\tpublic static String intToString(int integer) {",
+                                        "\tstatic String[] digits = {\"零\",\"一\",\"二\",\"三\",\"四\",\"五\",\"六\",\"七\",\"八\",\"九\"};\n"
+                                        + "\tstatic String[] lower_base = {\"\",\"十\",\"百\",\"千\"};\n"
+                                        + "\tstatic String[] upper_base = {\"\",\"万\",\"亿\"};\n"
+                                        + "\n"
+                                        + "\tstatic String intBlockToString(int integer, boolean isLower)\n"
+                                        + "\t{\n"
+                                        + "\t\tif (integer == 2 && !isLower) return \"两\";\n"
                                         + "\t\tStringBuilder sb = new StringBuilder();\n"
                                         + "\t\tString intStr = Integer.toString(integer);\n"
                                         + "\t\tint n = intStr.length();\n"
-                                        + "\t\tfor (int i = 0; i < n; i++) {\n"
-                                        + "\t\t\tif (intStr.charAt(i) == '-') {\n"
-                                        + "\t\t\t\tsb.append(\"负\");\n"
-                                        + "\t\t\t\tcontinue;\n"
-                                        + "\t\t\t}\n"
+                                        + "\t\tfor(int i = 0; i < n; i++)\n"
+                                        + "\t\t{\n"
                                         + "\t\t\tint num = intStr.charAt(i) - '0';\n"
                                         + "\t\t\tif (num == 0 && sb.length() > 0 && sb.charAt(sb.length()-1) == '零') continue;\n"
                                         + "\t\t\tString digit = digits[num];\n"
-                                        + "\t\t\tif (num == 2 && n == 1) digit = \"两\";\n"
-                                        + "\t\t\tif (i != n - 1 && num != 0) {\n"
-                                        + "\t\t\t\tsb.append(digit).append(caps[n - 2 - i]);\n"
-                                        + "\t\t\t} else {\n"
-                                        + "\t\t\t\tsb.append(digit);\n"
-                                        + "\t\t\t}\n"
+                                        + "\t\t\tif (num == 2 && n - 1 - i != 0 && n - 1 - i != 1) sb.append('两');\n"
+                                        + "\t\t\telse sb.append(digit);\n"
+                                        + "\t\t\tif (num != 0) sb.append(lower_base[n - 1 - i]);\n"
+                                        + "\t\t\tif (!isLower && sb.length() > 1 && sb.charAt(0) == '一' && sb.charAt(1) == '十') sb.deleteCharAt(0);\n"
                                         + "\t\t}\n"
                                         + "\t\tif (sb.length() == 0) return \"\";\n"
                                         + "\t\tif (sb.charAt(sb.length()-1) == '零') sb.deleteCharAt(sb.length()-1);\n"
                                         + "\t\treturn sb.toString();\n"
                                         + "\t}\n"
+                                        + "\n"
+                                        + "\tpublic static String intToString(int integer) {\n"
+                                        + "\t\tStringBuilder sb = new StringBuilder();\n"
+                                        + "\t\tString minus = \"\";\n"
+                                        + "\t\tif (integer < 0) \n"
+                                        + "\t\t{\n"
+                                        + "\t\t\tminus = \"负\";\n"
+                                        + "\t\t\tinteger = -integer;\n"
+                                        + "\t\t}\n"
+                                        + "\t\tint upper_cap = 0;\n"
+                                        + "\t\twhile(integer > 0)\n"
+                                        + "\t\t{\n"
+                                        + "\t\t\tint upper = integer%10000;\n"
+                                        + "\t\t\tif (sb.length() == 1 || (sb.length() > 1 && sb.charAt(1) != '千')) sb.insert(0, '零');\n"
+                                        + "\t\t\tsb.insert(0, intBlockToString(upper, integer/10000 > 0)+upper_base[upper_cap]);\n"
+                                        + "\t\t\tinteger = integer/10000;\n"
+                                        + "\t\t\tupper_cap++;\n"
+                                        + "\t\t}\n"
+                                        + "\n"
+                                        + "\t\tsb.insert(0, minus);\n"
+                                        + "\n"
+                                        + "\t\treturn sb.toString();\n"
+                                        + "\t}\n"
                                         + "\tpublic static String intToStringOld(int integer){")
+                    # 添加正字标记使用的intToZheng
+                    line = line.replace("public static String intToTally(int integer, int max) {",
+                                        "public static String intToZheng(int integer, int max) {\n"
+                                        + "\t\tString[] zhengPhase = {\"丨\",\"丄\",\"上\",\"止\"};\n"
+                                        + "\t\tStringBuilder numeralSB = new StringBuilder();\n"
+                                        + "\t\tint limit = Math.min(integer, max);\n"
+                                        + "\t\tfor(int i=0; i<limit/5; i++) numeralSB.append(\"正\");\n"
+                                        + "\t\tif(limit%5 != 0) numeralSB.append(zhengPhase[limit%5-1]);\n"
+                                        + "\t\tif(limit<integer) numeralSB.append(\"…… (共计：\"+integer+\")\");\n"
+                                        + "\t\treturn numeralSB.toString();\n"
+                                        + "\t}\n"
+                                        + "\tpublic static String intToTally(int integer, int max) {"
+                                        )
                 elif file.name == "Units.java":
                     # 调整日期格式
                     line = line.replace("DateTimeFormatter.ofPattern(Main.getProperties().hasValue(PropertyValue.internationalDate) ? \"dd.MM.yy\" : \"MM/dd/yy\")",
@@ -178,6 +213,16 @@ class Applier:
                     # 调整精液前缀判断方法
                     line = line.replace("if(name.endsWith(\"-\")) {",
                                         "if(baseFluidType.getNames().contains(name)) {")
+                elif file.name == "TattooCountType.java":
+                    # 添加正字标记
+                    line = line.replace("public enum TattooCountType {",
+                                        "public enum TattooCountType {\n"
+                                        + "\tZHENG(\"正字\") {\n"
+                                        + "\t\tpublic String convertInt(int input) {\n"
+                                        + "\t\t\treturn Util.intToZheng(input, 50);\n"
+                                        + "\t\t}\n"
+                                        + "\t},\n"
+                                        )
                 lines[idx] = line
 
             with open(file, 'w', encoding='utf-8') as f:

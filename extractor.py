@@ -645,7 +645,7 @@ class JavaExtractor:
             self.interest_line = True
         elif "new String[]" in line or "static String[]" in line:
             self.interest_line = True
-        elif "super(" in line:
+        elif "super(" in line or "this(" in line:
             self.interest_line = True
         elif "new TattooWriting" in line:
             self.interest_line = True
@@ -728,6 +728,9 @@ class JavaExtractor:
     def parse_dialogue(self, filename: str, line: str):
         if filename == "PrologueDialogue.java":
             if "demonstoneImages = " in line or "demonstoneEnergy = " in line:
+                self.interest_line = True
+        elif filename == "PhoneDialogue.java":
+            if "clothingSlotCategories.put" in line:
                 self.interest_line = True
         
         if "purchaseAvailability.append" in line:

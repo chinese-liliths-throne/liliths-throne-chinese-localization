@@ -8,7 +8,7 @@
 					<goals><goal>launch4j</goal></goals>
 					<configuration>
 						<headerType>gui</headerType>
-						<outfile>${project.build.directory}/${project.name} (${target.platform})/${project.name} (${target.platform}).exe</outfile>
+						<outfile>${project.build.directory}/${project.name} (${target.platform})/${project.name}.exe</outfile>
 						<jar>${project.build.directory}/${project.name} (${target.platform})/${project.name}-${project.version}.jar</jar>
 						<errTitle>Lilith's Throne</errTitle>
 						<classPath>

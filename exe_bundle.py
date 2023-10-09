@@ -23,8 +23,6 @@ def add_plugin(pom_path: Path, plugin_path: Path):
 
 	pom_plugins = list(pom_tree.iterfind("//plugins", namespaces=namespace))
 
-	print(pom_plugins)
-
 	if len(pom_plugins) > 0:
 		pom_plugins[0].append(plugin_tree.getroot())
 	else:
