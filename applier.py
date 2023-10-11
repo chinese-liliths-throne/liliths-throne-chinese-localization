@@ -143,9 +143,9 @@ class Applier:
                                         + "\tstatic String[] lower_base = {\"\",\"十\",\"百\",\"千\"};\n"
                                         + "\tstatic String[] upper_base = {\"\",\"万\",\"亿\"};\n"
                                         + "\n"
-                                        + "\tstatic String intBlockToString(int integer, boolean isLower)\n"
+                                        + "\tstatic String intBlockToString(int integer, boolean isLower, char charTwo)\n"
                                         + "\t{\n"
-                                        + "\t\tif (integer == 2 && !isLower) return \"两\";\n"
+                                        + "\t\tif (integer == 2 && !isLower) return String.valueOf(charTwo);\n"
                                         + "\t\tStringBuilder sb = new StringBuilder();\n"
                                         + "\t\tString intStr = Integer.toString(integer);\n"
                                         + "\t\tint n = intStr.length();\n"
@@ -165,6 +165,10 @@ class Applier:
                                         + "\t}\n"
                                         + "\n"
                                         + "\tpublic static String intToString(int integer) {\n"
+                                        + "\t\treturn intToString(integer, true);\n"
+                                        + "\t}\n"
+                                        + "\n"
+                                        + "\tpublic static String intToString(int integer, boolean withLiang) {\n"
                                         + "\t\tStringBuilder sb = new StringBuilder();\n"
                                         + "\t\tString minus = \"\";\n"
                                         + "\t\tif (integer < 0) \n"
@@ -177,7 +181,7 @@ class Applier:
                                         + "\t\t{\n"
                                         + "\t\t\tint upper = integer%10000;\n"
                                         + "\t\t\tif (sb.length() == 1 || (sb.length() > 1 && sb.charAt(1) != '千')) sb.insert(0, '零');\n"
-                                        + "\t\t\tsb.insert(0, intBlockToString(upper, integer/10000 > 0)+upper_base[upper_cap]);\n"
+                                        + "\t\t\tsb.insert(0, intBlockToString(upper, integer/10000 > 0, withLiang ? '两' : '二')+upper_base[upper_cap]);\n"
                                         + "\t\t\tinteger = integer/10000;\n"
                                         + "\t\t\tupper_cap++;\n"
                                         + "\t\t}\n"
@@ -187,6 +191,12 @@ class Applier:
                                         + "\t\treturn sb.toString();\n"
                                         + "\t}\n"
                                         + "\tpublic static String intToStringOld(int integer){")
+                    line = line.replace("public static String intToPosition(int integer) {",
+                                        "public static String intToPosition(int integer) {\n"
+                                        + "\t\treturn \"第\" + intToString(integer, false);\n"
+                                        + "\t}\n"
+                                        + "public static String intToPositionOld(int integer) {"
+                                        )
                     # 添加正字标记使用的intToZheng
                     line = line.replace("public static String intToTally(int integer, int max) {",
                                         "public static String intToZheng(int integer, int max) {\n"

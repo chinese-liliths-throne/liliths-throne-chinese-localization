@@ -557,7 +557,7 @@ class Extractor:
             elif file.parent.name == "race":
                 java_extractor.parse_race(line)
             elif file.parent.name == "character":
-                java_extractor.parse_character(line)
+                java_extractor.parse_character(file.name, line)
             elif file.parent.name == "moves":
                 java_extractor.parse_moves(line)
             elif file.parent.name == "dialogue" or file.parent.parent.name == "dialogue":
@@ -711,7 +711,10 @@ class JavaExtractor:
         elif "new AbstractSubspecies" in line:
             self.interest_line = True
 
-    def parse_character(self, line: str):
+    def parse_character(self, filename: str, line: str):
+        if filename == "StatusEffect.java":
+            if "tooDeep.add" in line or "stretching.add" in line:
+                self.interest_line = True
         if re.search(r"writing\s*=\s*", line) is not None:
             self.interest_line = True
         elif "new GenderAppearance" in line:
@@ -801,6 +804,8 @@ class JavaExtractor:
         if re.search(r"(getMandatoryFirstOf|getAllOf|parseFromXMLFile)", line) is not None:
             return False
         elif "SVGImageSB.append" in line:
+            return False
+        elif "System.err.println" in line: # 暂不翻译报错信息
             return False
 
         if re.search(r"\"[^\"]+\"(?!\")", line) is not None:
