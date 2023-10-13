@@ -162,7 +162,7 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    needs: [build-linux, build-win]
+    needs: [build-linux, build-win, build-aarch64]
     
     steps:
     - name: Download a Linux Artifact
