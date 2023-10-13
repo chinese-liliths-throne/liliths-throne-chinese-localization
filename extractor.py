@@ -598,21 +598,21 @@ class Extractor:
 
         return entry_list
 
-SB_REGEX = r"([sS][bB]|StringBuilder)(\(\))?"
-ADJ_REGEX = r"[a|A]djectives?"
-TEXT_REGEX = r"[t|T]exts?"
-NAME_REGEX = r"[n|N]ames?"
-TITLE_REGEX = r"[t|T]itles?"
-DESC_REGEX = r"[d|D]esc(ription|riptor)?s?"
-DETER_REGEX = r"[d|D]eterminers?"
-STRING_REGEX = r"[s|S]trings?"
-PREFIX_REGEX = r"[p|P]refixe?s?"
-SUFFIX_REGEX = r"[s|S]uffixe?s?"
-EFFECT_REGEX = r"[e|E]ff(ect)?s?"
-MOD_REGEX = r"[m|M]od(ifier)?s?"
+SB_REGEX =      r"([sS][bB]|StringBuilder)(\(\))?"
+ADJ_REGEX =     r"[a|A]djectives?"
+TEXT_REGEX =    r"[t|T]exts?"
+NAME_REGEX =    r"[n|N]ames?"
+TITLE_REGEX =   r"[t|T]itles?"
+DESC_REGEX =    r"[d|D]esc(ription|riptor)?s?"
+DETER_REGEX =   r"[d|D]eterminers?"
+STRING_REGEX =  r"[s|S]trings?"
+PREFIX_REGEX =  r"[p|P]refixe?s?"
+SUFFIX_REGEX =  r"[s|S]uffixe?s?"
+EFFECT_REGEX =  r"[e|E]ff(ect)?s?"
+MOD_REGEX =     r"[m|M]od(ifier)?s?"
 
-ASSIGN_REGEX = r"\s*\+?=\s*"
-ADD_REGEX    = r"(List)?.add"
+ASSIGN_REGEX =  r"\s*\+?=\s*"
+ADD_REGEX    =  r"(List)?.add"
 
 class JavaExtractor:
     def __init__(self):

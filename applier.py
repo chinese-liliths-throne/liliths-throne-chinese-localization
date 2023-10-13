@@ -222,7 +222,10 @@ class Applier:
                 elif file.name == "AbstractFluidType.java":
                     # 调整精液前缀判断方法
                     line = line.replace("if(name.endsWith(\"-\")) {",
-                                        "if(baseFluidType.getNames().contains(name)) {")
+                                        "if(!baseFluidType.getNames().contains(name)) {")
+                elif file.name == "AbstractPenisType.java" or file.name == "AbstractViginaType.java":
+                    line = line.replace("if(name.endsWith(\"-\")) {",
+                                        "if(!Util.getRandomObjectFromWeightedMap(returnNames).contains(name)) {")
                 elif file.name == "TattooCountType.java":
                     # 添加正字标记
                     line = line.replace("public enum TattooCountType {",
