@@ -140,7 +140,7 @@ async def update_data(old_dict_data: List[Dict[str, str]], new_dict_data: List[D
                 translation = old_dict_data[old_idx]["translation"]
                 
                 # 引号使用中文双引号，括号使用半角括号
-                translation = re.sub(r"'[一-龟]+'","“$1”",translation)
+                translation = re.sub(r"'([一-龟]+)'",r"“\1”",translation)
                 translation = re.sub(r"（","(",translation)
                 translation = re.sub(r"）",")",translation)
 
