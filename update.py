@@ -3,6 +3,7 @@ from typing import List, Dict
 import json
 import shutil
 import asyncio
+import re
 
 from const import *
 from logger import logger
@@ -109,6 +110,8 @@ async def update_data(old_dict_data: List[Dict[str, str]], new_dict_data: List[D
 
     for key, value in old_dict_map.items():
         new_idx_list = new_dict_map.get(key)
+        if new_idx_list is None:
+            continue
         if version != "":
             for idx, old_idx in enumerate(value):
                 # 若旧字典的汉化与原文一致（即无需汉化）则无视
@@ -129,13 +132,20 @@ async def update_data(old_dict_data: List[Dict[str, str]], new_dict_data: List[D
                 else:
                     new_dict_data[new_idx_list[idx]
                                   ]["key"] += f"_{version}"
-        elif new_idx_list is not None:
+        else:
             for idx, old_idx in enumerate(
                 value[:min(len(value), len(new_idx_list))]
             ):
                 # 保留汉化内容及当前阶段
+                translation = old_dict_data[old_idx]["translation"]
+                
+                # 引号使用中文双引号，括号使用半角括号
+                translation = re.sub(r"'[一-龟]+'","“$1”",translation)
+                translation = re.sub(r"（","(",translation)
+                translation = re.sub(r"）",")",translation)
+
                 new_dict_data[new_idx_list[idx]
-                              ]["translation"] = old_dict_data[old_idx]["translation"]
+                              ]["translation"] = translation
                 new_dict_data[new_idx_list[idx]
                               ]["stage"] = old_dict_data[old_idx]["stage"]
                 # 移除被迁移的旧词条

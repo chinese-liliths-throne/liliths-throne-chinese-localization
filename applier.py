@@ -223,7 +223,7 @@ class Applier:
                     # 调整精液前缀判断方法
                     line = line.replace("if(name.endsWith(\"-\")) {",
                                         "if(!baseFluidType.getNames().contains(name)) {")
-                elif file.name == "AbstractPenisType.java" or file.name == "AbstractViginaType.java":
+                elif file.name == "AbstractPenisType.java" or file.name == "AbstractVaginaType.java":
                     line = line.replace("if(name.endsWith(\"-\")) {",
                                         "if(!Util.getRandomObjectFromWeightedMap(returnNames).contains(name)) {")
                 elif file.name == "TattooCountType.java":
