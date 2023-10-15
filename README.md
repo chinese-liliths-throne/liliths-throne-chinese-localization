@@ -7,6 +7,14 @@
 ### 打包jar下载
 点击右侧“Releases”选择最新且对应操作系统的版本下载，并安装openjdk17以上的版本，设置路径，进行游玩。如不清楚，请百度“如何打开jar文件”。
 
+目前支持：
+ - Windows
+ - Linux
+ - Aarch64
+ - Mac
+
+在此附上使用手机游玩的[可能性方案](https://github.com/Agreous/liliths-throne-on-android#readme)，比较复杂，且对手机性能有一定要求。
+
 ### 自行编译
 通过
 ``` shell

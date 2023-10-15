@@ -195,7 +195,7 @@ class Applier:
                                         "public static String intToPosition(int integer) {\n"
                                         + "\t\treturn \"第\" + intToString(integer, false);\n"
                                         + "\t}\n"
-                                        + "public static String intToPositionOld(int integer) {"
+                                        + "\tpublic static String intToPositionOld(int integer) {"
                                         )
                     # 添加正字标记使用的intToZheng
                     line = line.replace("public static String intToTally(int integer, int max) {",
@@ -225,7 +225,7 @@ class Applier:
                                         "if(!baseFluidType.getNames().contains(name)) {")
                 elif file.name == "AbstractPenisType.java" or file.name == "AbstractVaginaType.java":
                     line = line.replace("if(name.endsWith(\"-\")) {",
-                                        "if(!Util.getRandomObjectFromWeightedMap(returnNames).contains(name)) {")
+                                        "if(!returnNames.containsKey(name)) {")
                 elif file.name == "TattooCountType.java":
                     # 添加正字标记
                     line = line.replace("public enum TattooCountType {",
