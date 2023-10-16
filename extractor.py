@@ -549,7 +549,7 @@ class Extractor:
             elif file.parent.name == "body" or file.parent.parent.name == "body":
                 java_extractor.parse_body(line)
             elif file.parent.name == "effects":
-                java_extractor.parse_effects(line)
+                java_extractor.parse_effects(file.name, line)
             elif file.parent.name == "fetishes":
                 java_extractor.parse_fetishs(line)
             elif file.parent.name == "npc":
@@ -689,7 +689,10 @@ class JavaExtractor:
         elif "faceBodyDescriptionFeral = " in line:
             self.interest_line = True
 
-    def parse_effects(self, line: str):
+    def parse_effects(self, filename:str, line: str):
+        if filename == "AbstractStatusEffect.java":
+            if "stringBuilderToAppendTo.append" in line:
+                self.interest_line = True
         if "new AbstractPerk" in line:
             self.interest_line = True
         elif "new AbstractStatusEffect" in line:
@@ -714,9 +717,6 @@ class JavaExtractor:
     def parse_character(self, filename: str, line: str):
         if filename == "StatusEffect.java":
             if "tooDeep.add" in line or "stretching.add" in line:
-                self.interest_line = True
-        elif filename == "AbstractStatusEffect.java":
-            if "stringBuilderToAppendTo.append" in line:
                 self.interest_line = True
         if re.search(r"writing\s*=\s*", line) is not None:
             self.interest_line = True
