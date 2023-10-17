@@ -208,8 +208,22 @@ class Extractor:
         for clothingAuthorTag in root.iter("clothingAuthorTag"):
             e = try_xml_entry_text(file, clothingAuthorTag)
             insert_entry(e)
-        for AuthorTag in root.iter("AuthorTag"):
-            e = try_xml_entry_text(file, AuthorTag)
+        for authorTag in root.iter("authorTag"):
+            e = try_xml_entry_text(file, authorTag)
+            insert_entry(e)
+
+        ## sticker related
+        for stickerName in root.iter("stickerName"):
+            e = try_xml_entry_text(file, stickerName)
+            insert_entry(e)
+        for namePrefix in root.iter("namePrefix"):
+            e = try_xml_entry_text(file, namePrefix)
+            insert_entry(e)
+        for namePostfix in root.iter("namePostfix"):
+            e = try_xml_entry_text(file, namePostfix)
+            insert_entry(e)
+        for descriptionModification in root.iter("descriptionModification"):
+            e = try_xml_entry_text(file, descriptionModification)
             insert_entry(e)
 
         # combat move nodes

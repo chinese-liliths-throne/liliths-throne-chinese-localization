@@ -169,6 +169,7 @@ class Applier:
                                         + "\t}\n"
                                         + "\n"
                                         + "\tpublic static String intToString(int integer, boolean withLiang) {\n"
+                                        + "\t\tif (integer == 0) return \"零\";\n"
                                         + "\t\tStringBuilder sb = new StringBuilder();\n"
                                         + "\t\tString minus = \"\";\n"
                                         + "\t\tif (integer < 0) \n"
