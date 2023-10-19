@@ -8,7 +8,6 @@ import shutil
 from const import *
 from logger import logger
 
-
 class Repo:
     def __init__(self, branch: str, paratranz_access_token: str) -> None:
         self.branch = branch
@@ -43,7 +42,7 @@ class Repo:
             self.latest_commit = "unknown"
 
         file_path = path / f"repo-latest-{self.latest_commit}.zip"
-        if not file_path.exists():
+        if not file_path.exists() and self.latest_commit != "unknown":
             for existing_file in path.glob("repo-latest-*.zip"):
                 os.remove(existing_file)
             request.urlretrieve(download_url, path /

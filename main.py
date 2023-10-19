@@ -1,7 +1,7 @@
-import asyncio
 import time
 import shutil
 import os
+import argparse
 
 from extractor import Extractor
 from applier import Applier
@@ -12,11 +12,28 @@ from update import *
 from logger import logger
 
 
+argparser = argparse.ArgumentParser()
+argparser.add_argument("--branch", type=str, default="dev",
+                       help="the specific branch name of the repo")
+argparser.add_argument("--pt_token", type=str, default="",
+                       help="paratranz token used to download dictionary, will be override by environment variale")
+argparser.add_argument("--udpate_repo", type=bool,
+                       default=True, help="whether to update repo file")
+argparser.add_argument("--udpate_dict", type=bool,
+                       default=True, help="whether to update dictionary file")
+
+
 PARATRANZ_ACCESS_TOKEN = "" if os.environ.get(
     'PARATRANZ_TOKEN') is None else os.environ.get('PARATRANZ_TOKEN')
 
 
 def main():
+    args = argparser.parse_args()
+
+    branch = args.branch
+    pt_token = args.pt_token if os.environ.get(
+        'PARATRANZ_TOKEN') is None else os.environ.get('PARATRANZ_TOKEN')
+
     new_dict_dir = Path(NEW_DICT_DIR)
     old_dict_dir = Path(OLD_DICT_DIR)
 
@@ -24,9 +41,10 @@ def main():
     shutil.rmtree(new_dict_dir, ignore_errors=True)
     shutil.rmtree(old_dict_dir, ignore_errors=True)
 
-    repo = Repo(REPO_BRANCH, PARATRANZ_ACCESS_TOKEN)
-    logger.info("==== 正在下载最新版本游戏源码 ====")
-    repo.fetch_latest_version()
+    repo = Repo(branch, pt_token)
+    if args.udpate_repo:
+        logger.info("==== 正在下载最新版本游戏源码 ====")
+        repo.fetch_latest_version()
     logger.info("==== 正在解压最新版本游戏源码 ====")
     repo.unzip_latest_version()
 
@@ -38,8 +56,9 @@ def main():
     logger.info("==== 正在提取翻译条目 ====")
     extractor.extract()
 
-    logger.info("==== 正在下载最新字典文件 ====")
-    repo.fetch_latest_dict()
+    if args.udpate_dict:
+        logger.info("==== 正在下载最新字典文件 ====")
+        repo.fetch_latest_dict()
     logger.info("==== 正在解压最新字典文件 ====")
     repo.unzip_latest_dict()
 
