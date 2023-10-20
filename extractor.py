@@ -566,7 +566,7 @@ class Extractor:
                 java_extractor.parse_effects(file.name, line)
             elif file.parent.name == "fetishes":
                 java_extractor.parse_fetishs(line)
-            elif file.parent.name == "npc":
+            elif "npc" in file.parent.as_posix() :
                 java_extractor.parse_npc(line)
             elif file.parent.name == "race":
                 java_extractor.parse_race(line)
@@ -677,6 +677,8 @@ class JavaExtractor:
             self.interest_line = True
         elif ".flashMessage" in line:
             self.interest_line = True
+        elif ".setName" in line or ".setSurname" in line:
+            self.interest_line = True
 
     def parse_tooltips(self, line: str):
         if "tooltipSB.append" in line:
@@ -720,6 +722,8 @@ class JavaExtractor:
         if "new PossibleItemEffect" in line:
             self.interest_line = True
         elif "FlavorText" in line:
+            self.interest_line = True
+        elif "getSurname().endsWith" in line:
             self.interest_line = True
 
     def parse_race(self, line: str):
