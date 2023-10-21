@@ -126,6 +126,14 @@ class Applier:
                     line = line.replace("tooltip.setMaxHeight(height);",
                                         "tooltip.setMaxHeight(height);\n" +
                                         "\t\ttooltip.setPrefHeight(height);")
+                    line = line.replace("Main.mainController.getWebEngine().getDocument().getElementById(\"hiddenFieldName\").getTextContent().length() < 2",
+                                        "Main.mainController.getWebEngine().getDocument().getElementById(\"hiddenFieldName\").getTextContent().length() < 1")
+                elif file.name == "CityHallDemographics.java":
+                    line = line.replace("Main.mainController.getWebEngine().getDocument().getElementById(\"hiddenFieldName\").getTextContent().length() < 2",
+                                        "Main.mainController.getWebEngine().getDocument().getElementById(\"hiddenFieldName\").getTextContent().length() < 1")
+                elif file.name == "CharacterCreation.java":
+                    line = line.replace("Main.mainController.getWebEngine().getDocument().getElementById(\"hiddenFieldName\").getTextContent().length() < 2",
+                                        "Main.mainController.getWebEngine().getDocument().getElementById(\"hiddenFieldName\").getTextContent().length() < 1")
                 elif file.name == "Main.java":
                     # 内置字体导入
                     line = line.replace("protected void loadFonts() {",
