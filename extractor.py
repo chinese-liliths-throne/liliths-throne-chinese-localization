@@ -709,6 +709,11 @@ class JavaExtractor:
         if filename == "AbstractStatusEffect.java":
             if "stringBuilderToAppendTo.append" in line:
                 self.interest_line = True
+        elif filename == "StatusEffect.java":
+            if "from1 = " in line or "from2 = " in line:
+                self.interest_line = True
+            elif "orificesRecovering.add" in line:
+                self.interest_line = True
         if "new AbstractPerk" in line:
             self.interest_line = True
         elif "new AbstractStatusEffect" in line:
