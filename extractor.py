@@ -574,7 +574,7 @@ class Extractor:
                 java_extractor.parse_character(file.name, line)
             elif file.parent.name == "moves":
                 java_extractor.parse_moves(line)
-            elif file.parent.name == "dialogue" or file.parent.parent.name == "dialogue":
+            elif "dialogue" in file.parent.as_posix():
                 java_extractor.parse_dialogue(file.name, line)
             elif file.parent.name == "clothing":
                 java_extractor.parse_clothing(line)
@@ -760,6 +760,12 @@ class JavaExtractor:
                 self.interest_line = True
         elif filename == "PhoneDialogue.java":
             if "clothingSlotCategories.put" in line:
+                self.interest_line = True
+        elif filename == "ClothingEmporium.java":
+            if "descriptionStart = " in line:
+                self.interest_line = True
+        elif filename == "SuccubisSecrets.java":
+            if "entry.getValue().getValue().add" in line:
                 self.interest_line = True
         
         if "purchaseAvailability.append" in line:
