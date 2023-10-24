@@ -649,6 +649,8 @@ class JavaExtractor:
             self.interest_line = True
         elif re.search(rf"({ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}(Plural)?|{TITLE_REGEX}|{DESC_REGEX}|{EFFECT_REGEX}|{MOD_REGEX}){ADD_REGEX}", line) is not None:
             self.interest_line = True
+        elif "list.add" in line:
+            self.interest_line = True
         # elif "System.err.println" in line:
         #     self.interest_line = True
         elif "new Value<>" in line:

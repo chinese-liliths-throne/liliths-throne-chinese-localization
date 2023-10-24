@@ -22,11 +22,6 @@ argparser.add_argument("--udpate_repo", type=bool,
 argparser.add_argument("--udpate_dict", type=bool,
                        default=True, help="whether to update dictionary file")
 
-
-PARATRANZ_ACCESS_TOKEN = "" if os.environ.get(
-    'PARATRANZ_TOKEN') is None else os.environ.get('PARATRANZ_TOKEN')
-
-
 def main():
     args = argparser.parse_args()
 
