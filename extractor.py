@@ -649,7 +649,9 @@ class JavaExtractor:
             self.interest_line = True
         elif re.search(rf"({ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}(Plural)?|{TITLE_REGEX}|{DESC_REGEX}|{EFFECT_REGEX}|{MOD_REGEX}){ADD_REGEX}", line) is not None:
             self.interest_line = True
-        elif "list.add" in line:
+        elif "list.add" in line or "list2.add" in line:
+            self.interest_line = True
+        elif "Names.contains":
             self.interest_line = True
         # elif "System.err.println" in line:
         #     self.interest_line = True
@@ -665,9 +667,9 @@ class JavaExtractor:
             self.interest_line = True
         elif "new TattooWriting" in line:
             self.interest_line = True
-        elif ".setDescription" in line:
+        elif ".setName" in line or ".setSurname" in line or ".setGenericName" in line:
             self.interest_line = True
-        elif ".setName" in line:
+        elif ".setDescription" in line:
             self.interest_line = True
         elif "new NameTriplet" in line:
             self.interest_line = True
@@ -678,8 +680,6 @@ class JavaExtractor:
         elif "new DialogueNode" in line:
             self.interest_line = True
         elif ".flashMessage" in line:
-            self.interest_line = True
-        elif ".setName" in line or ".setSurname" in line:
             self.interest_line = True
 
     def parse_tooltips(self, line: str):
