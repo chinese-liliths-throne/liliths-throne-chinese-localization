@@ -138,12 +138,21 @@ class Extractor:
 
     async def extract_xml(self, xml_path: Path) -> Dict[str, XmlEntry]:
         entry_list = []
+        entry_cluster : Dict[str, Dict[str, int]] = {}
 
         def insert_entry(entry: Optional[XmlEntry]):
             if entry is None:
                 return
+            tag = entry.node_tag
+            attrib = entry.attribute if entry.attribute is not None else "text"
+
             entry_json = entry.to_json()
-            entry_json['key'] += "_" + str(len(entry_list))
+            if entry_cluster.get(tag, None) is None or entry_cluster[tag].get(attrib, None) is None:
+                entry_cluster[tag] = {attrib : 0}
+            else:
+                entry_cluster[tag][attrib] += 1
+            
+            entry_json['key'] += "_" + str(entry_cluster[tag][attrib])
             entry_list.append(entry_json)
 
         file = xml_path.as_posix()
@@ -266,6 +275,19 @@ class Extractor:
 
         for responseTooltip in root.iter("responseTooltip"):
             e = try_xml_entry_text(file, responseTooltip)
+            insert_entry(e)
+
+        for effects in root.iter("effects"):
+            if effects.getparent().tag == "response":
+                e = try_xml_entry_text(file, effects)
+                insert_entry(e)
+        
+        for preParsingEffects in root.iter("preParsingEffects"):
+            e = try_xml_entry_text(file, preParsingEffects)
+            insert_entry(e)
+
+        for combatant in root.iter("combatant"):
+            e = try_xml_entry_text(file, combatant)
             insert_entry(e)
 
         # encounter
@@ -651,6 +673,10 @@ class JavaExtractor:
             self.interest_line = True
         elif re.search(rf"({ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}(Plural)?|{TITLE_REGEX}|{DESC_REGEX}|{EFFECT_REGEX}|{MOD_REGEX}){ADD_REGEX}", line) is not None:
             self.interest_line = True
+        elif "list.add" in line or "list2.add" in line:
+            self.interest_line = True
+        elif "Names.contains" in line:
+            self.interest_line = True
         # elif "System.err.println" in line:
         #     self.interest_line = True
         elif "new Value<>" in line:
@@ -665,9 +691,9 @@ class JavaExtractor:
             self.interest_line = True
         elif "new TattooWriting" in line:
             self.interest_line = True
-        elif ".setDescription" in line:
+        elif ".setName" in line or ".setSurname" in line or ".setGenericName" in line:
             self.interest_line = True
-        elif ".setName" in line:
+        elif ".setDescription" in line:
             self.interest_line = True
         elif "new NameTriplet" in line:
             self.interest_line = True
@@ -679,7 +705,7 @@ class JavaExtractor:
             self.interest_line = True
         elif ".flashMessage" in line:
             self.interest_line = True
-        elif ".setName" in line or ".setSurname" in line:
+        elif ".addSpecialParsingString" in line:
             self.interest_line = True
 
     def parse_tooltips(self, line: str):
