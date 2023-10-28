@@ -582,8 +582,10 @@ class Extractor:
                 java_extractor.parse_enchanting(line)
             elif file.parent.name == "item":
                 java_extractor.parse_item(line)
-            elif file.parent.name == "positions" or file.parent.parent.name == "positions":
+            elif "positions" in file.parent.as_posix():
                 java_extractor.parse_positions(line)
+            elif "sex" in file.parent.as_posix():
+                java_extractor.parse_sex(file.name, line)
             elif file.parent.name == "main":
                 java_extractor.parse_main(line)
             elif file.parent.name == "rendering":
@@ -794,6 +796,11 @@ class JavaExtractor:
             self.interest_line = True
         elif "new SexSlot" in line:
             self.interest_line = True
+
+    def parse_sex(self, filename: str, line: str):
+        if filename == "SadisticActions.java":
+            if "tailSpecial1 = " in line or "tailSpecial2 = " in line:
+                self.interest_line = True
 
     def parse_main(self, line: str):
         if re.search(r"disclaimer\s*=\s*", line) is not None:
