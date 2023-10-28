@@ -5,6 +5,7 @@ import argparse
 
 from extractor import Extractor
 from applier import Applier
+from processor import Processor
 from repo_dump import Repo
 
 from const import *
@@ -21,6 +22,8 @@ argparser.add_argument("--udpate_repo", type=bool,
                        default=True, help="whether to update repo file")
 argparser.add_argument("--udpate_dict", type=bool,
                        default=True, help="whether to update dictionary file")
+argparser.add_argument("--special_process", action='store_true',
+                       help="whether to do special process")
 
 def main():
     args = argparser.parse_args()
@@ -47,6 +50,7 @@ def main():
 
     extractor = Extractor(root, new_dict_dir, repo.latest_commit)
     applier = Applier(root, new_dict_dir)
+    processor = Processor(new_dict_dir)
 
     logger.info("==== 正在提取翻译条目 ====")
     extractor.extract()
@@ -59,6 +63,10 @@ def main():
 
     logger.info("==== 正在合并字典 ====")
     update_dict(old_dict_dir, new_dict_dir)
+    
+    if args.special_process:
+        logger.info("==== 正在应用特殊处理 ====")
+        processor.process()
 
     logger.info("==== 正在应用字典 ====")
     applier.apply()

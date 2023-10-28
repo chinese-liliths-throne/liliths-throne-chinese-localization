@@ -24,6 +24,8 @@ class XmlEntry(Entry):
 
     @staticmethod
     def from_json(file: Path, entry_json: Dict[str, str]) -> "XmlEntry":
+        if "." in entry_json["key"]:
+            entry_json["key"] = entry_json["key"][:entry_json["key"].rfind("_")]
         return XmlEntry(
             file=file.as_posix(),
             original=entry_json["original"],
@@ -54,6 +56,8 @@ class CodeEntry(Entry):
 
     @staticmethod
     def from_json(file: Path, entry_json: Dict[str, str]) -> "CodeEntry":
+        if "." in entry_json["key"]:
+            entry_json["key"] = entry_json["key"][:entry_json["key"].rfind("_")]
         return CodeEntry(
             file=file.as_posix(),
             original=entry_json["original"],
