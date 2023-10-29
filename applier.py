@@ -245,6 +245,10 @@ class Applier:
                                         + "\t\t}\n"
                                         + "\t},\n"
                                         )
+                elif file.name == "GameCharacter.java":
+                    # remove useless 'the'
+                    line = line.replace(":determiner)",
+                                        ":\"\")")
                 lines[idx] = line
 
             with open(file, 'w', encoding='utf-8') as f:
