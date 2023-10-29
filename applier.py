@@ -249,6 +249,23 @@ class Applier:
                     # remove useless 'the'
                     line = line.replace(":determiner)",
                                         ":\"\")")
+                elif file.name == "Wes.java":
+                    line = line.replace("return this.getNameIgnoresPlayerKnowledge();",
+                                        "return \"Wes\";")
+                elif file.name == "Brax.java":
+                    line = line.replace("return this.getNameIgnoresPlayerKnowledge();",
+                                        "switch(this.getFemininity()) {\n"
+                                        +"\t\t\tcase MASCULINE_STRONG:\n"
+                                        +"\t\t\tcase MASCULINE:\n"
+                                        +"\t\t\t\treturn \"Brax\";\n"
+                                        +"\t\t\tcase ANDROGYNOUS:\n"
+                                        +"\t\t\t\treturn \"Bree\";\n"
+                                        +"\t\t\tcase FEMININE:\n"
+                                        +"\t\t\tcase FEMININE_STRONG:\n"
+                                        +"\t\t\tdefault:\n"
+                                        +"\t\t\t\treturn \"Brandi\";\n"
+                                        +"\t\t}"
+                                    )
                 lines[idx] = line
 
             with open(file, 'w', encoding='utf-8') as f:

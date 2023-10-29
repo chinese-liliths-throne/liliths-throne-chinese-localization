@@ -589,7 +589,7 @@ class Extractor:
             elif file.parent.name == "fetishes":
                 java_extractor.parse_fetishs(line)
             elif "npc" in file.parent.as_posix():
-                java_extractor.parse_npc(line)
+                java_extractor.parse_npc(file.name, line)
             elif file.parent.name == "race":
                 java_extractor.parse_race(line)
             elif file.parent.name == "character":
@@ -733,7 +733,7 @@ class JavaExtractor:
         elif "faceBodyDescriptionFeral = " in line:
             self.interest_line = True
 
-    def parse_effects(self, filename:str, line: str):
+    def parse_effects(self, filename: str, line: str):
         if filename == "AbstractStatusEffect.java":
             if "stringBuilderToAppendTo.append" in line:
                 self.interest_line = True
@@ -751,7 +751,10 @@ class JavaExtractor:
         if "new AbstractFetish" in line:
             self.interest_line = True
 
-    def parse_npc(self, line: str):
+    def parse_npc(self, filename: str, line: str):
+        if filename == "NPCOffspring.java":
+            if "result = " in line:
+                self.interest_line = True
         if "new PossibleItemEffect" in line:
             self.interest_line = True
         elif "FlavorText" in line:
