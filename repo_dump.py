@@ -94,6 +94,9 @@ class Repo:
         shutil.move(extract_path / "utf8", old_dict_dir)
         shutil.rmtree(extract_path / "raw")
 
+    def updata_source_dict(self, dict_path: Path):
+        pass
+
 
 if __name__ == "__main__":
     repo = Repo("dev", "")
