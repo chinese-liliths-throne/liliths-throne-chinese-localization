@@ -691,9 +691,9 @@ class JavaExtractor:
             self.interest_line = True
         elif "new TattooWriting" in line:
             self.interest_line = True
-        elif ".setName" in line or ".setSurname" in line or ".setGenericName" in line:
+        elif "setName" in line or "setSurname" in line or "setGenericName" in line:
             self.interest_line = True
-        elif ".setDescription" in line:
+        elif "setDescription" in line:
             self.interest_line = True
         elif "new NameTriplet" in line:
             self.interest_line = True

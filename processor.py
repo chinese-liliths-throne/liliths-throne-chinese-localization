@@ -7,7 +7,7 @@ from logger import logger
 from data import XmlEntry, CodeEntry
 
 class Processor():
-	def __init__(self, dict_path: Path):
+	def __init__(self, dict_path: Path, pt_token: str):
 		self.dict_path = dict_path
 		self.translated : Dict[str, Union[XmlEntry, CodeEntry]] = {}
 		self.untranslated : Dict[str, Union[XmlEntry, CodeEntry]] = {}

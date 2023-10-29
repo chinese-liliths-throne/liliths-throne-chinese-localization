@@ -16,6 +16,8 @@ from logger import logger
 argparser = argparse.ArgumentParser()
 argparser.add_argument("--branch", type=str, default="dev",
                        help="the specific branch name of the repo")
+argparser.add_argument("--pt-token", type=str, default="",
+                       help="paratranz token used to download dictionary, will be override by environment variale")
 argparser.add_argument("--udpate-repo", type=bool,
                        default=True, help="whether to update repo file")
 argparser.add_argument("--udpate-dict", type=bool,
@@ -23,16 +25,15 @@ argparser.add_argument("--udpate-dict", type=bool,
 argparser.add_argument("--special-process", action='store_true',
                        help="whether to do special process")
 
-PARATRANZ_TOKEN = ""
-
 def main():
     args = argparser.parse_args()
 
     branch = args.branch
-    if PARATRANZ_TOKEN == "":
-        PARATRANZ_TOKEN = input("请输入Paratranz的Acccess Token，\t或选择设置环境变量“PARATRANZ_TOKEN”/在main.py文件夹中修改PARATRANZ_TOKEN的值：")
-    pt_token = PARATRANZ_TOKEN if os.environ.get(
+    pt_token = args.pt_token if os.environ.get(
         'PARATRANZ_TOKEN') is None else os.environ.get('PARATRANZ_TOKEN')
+    if pt_token == "":
+        pt_token = input("请输入Paratranz的Acccess Token，\t或选择设置环境变量“PARATRANZ_TOKEN”/在main.py文件夹中修改--pt-token的default值：")
+    
 
     new_dict_dir = Path(NEW_DICT_DIR)
     old_dict_dir = Path(OLD_DICT_DIR)
@@ -52,7 +53,7 @@ def main():
 
     extractor = Extractor(root, new_dict_dir, repo.latest_commit)
     applier = Applier(root, new_dict_dir)
-    processor = Processor(new_dict_dir)
+    processor = Processor(new_dict_dir,pt_token)
 
     logger.info("==== 正在提取翻译条目 ====")
     extractor.extract()
