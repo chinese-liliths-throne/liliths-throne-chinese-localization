@@ -588,7 +588,7 @@ class Extractor:
                 java_extractor.parse_effects(file.name, line)
             elif file.parent.name == "fetishes":
                 java_extractor.parse_fetishs(line)
-            elif "npc" in file.parent.as_posix() :
+            elif "npc" in file.parent.as_posix():
                 java_extractor.parse_npc(line)
             elif file.parent.name == "race":
                 java_extractor.parse_race(line)

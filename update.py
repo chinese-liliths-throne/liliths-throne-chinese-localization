@@ -143,7 +143,7 @@ async def update_data(old_dict_data: List[Dict[str, str]], new_dict_data: List[D
                 translation = re.sub(r"'([一-龟]+)'",r"“\1”",translation)
                 translation = re.sub(r"（","(",translation)
                 translation = re.sub(r"）",")",translation)
-                translation = re.sub(r"\t ","\t", translation)
+                translation = re.sub("\t ","\t", translation)
 
                 new_dict_data[new_idx_list[idx]
                               ]["translation"] = translation

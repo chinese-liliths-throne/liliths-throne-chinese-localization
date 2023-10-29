@@ -5,10 +5,13 @@ from typing import Dict, Union, List, Tuple
 
 from logger import logger
 from data import XmlEntry, CodeEntry
+from const import *
 
 class Processor():
 	def __init__(self, dict_path: Path, pt_token: str):
 		self.dict_path = dict_path
+		self.pt_token = pt_token
+		self.upgrade_files = set()
 		self.translated : Dict[str, Union[XmlEntry, CodeEntry]] = {}
 		self.untranslated : Dict[str, Union[XmlEntry, CodeEntry]] = {}
 
@@ -48,6 +51,7 @@ class Processor():
 					res_dict[path].append((int(entry_index), same_checker[value.original]))
 
 		logger.info(f"共有{sum([len(v) for v in res_dict.values()])}个词条会被填充！")
+		self.upgrade_files = self.upgrade_files.union(res_dict.keys())
 
 		for (path, modify_list) in res_dict.items():
 			with open(path, 'r', encoding='utf-8') as f:
@@ -59,3 +63,5 @@ class Processor():
 			with open(path, 'w', encoding='utf-8') as f:
 				json.dump(data, f, indent=2, ensure_ascii=False)
 		
+	# def update_pt_dict(self):
+	# 	post_url = PARATRANZ_API_BASE_URL + "/projects/" + PARATRANZ_PROJECT_ID + "/files/" +
