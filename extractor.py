@@ -575,51 +575,77 @@ class Extractor:
 
             if len(line) == 0:
                 continue  
-
+                
+            # controller\eventListeners\tooltips
             if file.parent.name == "tooltips":
                 java_extractor.parse_tooltips(line)
-            elif file.parent.name == "controller":
-                java_extractor.parse_controller(line)
+            # game\character\attributes
             elif file.parent.name == "attributes":
                 java_extractor.parse_attributes(line)
+            # game\character\body
             elif file.parent.name == "body" or file.parent.parent.name == "body":
                 java_extractor.parse_body(line)
+            # game\character\effects
             elif file.parent.name == "effects":
                 java_extractor.parse_effects(file.name, line)
+            # game\character\fetishes
             elif file.parent.name == "fetishes":
                 java_extractor.parse_fetishs(line)
+            # game\character\npc
             elif "npc" in file.parent.as_posix():
                 java_extractor.parse_npc(file.name, line)
+            # game\character\race
             elif file.parent.name == "race":
                 java_extractor.parse_race(line)
-            elif file.parent.name == "character":
-                java_extractor.parse_character(file.name, line)
+            # game\combat\moves
             elif file.parent.name == "moves":
                 java_extractor.parse_moves(line)
-            elif "dialogue" in file.parent.as_posix():
-                java_extractor.parse_dialogue(file.name, line)
+            # game\iventory\clothing
             elif file.parent.name == "clothing":
                 java_extractor.parse_clothing(line)
+            # game\iventory\enchanting
             elif file.parent.name == "enchanting":
                 java_extractor.parse_enchanting(line)
+            # game\iventory\item
             elif file.parent.name == "item":
                 java_extractor.parse_item(line)
-            elif "positions" in file.parent.as_posix():
-                java_extractor.parse_positions(line)
-            elif "sex" in file.parent.as_posix():
-                java_extractor.parse_sex(file.name, line)
+            # main
             elif file.parent.name == "main":
                 java_extractor.parse_main(line)
+            # rendering
             elif file.parent.name == "rendering":
                 java_extractor.parse_rendering(line)
+            # utils\colours
             elif file.parent.name == "colours":
                 java_extractor.parse_colours(line)
-            elif file.parent.name == "places":
-                java_extractor.parse_places(line)
+            # world\population
             elif file.parent.name == "population":
                 java_extractor.parse_population(line)
+            # world no sub
             elif file.parent.name == "world":
                 java_extractor.parse_world(line)
+            # rest in controller\
+            elif "controller" in file.parent.as_posix():
+                java_extractor.parse_controller(line)
+            # game\sex\positions
+            elif "positions" in file.parent.as_posix():
+                java_extractor.parse_positions(line)
+            # rest in game\sex\
+            elif "sex" in file.parent.as_posix():
+                java_extractor.parse_sex(file.name, line)
+            # rest in game\character\
+            elif "character" in file.parent.as_posix():
+                java_extractor.parse_character(file.name, line)
+            # rest in game\dialogue\
+            elif "dialogue" in file.parent.as_posix():
+                java_extractor.parse_dialogue(file.name, line)
+            # rest in game\
+            elif "game" in file.parent.as_posix():
+                java_extractor.parse_game(file.name, line)
+            # rest in world\places
+            elif "places" in file.parent.as_posix():
+                java_extractor.parse_places(file.name, line)
+
 
             java_extractor.parse_normal(line)
 
@@ -798,6 +824,9 @@ class JavaExtractor:
         elif filename == "SuccubisSecrets.java":
             if "entry.getValue().getValue().add" in line:
                 self.interest_line = True
+        elif filename == "RoomPlayer.java":
+            if ".add" in line:
+                self.interest_line = True
         
         if "purchaseAvailability.append" in line:
             self.interest_line = True
@@ -845,7 +874,7 @@ class JavaExtractor:
         if "new Colour" in line:
             self.interest_line = True
 
-    def parse_places(self, line: str):
+    def parse_places(self, filename: str, line: str):
         if "new AbstractPlaceType" in line:
             self.interest_line = True
         elif "new AbstractPlaceUpgrade" in line:
@@ -858,6 +887,14 @@ class JavaExtractor:
     def parse_world(self, line: str):
         if "new AbstractWorldType" in line:
             self.interest_line = True
+    
+    def parse_game(self, filename: str, line:str):
+        if filename == "Game.java":
+            if "corruptionGains = " in line:
+                self.interest_line = True
+        elif filename == "Combat.java":
+            if "Content.put" in line:
+                self.interest_line = True
 
     def general_string_parse(self, line: str) -> bool:      
         if not self.interest_line:

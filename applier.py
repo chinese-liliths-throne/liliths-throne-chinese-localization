@@ -308,7 +308,7 @@ class Applier:
                     f"\t****{original_file.relative_to(self.root)}: 节点{tag}数量({len(nodes)})与字典数量({len(entry_cluster)})不匹配")
                 continue
             for entry, node in zip(entry_cluster, nodes):
-                if len(entry.translation) <= 0 or entry.translation == entry.original:  # 暂无汉化或无需修改
+                if entry.stage == 0 or entry.translation == entry.original:  # 无需修改
                     continue
 
                 if entry.attribute is not None:
