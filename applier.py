@@ -7,6 +7,7 @@ import shutil
 
 from data import XmlEntry, CodeEntry
 from logger import logger
+from urllib.parse import quote
 from const import *
 
 FONT_SIZE_REGEX = r"font-size\s*:\s*(\d+)\s*(?:px|pt)"
@@ -356,17 +357,17 @@ class Applier:
         # 常见错误检测
         quote_count = translation.count("\"") - translation.count("\\\"")
         if quote_count % 2 == 1 and "//" not in translation and "/*" not in translation:
-            logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本有奇数个双引号！")
+            logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本有奇数个双引号！|https://paratranz.cn/projects/{PARATRANZ_PROJECT_ID}/strings?text={quote(original)}")
             print(text)
         if "\\n" in translation and "\\n" not in original:
-            logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本有额外换行符！")
+            logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本有额外换行符！|https://paratranz.cn/projects/{PARATRANZ_PROJECT_ID}/strings?text={quote(original)}")
             translation = translation.replace("\\n", "")
         
         if original.endswith(',') and not translation.endswith(',') and not translation.strip().endswith(','):
-            logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本末尾无逗号！")
+            logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本末尾无逗号！|https://paratranz.cn/projects/{PARATRANZ_PROJECT_ID}/strings?text={quote(original)}")
             translation += ","
         elif original.endswith(';') and not translation.endswith(';') and not translation.strip().endswith(';'):
-            logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本末尾无分号！")
+            logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本末尾无分号！|https://paratranz.cn/projects/{PARATRANZ_PROJECT_ID}/strings?text={quote(original)}")
             translation += ";"
 
 
