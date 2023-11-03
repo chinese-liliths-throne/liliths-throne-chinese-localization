@@ -185,7 +185,7 @@ jobs:
       shell: bash
       run: |
         cd ${{ vars.REPO_PATH }}
-        mvn package -Dtarget.platform=win -Dexclude.platform=linux
+        mvn package -Dtarget.platform=win -Dexclude.platform=linux -e -X
     - name: Add JRE
       shell: bash
       run: |
