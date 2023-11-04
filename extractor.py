@@ -827,6 +827,9 @@ class JavaExtractor:
         elif filename == "RoomPlayer.java":
             if ".add" in line:
                 self.interest_line = True
+        elif filename == "SlaveAuctionBidder.java":
+            if "Comments = " in line:
+                self.interest_line = True
         
         if "purchaseAvailability.append" in line:
             self.interest_line = True
