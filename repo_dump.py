@@ -55,7 +55,7 @@ class Repo:
         extract_path = Path(self.source_dir)
 
         if extract_path.exists():
-            shutil.rmtree(extract_path)
+            shutil.rmtree(extract_path, ignore_errors=True)
         extract_path.mkdir()
 
         with zipfile.ZipFile(zip_path, "r") as zip_ref:
@@ -92,7 +92,7 @@ class Repo:
             shutil.rmtree(old_dict_dir)
 
         shutil.move(extract_path / "utf8", old_dict_dir)
-        shutil.rmtree(extract_path / "raw")
+        shutil.rmtree(extract_path / "raw", ignore_errors=True)
 
     def updata_source_dict(self, dict_path: Path):
         pass

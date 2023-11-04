@@ -304,14 +304,10 @@ class Applier:
         for tag, entry_cluster in entry_dict.items():
             nodes: List[etree._Element] = list(tree.iter(tag))
             nodes = list(filter(lambda node: valid_element(node), nodes))
-            if len(entry_cluster) != len(nodes):
-                logger.warning(
-                    f"\t****{original_file.relative_to(self.root)}: 节点{tag}数量({len(nodes)})与字典数量({len(entry_cluster)})不匹配")
-                continue
-            for entry, node in zip(entry_cluster, nodes):
-                if entry.stage == 0 or entry.translation == entry.original:  # 无需修改
+            for entry in entry_cluster:
+                if entry.stage == 0 or entry.translation == entry.original: # 无需修改
                     continue
-
+                node = nodes[entry.node_idx]
                 if entry.attribute is not None:
                     node.set(entry.attribute, entry.translation)
                 else:

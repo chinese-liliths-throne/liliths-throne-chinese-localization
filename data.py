@@ -21,6 +21,7 @@ class Entry:
 class XmlEntry(Entry):
     node_tag: str
     attribute: Optional[str]
+    node_idx: Optional[int]
 
     @staticmethod
     def from_json(file: Path, entry_json: Dict[str, str]) -> "XmlEntry":
@@ -34,7 +35,8 @@ class XmlEntry(Entry):
             attribute=entry_json["key"].split('_')[1] if entry_json["key"].split('_')[
                 1] != "text" else None,
             stage=entry_json['stage'] if entry_json.get(
-                "stage") is not None else 0
+                "stage") is not None else 0,
+            node_idx=int(entry_json["key"].split('_')[-1])
         )
 
     def to_json(self) -> Dict:

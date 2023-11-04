@@ -37,7 +37,8 @@ def try_xml_entry_text(file: str, element: etree._Element) -> Optional[XmlEntry]
         translation="",
         node_tag=element.tag,
         attribute=None,
-        stage=0
+        stage=0,
+        node_idx=0
     )
 
 def split_htmlContent(file: str, element: etree._Element) -> Optional[List[XmlEntry]]:
@@ -896,7 +897,7 @@ class JavaExtractor:
             if "corruptionGains = " in line:
                 self.interest_line = True
         elif filename == "Combat.java":
-            if "Content.put" in line:
+            if "Content.put" in line or "Content.get" in line:
                 self.interest_line = True
 
     def general_string_parse(self, line: str) -> bool:      

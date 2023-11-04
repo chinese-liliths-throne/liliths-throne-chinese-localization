@@ -24,6 +24,8 @@ argparser.add_argument("--udpate-dict", type=bool,
                        default=True, help="whether to update dictionary file")
 argparser.add_argument("--special-process", action='store_true',
                        help="whether to do special process")
+argparser.add_argument("--ignore-untranslated", action='store_true',
+                       help="whether to ignore untranslated entries")
 
 def main():
     args = argparser.parse_args()
@@ -65,7 +67,7 @@ def main():
     repo.unzip_latest_dict()
 
     logger.info("==== 正在合并字典 ====")
-    update_dict(old_dict_dir, new_dict_dir)
+    update_dict(old_dict_dir, new_dict_dir, args.ignore_untranslated)
     
     if args.special_process:
         logger.info("==== 正在应用特殊处理 ====")

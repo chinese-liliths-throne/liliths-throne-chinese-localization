@@ -9,7 +9,7 @@ from const import *
 from logger import logger
 
 
-def update_dict(old_dict_path: Path, new_dict_path: Path):
+def update_dict(old_dict_path: Path, new_dict_path: Path, ignore_untranslated: bool = False):
     loop = asyncio.get_event_loop()
 
     new_outdated_dir = Path(new_dict_path) / OUTDATE_DIR_NAME
@@ -32,14 +32,14 @@ def update_dict(old_dict_path: Path, new_dict_path: Path):
     ]
 
     tasks = [
-        update_dict_file(old_dict_file, new_dict_file, outdated_file)
+        update_dict_file(old_dict_file, new_dict_file, outdated_file, ignore_untranslated)
         for old_dict_file, new_dict_file, outdated_file in file_pairs
     ]
 
     loop.run_until_complete(asyncio.gather(*tasks))
 
 
-async def update_dict_file(old_dict_file: Path, new_dict_file: Path, outdated_file: Path):
+async def update_dict_file(old_dict_file: Path, new_dict_file: Path, outdated_file: Path, ignore_untranslated: bool = False):
     with open(old_dict_file, 'r', encoding='utf-8') as old_dict:
         old_dict_data: List[Dict] = json.load(old_dict)
 
@@ -55,8 +55,14 @@ async def update_dict_file(old_dict_file: Path, new_dict_file: Path, outdated_fi
 
         old_dict_data = await update_data(old_dict_data, new_dict_data)
 
+        if ignore_untranslated:
+            # result_dict_data = list(filter(lambda entry: entry["stage"] != 0, new_dict_data))
+            result_dict_data = new_dict_data
+        else:
+            result_dict_data = new_dict_data
+
         with open(new_dict_file, 'w', encoding='utf-8') as new_dict:
-            json.dump(new_dict_data, new_dict, indent=4, ensure_ascii=False)
+            json.dump(result_dict_data, new_dict, indent=4, ensure_ascii=False)
 
         outdated_data = list(
             filter(lambda entry: entry is not None, old_dict_data))
@@ -140,10 +146,18 @@ async def update_data(old_dict_data: List[Dict[str, str]], new_dict_data: List[D
                 translation = old_dict_data[old_idx]["translation"]
                 
                 # 引号使用中文双引号，括号使用半角括号
-                translation = re.sub(r"'([一-龟]+)'",r"“\1”",translation)
+                zh_character = r"[一-龟]"
+                translation = re.sub(rf"'({zh_character}+)'",r"“\1”",translation)
                 translation = re.sub(r"（","(",translation)
                 translation = re.sub(r"）",")",translation)
                 translation = re.sub("\t ","\t", translation)
+                # 中文与markup代码之间
+                translation = re.sub(rf"\] ({zh_character})", r"]\1", translation)
+                translation = re.sub(rf"({zh_character}) \[", r"\1[", translation)
+                translation = re.sub(rf"\] \[", r"][", translation)
+                # <>左右
+                translation = re.sub(r" <(i|b)", r"<\1", translation)
+                translation = re.sub(r"(i|b)> ", r"\1>", translation)
 
                 new_dict_data[new_idx_list[idx]
                               ]["translation"] = translation
