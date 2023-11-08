@@ -62,6 +62,8 @@ class Applier:
         # 复制字体文件
         shutil.copytree(Path(ROOT_DIR) / FONT_DIR / FONT_DIR_NAME,
                         self.root / FONT_TARGET_DIR / FONT_DIR_NAME)
+        shutil.copy(Path(ROOT_DIR) / "replace_file" / "GenderNames.java",
+                     self.root / "src" / "com" / "lilithsthrone" / "game" / "character" / "gender" / "GenderNames.java")
 
     def modify_css(self) -> None:
         for file in self.root.glob("**/*.css"):
@@ -114,6 +116,9 @@ class Applier:
                         line = "//" + line
                     if "import org.openjdk.nashorn" in line:
                         line = line[2:]
+                    line = line.replace(".getGenderName().getFeminine()", ".getGenderName().getFeminineId()")
+                    line = line.replace(".getGenderName().getMasculine()", ".getGenderName().getMasculineId()")
+                    line = line.replace(".getGenderName().getNeutral()", ".getGenderName().getNeutralId()")
                 elif file.name == "AbstractAttribute.java":
                     # Attribute的name同时被用于逻辑和显示，故使用类似的nameAbbreviation暂时替代
                     line = line.replace(

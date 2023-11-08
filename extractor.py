@@ -831,6 +831,18 @@ class JavaExtractor:
         elif filename == "SlaveAuctionBidder.java":
             if "Comments = " in line:
                 self.interest_line = True
+        elif filename == "SlaverAlleyDialogue.java":
+            if "Availability.add" in line:
+                self.interest_line = True
+        elif filename == "EnforcerWarehouse.java":
+            if "dangerousDirections.add" in line:
+                self.interest_line = True
+        elif filename == "OptionsDialogue.java":
+            if "disabledMsg = " in line:
+                self.interest_line = True
+        elif filename == "KaysWarehouse.java":
+            if "KaySexResponse(" in line:
+                self.interest_line = True
         
         if "purchaseAvailability.append" in line:
             self.interest_line = True
