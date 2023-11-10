@@ -90,8 +90,6 @@ def main():
     logger.info("==== 正在解压最新字典文件 ====")
     repo.unzip_latest_dict()
 
-    dict_update_splited_htmlContent(old_dict_dir)
-
     logger.info("==== 正在合并字典 ====")
     update_dict(old_dict_dir, new_dict_dir, args.ignore_untranslated)
 
