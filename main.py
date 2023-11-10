@@ -69,7 +69,7 @@ def main():
     shutil.rmtree(old_dict_dir, ignore_errors=True)
 
     repo = Repo(branch, pt_token)
-    if args.udpate_repo:
+    if not args.no_udpate_repo:
         logger.info("==== 正在下载最新版本游戏源码 ====")
         repo.fetch_latest_version()
     logger.info("==== 正在解压最新版本游戏源码 ====")
@@ -84,7 +84,7 @@ def main():
     logger.info("==== 正在提取翻译条目 ====")
     extractor.extract()
 
-    if args.udpate_dict:
+    if not args.no_udpate_dict:
         logger.info("==== 正在下载最新字典文件 ====")
         repo.fetch_latest_dict()
     logger.info("==== 正在解压最新字典文件 ====")

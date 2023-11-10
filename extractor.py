@@ -823,6 +823,9 @@ class JavaExtractor:
         if filename == "StatusEffect.java":
             if "tooDeep.add" in line or "stretching.add" in line:
                 self.interest_line = True
+        if filename == "GameCharacter.java":
+            if "target = " in line:
+                self.interest_line = True
         if re.search(r"writing\s*=\s*", line) is not None:
             self.interest_line = True
         elif "new GenderAppearance" in line:
