@@ -287,10 +287,10 @@ jobs:
       uses: actions/download-artifact@v2.1.1
       with:
         name: "liliths-throne-win"
-    - name: Download a Win x86 Artifact
-      uses: actions/download-artifact@v2.1.1
-      with:
-        name: "liliths-throne-win-x86"
+    # - name: Download a Win x86 Artifact
+    #   uses: actions/download-artifact@v2.1.1
+    #   with:
+    #     name: "liliths-throne-win-x86"
     - name: Set Release version env variable
       run: |
         echo "RELEASE_VERSION=$(date "+%y.%m.%d")" >> $GITHUB_ENV
