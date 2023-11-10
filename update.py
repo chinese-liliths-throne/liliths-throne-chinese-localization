@@ -77,12 +77,12 @@ async def update_dict_file(
         if len(outdated_data) > 0:
             logger.info("在新提取中该文件存在遗失条目：%s", old_dict_file)
 
-        # 过时条目融合
-        if outdated_file.exists():
-            with open(outdated_file, "r", encoding="utf-8") as f:
-                prev_outdated_data = json.load(f)
-        else:
-            prev_outdated_data = []
+    # 过时条目融合
+    if outdated_file.exists():
+        with open(outdated_file, "r", encoding="utf-8") as f:
+            prev_outdated_data = json.load(f)
+    else:
+        prev_outdated_data = []
 
     await update_data(outdated_data, prev_outdated_data, version="0.4.8.9")
 

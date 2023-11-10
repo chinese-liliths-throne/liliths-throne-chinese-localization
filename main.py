@@ -27,14 +27,14 @@ argparser.add_argument(
 )
 argparser.add_argument(
     "--no-udpate-repo",
-    action="store_false",
-    default=True,
+    action="store_true",
+    default=False,
     help="whether to update repo file",
 )
 argparser.add_argument(
     "--no-udpate-dict",
-    action="store_false",
-    default=True,
+    action="store_true",
+    default=False,
     help="whether to update dictionary file",
 )
 argparser.add_argument(

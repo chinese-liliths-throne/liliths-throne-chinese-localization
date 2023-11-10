@@ -325,7 +325,7 @@ class Applier:
                     line = line.replace(
                         "return this.getNameIgnoresPlayerKnowledge();",
                         "if (Main.game.getDialogueFlags().hasFlag(DialogueFlagValue.bimbofiedBrax))\n"
-                        + '\t\t\treturn "Brandi"\n'
+                        + '\t\t\treturn "Brandi";\n'
                         + "\t\telse if (Main.game.getDialogueFlags().hasFlag(DialogueFlagValue.feminisedBrax))\n"
                         + '\t\t\treturn "Bree";\n'
                         + "\t\telse\n"
