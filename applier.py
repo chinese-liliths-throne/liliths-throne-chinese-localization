@@ -8,7 +8,7 @@ import shutil
 from data import XmlEntry, CodeEntry
 from logger import logger
 from urllib.parse import quote
-from const import *
+from const import ROOT_DIR, FONT_DIR, FONT_DIR_NAME, FONT_TARGET_DIR, PARATRANZ_PROJECT_ID
 
 FONT_SIZE_REGEX = r"font-size\s*:\s*(\d+)\s*(?:px|pt)"
 LINE_HEIGHT_REGEX = r"line-height\s*:\s*(\d+)\s*(?:px|pt)"
@@ -307,17 +307,25 @@ class Applier:
                 entry_dict[entry.node_tag].append(entry)
 
         for tag, entry_cluster in entry_dict.items():
-            nodes: List[etree._Element] = list(tree.iter(tag))
-            nodes = list(filter(lambda node: valid_element(node), nodes))
-            for entry in entry_cluster:
-                if entry.stage == 0 or entry.translation == entry.original: # 无需修改
-                    continue
-                node = nodes[entry.node_idx]
-                if entry.attribute is not None:
-                    node.set(entry.attribute, entry.translation)
-                else:
-                    node.text = entry.translation.replace("\\n", "\n")
+            #special process for htmlContent
+            if tag == "htmlContent":
+                for entry in entry_cluster:
+                    nodes = tree.xpath(f"//htmlContent[@tag='{entry.attribute}']")
+                    node = nodes[0]
+                    node.text = node.text.replace(entry.original, entry.translation.replace("\\n", "\n"))
                     node.text = etree.CDATA(node.text)
+            else:
+                nodes: List[etree._Element] = list(tree.iter(tag))
+                nodes = list(filter(valid_element, nodes))
+                for entry in entry_cluster:
+                    if entry.stage == 0 or entry.translation == entry.original: # 无需修改
+                        continue
+                    node = nodes[entry.node_idx]
+                    if entry.attribute is not None:
+                        node.set(entry.attribute, entry.translation)
+                    else:
+                        node.text = entry.translation.replace("\\n", "\n")
+                        node.text = etree.CDATA(node.text)
 
         tree.write(original_file.as_posix(), encoding="utf-8",
                    xml_declaration=True, pretty_print=True, standalone=False)
@@ -358,17 +366,21 @@ class Applier:
         # 常见错误检测
         quote_count = translation.count("\"") - translation.count("\\\"")
         if quote_count % 2 == 1 and "//" not in translation and "/*" not in translation:
-            logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本有奇数个双引号！|https://paratranz.cn/projects/{PARATRANZ_PROJECT_ID}/strings?text={quote(original)}")
+            logger.warning("\t****%s[%s]:翻译文本有奇数个双引号！|https://paratranz.cn/projects/%s/strings?text=%s",
+            file.as_posix(), line, PARATRANZ_PROJECT_ID, quote(original))
             print(text)
         if "\\n" in translation and "\\n" not in original:
-            logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本有额外换行符！|https://paratranz.cn/projects/{PARATRANZ_PROJECT_ID}/strings?text={quote(original)}")
+            logger.warning("\t****%s[%s]:翻译文本有额外换行符！|https://paratranz.cn/projects/%s/strings?text=%s",
+            file.as_posix(), line, PARATRANZ_PROJECT_ID, quote(original))
             translation = translation.replace("\\n", "")
-        
+
         if original.endswith(',') and not translation.endswith(',') and not translation.strip().endswith(','):
-            logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本末尾无逗号！|https://paratranz.cn/projects/{PARATRANZ_PROJECT_ID}/strings?text={quote(original)}")
+            logger.warning("\t****%s[%s]:翻译文本末尾无逗号！|https://paratranz.cn/projects/%s/strings?text=%s",
+            file.as_posix(), line, PARATRANZ_PROJECT_ID, quote(original))
             translation += ","
         elif original.endswith(';') and not translation.endswith(';') and not translation.strip().endswith(';'):
-            logger.warning(f"\t****{file.as_posix()}[{line}]:翻译文本末尾无分号！|https://paratranz.cn/projects/{PARATRANZ_PROJECT_ID}/strings?text={quote(original)}")
+            logger.warning("\t****%s[%s]:翻译文本末尾无分号！|https://paratranz.cn/projects/%s/strings?text=%s",
+            file.as_posix(), line, PARATRANZ_PROJECT_ID, quote(original))
             translation += ";"
 
 

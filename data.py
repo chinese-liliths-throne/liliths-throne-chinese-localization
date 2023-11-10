@@ -26,17 +26,17 @@ class XmlEntry(Entry):
     @staticmethod
     def from_json(file: Path, entry_json: Dict[str, str]) -> "XmlEntry":
         if "." in entry_json["key"]:
-            entry_json["key"] = entry_json["key"][:entry_json["key"].rfind("_")]
+            entry_json["key"] = entry_json["key"][: entry_json["key"].rfind("_")]
         return XmlEntry(
             file=file.as_posix(),
             original=entry_json["original"],
             translation=entry_json["translation"],
-            node_tag=entry_json["key"].split('_')[0],
-            attribute=entry_json["key"].split('_')[1] if entry_json["key"].split('_')[
-                1] != "text" else None,
-            stage=entry_json['stage'] if entry_json.get(
-                "stage") is not None else 0,
-            node_idx=int(entry_json["key"].split('_')[-1])
+            node_tag=entry_json["key"].split("_")[0],
+            attribute=entry_json["key"].split("_")[1].replace("-", "_")
+            if entry_json["key"].split("_")[1] != "text"
+            else None,
+            stage=entry_json["stage"] if entry_json.get("stage") is not None else 0,
+            node_idx=int(entry_json["key"].split("_")[-1]),
         )
 
     def to_json(self) -> Dict:
@@ -45,11 +45,11 @@ class XmlEntry(Entry):
             "original": self.original,
             "translation": self.translation,
             "context": "",
-            "stage": self.stage
+            "stage": self.stage,
         }
 
     def to_id(self) -> str:
-        return "{}_{}".format(self.node_tag, self.attribute if self.attribute is not None else "text")
+        return f"{self.node_tag}_{self.attribute if self.attribute is not None else 'text'}"
 
 
 @dataclass
@@ -59,14 +59,13 @@ class CodeEntry(Entry):
     @staticmethod
     def from_json(file: Path, entry_json: Dict[str, str]) -> "CodeEntry":
         if "." in entry_json["key"]:
-            entry_json["key"] = entry_json["key"][:entry_json["key"].rfind("_")]
+            entry_json["key"] = entry_json["key"][: entry_json["key"].rfind("_")]
         return CodeEntry(
             file=file.as_posix(),
             original=entry_json["original"],
             translation=entry_json["translation"],
             line=int(entry_json["key"]),
-            stage=entry_json['stage'] if entry_json.get(
-                "stage") is not None else 0
+            stage=entry_json["stage"] if entry_json.get("stage") is not None else 0,
         )
 
     def to_json(self) -> Dict:
@@ -75,11 +74,11 @@ class CodeEntry(Entry):
             "original": self.original,
             "translation": self.translation,
             "context": "",
-            "stage": self.stage
+            "stage": self.stage,
         }
 
     def to_id(self) -> str:
-        return "{:0>5}".format(self.line)
+        return f"{self.line:0>5}"
 
 
 @dataclass

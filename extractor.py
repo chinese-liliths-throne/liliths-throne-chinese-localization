@@ -7,10 +7,13 @@ import asyncio
 from lxml import etree
 
 from data import XmlEntry, CodeEntry, FilePair
-from const import BLACKLIST_FILE
+from const import BLACKLIST_FILE, BLACKLIST_HTMLCONTENT
+from util import split_htmlContent
 
 
-def try_xml_entry_attrib(file: str, element: etree._Element, attr: str) -> Optional[XmlEntry]:
+def try_xml_entry_attrib(
+    file: str, element: etree._Element, attr: str
+) -> Optional[XmlEntry]:
     if element.attrib.get(attr):
         return XmlEntry(
             file=file,
@@ -18,7 +21,8 @@ def try_xml_entry_attrib(file: str, element: etree._Element, attr: str) -> Optio
             translation="",
             node_tag=element.tag,
             attribute=attr,
-            stage=0
+            stage=0,
+            node_idx=0,
         )
     else:
         return None
@@ -38,62 +42,48 @@ def try_xml_entry_text(file: str, element: etree._Element) -> Optional[XmlEntry]
         node_tag=element.tag,
         attribute=None,
         stage=0,
-        node_idx=0
+        node_idx=0,
     )
 
-def split_htmlContent(file: str, element: etree._Element) -> Optional[List[XmlEntry]]:
+
+def get_splited_htmlContent(
+    file: Path, element: etree._Element
+) -> Optional[List[XmlEntry]]:
     if element.text is None:
         return None
 
     if element.text.strip() == "":
         return None
-    
-    extractor = HtmlContentExtractor()
-    
-    extract_lines = []
 
-    splited_text = element.text.split("\n")
-    for idx, line in enumerate(splited_text):
-        if extractor.need_translation(line.strip()):
-            extract_lines.append(idx)
+    attr = element.get("tag")
+    if attr in [x["tag"] for x in BLACKLIST_HTMLCONTENT if file.name in x["file"]]:
+        return [
+            XmlEntry(
+                file=file.as_posix(),
+                original=element.text,
+                translation="",
+                node_tag=element.tag,
+                attribute=attr.replace("_", "-"),
+                stage=0,
+                node_idx=0,
+            )
+        ]
+
+    extracted_blocks = split_htmlContent(element.text)
 
     return [
         XmlEntry(
-            file=file,
-            original=splited_text[line],
+            file=file.as_posix(),
+            original=block,
             translation="",
             node_tag=element.tag,
-            attribute=element.get('tag').replace("_","-") + f"_{line}",
-            stage=0
+            attribute=attr.replace("_", "-"),
+            stage=0,
+            node_idx=0,
         )
-        for line in extract_lines
+        for idx, block in enumerate(extracted_blocks)
     ]
 
-class HtmlContentExtractor:
-    def __init__(self):
-        self.interest_line: bool = True
-
-    def need_translation(self, line: str) -> bool:
-        if line == "":
-            return False
-        
-        if "#VAR" in line:
-            self.interest_line = False
-        elif "#ENDVAR" in line:
-            self.interest_line = True
-            return False
-        
-        if line == "#THEN" or line == "#ELSE" or line == "#ENDIF":
-            return False
-        elif re.search(r"#IF(?!\()", line) is not None:
-            return False
-        elif re.search(r"^#(ELSE)?IF\(.*\)$", line) is not None:
-            return False
-        elif re.search(r"^<.*>$", line) is not None:
-            return False
-        
-        if self.interest_line:
-            return True
 
 class Extractor:
     def __init__(self, root: str, new_dict_path: str, commit_sha: str):
@@ -101,7 +91,7 @@ class Extractor:
         self.target_dir = Path(new_dict_path)
 
         if not self.root.is_dir():
-            raise Exception("Invalid root directory")
+            raise NotADirectoryError("Invalid root directory")
         if not self.target_dir.is_dir():
             self.target_dir.mkdir()
 
@@ -119,13 +109,15 @@ class Extractor:
         # 递归获取所有后缀为xml的文件
         for file in res_path.glob("**/*.xml"):
             result_path = self.target_dir.joinpath(
-                file.relative_to(self.root)).with_suffix(".json")
+                file.relative_to(self.root)
+            ).with_suffix(".json")
             file_pairs.append(FilePair(file, result_path))
             if not result_path.parent.exists():
                 result_path.parent.mkdir(parents=True)
 
         tasks = [
-            self.extract_xml_gather(file.original_file, file.entry_file) for file in file_pairs
+            self.extract_xml_gather(file.original_file, file.entry_file)
+            for file in file_pairs
         ]
 
         loop.run_until_complete(asyncio.gather(*tasks))
@@ -139,7 +131,7 @@ class Extractor:
 
     async def extract_xml(self, xml_path: Path) -> Dict[str, XmlEntry]:
         entry_list = []
-        entry_cluster : Dict[str, Dict[str, int]] = {}
+        entry_cluster: Dict[str, Dict[str, int]] = {}
 
         def insert_entry(entry: Optional[XmlEntry]):
             if entry is None:
@@ -148,12 +140,15 @@ class Extractor:
             attrib = entry.attribute if entry.attribute is not None else "text"
 
             entry_json = entry.to_json()
-            if entry_cluster.get(tag, None) is None or entry_cluster[tag].get(attrib, None) is None:
-                entry_cluster[tag] = {attrib : 0}
+            if (
+                entry_cluster.get(tag, None) is None
+                or entry_cluster[tag].get(attrib, None) is None
+            ):
+                entry_cluster[tag] = {attrib: 0}
             else:
                 entry_cluster[tag][attrib] += 1
-            
-            entry_json['key'] += "_" + str(entry_cluster[tag][attrib])
+
+            entry_json["key"] += "_" + str(entry_cluster[tag][attrib])
             entry_list.append(entry_json)
 
         file = xml_path.as_posix()
@@ -245,11 +240,15 @@ class Extractor:
             e = try_xml_entry_text(file, criticalDescription)
             insert_entry(e)
 
-        for movePredictionDescriptionWithTarget in root.iter("movePredictionDescriptionWithTarget"):
+        for movePredictionDescriptionWithTarget in root.iter(
+            "movePredictionDescriptionWithTarget"
+        ):
             e = try_xml_entry_text(file, movePredictionDescriptionWithTarget)
             insert_entry(e)
 
-        for movePredictionDescriptionNoTarget in root.iter("movePredictionDescriptionNoTarget"):
+        for movePredictionDescriptionNoTarget in root.iter(
+            "movePredictionDescriptionNoTarget"
+        ):
             e = try_xml_entry_text(file, movePredictionDescriptionNoTarget)
             insert_entry(e)
 
@@ -282,7 +281,7 @@ class Extractor:
             if effects.getparent().tag == "response":
                 e = try_xml_entry_text(file, effects)
                 insert_entry(e)
-        
+
         for preParsingEffects in root.iter("preParsingEffects"):
             e = try_xml_entry_text(file, preParsingEffects)
             insert_entry(e)
@@ -406,13 +405,14 @@ class Extractor:
 
         # bookText
         for htmlContent in root.iter("htmlContent"):
-            """ 将htmlContent拆分成小段 """
-            # e_list = split_htmlContent(file, htmlContent)
-            # [insert_entry(e) for e in e_list]
+            # 将htmlContent拆分成小段
+            e_list = get_splited_htmlContent(xml_path, htmlContent)
+            for e in e_list:
+                insert_entry(e)
 
-            """ 保留大段文本 """
-            e = try_xml_entry_text(file, htmlContent)
-            insert_entry(e)
+            # 保留大段文本
+            # e = try_xml_entry_text(file, htmlContent)
+            # insert_entry(e)
 
         # Bodyparts
         # name
@@ -426,7 +426,9 @@ class Extractor:
         for bodyDescription in root.iter("bodyDescription"):
             e = try_xml_entry_text(file, bodyDescription)
             insert_entry(e)
-        for crotchBoobsTransformationDescription in root.iter("crotchBoobsTransformationDescription"):
+        for crotchBoobsTransformationDescription in root.iter(
+            "crotchBoobsTransformationDescription"
+        ):
             e = try_xml_entry_text(file, crotchBoobsTransformationDescription)
             insert_entry(e)
         for crotchBoobsBodyDescription in root.iter("crotchBoobsBodyDescription"):
@@ -539,13 +541,15 @@ class Extractor:
         # 递归获取所有后缀为xml的文件
         for file in src_path.glob("**/*.java"):
             result_path = self.target_dir.joinpath(
-                file.relative_to(self.root)).with_suffix(".json")
+                file.relative_to(self.root)
+            ).with_suffix(".json")
             file_pairs.append(FilePair(file, result_path))
             if not result_path.parent.exists():
                 result_path.parent.mkdir(parents=True)
 
         tasks = [
-            self.extract_java_gather(file.original_file, file.entry_file) for file in file_pairs
+            self.extract_java_gather(file.original_file, file.entry_file)
+            for file in file_pairs
         ]
 
         loop.run_until_complete(asyncio.gather(*tasks))
@@ -567,16 +571,15 @@ class Extractor:
             lines = f.readlines()
 
         for idx, line in enumerate(lines):
-
             line = line.strip()
             original_line = line
-            
+
             line = java_extractor.process_comment(line)
             line = line.strip()
 
             if len(line) == 0:
-                continue  
-                
+                continue
+
             # controller\eventListeners\tooltips
             if file.parent.name == "tooltips":
                 java_extractor.parse_tooltips(line)
@@ -647,7 +650,6 @@ class Extractor:
             elif "places" in file.parent.as_posix():
                 java_extractor.parse_places(file.name, line)
 
-
             java_extractor.parse_normal(line)
 
             if java_extractor.general_string_parse(line):
@@ -657,27 +659,29 @@ class Extractor:
                         original=original_line,
                         translation="",
                         line=idx,
-                        stage=0
+                        stage=0,
                     ).to_json()
                 )
 
         return entry_list
 
-SB_REGEX =      r"([sS][bB]|StringBuilder)(\(\))?"
-ADJ_REGEX =     r"[a|A]djectives?"
-TEXT_REGEX =    r"[t|T]exts?"
-NAME_REGEX =    r"[n|N]ames?"
-TITLE_REGEX =   r"[t|T]itles?"
-DESC_REGEX =    r"[d|D]esc(ription|riptor)?s?"
-DETER_REGEX =   r"[d|D]eterminers?"
-STRING_REGEX =  r"[s|S]trings?"
-PREFIX_REGEX =  r"[p|P]refixe?s?"
-SUFFIX_REGEX =  r"[s|S]uffixe?s?"
-EFFECT_REGEX =  r"[e|E]ff(ect)?s?"
-MOD_REGEX =     r"[m|M]od(ifier)?s?"
 
-ASSIGN_REGEX =  r"\s*\+?=\s*"
-ADD_REGEX    =  r"(List)?.add"
+SB_REGEX = r"([sS][bB]|StringBuilder)(\(\))?"
+ADJ_REGEX = r"[a|A]djectives?"
+TEXT_REGEX = r"[t|T]exts?"
+NAME_REGEX = r"[n|N]ames?"
+TITLE_REGEX = r"[t|T]itles?"
+DESC_REGEX = r"[d|D]esc(ription|riptor)?s?"
+DETER_REGEX = r"[d|D]eterminers?"
+STRING_REGEX = r"[s|S]trings?"
+PREFIX_REGEX = r"[p|P]refixe?s?"
+SUFFIX_REGEX = r"[s|S]uffixe?s?"
+EFFECT_REGEX = r"[e|E]ff(ect)?s?"
+MOD_REGEX = r"[m|M]od(ifier)?s?"
+
+ASSIGN_REGEX = r"\s*\+?=\s*"
+ADD_REGEX = r"(List)?.add"
+
 
 class JavaExtractor:
     def __init__(self):
@@ -690,15 +694,30 @@ class JavaExtractor:
 
         if "return" in line:
             self.interest_line = True
-        elif re.search(rf"({SB_REGEX}|{DESC_REGEX}|[o|O]utput)\.append", line) is not None:
+        elif (
+            re.search(rf"({SB_REGEX}|{DESC_REGEX}|[o|O]utput)\.append", line)
+            is not None
+        ):
             self.interest_line = True
         elif "new Response" in line:
             self.interest_line = True
         elif ".setInformation" in line:
             self.interest_line = True
-        elif re.search(rf"({SB_REGEX}|{ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}|{TITLE_REGEX}|{DESC_REGEX}|returnValue|{PREFIX_REGEX}|{SUFFIX_REGEX}|{STRING_REGEX}|{DETER_REGEX}|[o|O]utput){ASSIGN_REGEX}", line) is not None:
+        elif (
+            re.search(
+                rf"({SB_REGEX}|{ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}|{TITLE_REGEX}|{DESC_REGEX}|returnValue|{PREFIX_REGEX}|{SUFFIX_REGEX}|{STRING_REGEX}|{DETER_REGEX}|[o|O]utput){ASSIGN_REGEX}",
+                line,
+            )
+            is not None
+        ):
             self.interest_line = True
-        elif re.search(rf"({ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}(Plural)?|{TITLE_REGEX}|{DESC_REGEX}|{EFFECT_REGEX}|{MOD_REGEX}){ADD_REGEX}", line) is not None:
+        elif (
+            re.search(
+                rf"({ADJ_REGEX}|{TEXT_REGEX}|{NAME_REGEX}(Plural)?|{TITLE_REGEX}|{DESC_REGEX}|{EFFECT_REGEX}|{MOD_REGEX}){ADD_REGEX}",
+                line,
+            )
+            is not None
+        ):
             self.interest_line = True
         elif "list.add" in line or "list2.add" in line:
             self.interest_line = True
@@ -708,9 +727,9 @@ class JavaExtractor:
         #     self.interest_line = True
         elif "new Value<>" in line:
             self.interest_line = True
-        elif "public enum" in line:    # 枚举项
+        elif "public enum" in line:  # 枚举项
             self.interest_line = True
-        elif re.search(r"^\s*[A-Z_0-9]+\(", line) is not None:   # 枚举项
+        elif re.search(r"^\s*[A-Z_0-9]+\(", line) is not None:  # 枚举项
             self.interest_line = True
         elif "new String[]" in line or "static String[]" in line:
             self.interest_line = True
@@ -724,7 +743,12 @@ class JavaExtractor:
             self.interest_line = True
         elif "new NameTriplet" in line:
             self.interest_line = True
-        elif "UtilText.parse" in line or "Util.capitaliseSentence" in line or "UtilText.returnStringAtRandom" in line or "Util.randomItemFromValues" in line:
+        elif (
+            "UtilText.parse" in line
+            or "Util.capitaliseSentence" in line
+            or "UtilText.returnStringAtRandom" in line
+            or "Util.randomItemFromValues" in line
+        ):
             self.interest_line = True
         elif "new EventLogEntry" in line:
             self.interest_line = True
@@ -843,7 +867,7 @@ class JavaExtractor:
         elif filename == "KaysWarehouse.java":
             if "KaySexResponse(" in line:
                 self.interest_line = True
-        
+
         if "purchaseAvailability.append" in line:
             self.interest_line = True
         elif re.search(r"(Cry|Reaction|Speech)\s*=\s*", line) is not None:
@@ -903,8 +927,8 @@ class JavaExtractor:
     def parse_world(self, line: str):
         if "new AbstractWorldType" in line:
             self.interest_line = True
-    
-    def parse_game(self, filename: str, line:str):
+
+    def parse_game(self, filename: str, line: str):
         if filename == "Game.java":
             if "corruptionGains = " in line:
                 self.interest_line = True
@@ -912,21 +936,23 @@ class JavaExtractor:
             if "Content.put" in line or "Content.get" in line:
                 self.interest_line = True
 
-    def general_string_parse(self, line: str) -> bool:      
+    def general_string_parse(self, line: str) -> bool:
         if not self.interest_line:
             return False
 
-        if line.strip().endswith(';'):
+        if line.strip().endswith(";"):
             self.interest_line = False
         elif "@Override" in line:  # 有效？
             self.interest_line = False
 
-        
-        if re.search(r"(getMandatoryFirstOf|getAllOf|parseFromXMLFile)", line) is not None:
+        if (
+            re.search(r"(getMandatoryFirstOf|getAllOf|parseFromXMLFile)", line)
+            is not None
+        ):
             return False
         elif "SVGImageSB.append" in line:
             return False
-        elif "System.err.println" in line: # 暂不翻译报错信息
+        elif "System.err.println" in line:  # 暂不翻译报错信息
             return False
 
         if re.search(r"\"[^\"]+\"(?!\")", line) is not None:
@@ -934,27 +960,27 @@ class JavaExtractor:
         return False
 
     def process_comment(self, line: str) -> str:
-        '''
+        """
         处理多行注释
-        '''
+        """
         if re.search(r"^/\*", line) is not None:
             if "*/" not in line:
                 self.comment = True
             else:
-                return line[:line.find("/*")]
+                return line[: line.find("/*")]
         elif self.comment and "*/" in line:
             self.comment = False
-            return line[:line.find("*/")]
-        
+            return line[: line.find("*/")]
+
         # 处于多行注释内部则返回空字符串
         if self.comment:
             return ""
-        
+
         # 移除单行注释
         if line.find(r"//") != -1:
             match = re.search(r"(?<!s:)//", line)
             if match is not None:
-                return line[:match.start()]
-        
+                return line[: match.start()]
+
         # 返回原字符串
         return line

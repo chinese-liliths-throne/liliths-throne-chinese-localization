@@ -3,39 +3,63 @@ import shutil
 import os
 import argparse
 
+from pathlib import Path
+
 from extractor import Extractor
 from applier import Applier
 from processor import Processor
 from repo_dump import Repo
-
-from const import *
-from update import *
+from const import NEW_DICT_DIR, OLD_DICT_DIR
+from update import update_dict
 from logger import logger
+from util import dict_update_splited_htmlContent
 
 
 argparser = argparse.ArgumentParser()
-argparser.add_argument("--branch", type=str, default="dev",
-                       help="the specific branch name of the repo")
-argparser.add_argument("--pt-token", type=str, default="",
-                       help="paratranz token used to download dictionary, will be override by environment variale")
-argparser.add_argument("--udpate-repo", type=bool,
-                       default=True, help="whether to update repo file")
-argparser.add_argument("--udpate-dict", type=bool,
-                       default=True, help="whether to update dictionary file")
-argparser.add_argument("--special-process", action='store_true',
-                       help="whether to do special process")
-argparser.add_argument("--ignore-untranslated", action='store_true',
-                       help="whether to ignore untranslated entries")
+argparser.add_argument(
+    "--branch", type=str, default="dev", help="the specific branch name of the repo"
+)
+argparser.add_argument(
+    "--pt-token",
+    type=str,
+    default="",
+    help="paratranz token used to download dictionary, will be override by environment variale",
+)
+argparser.add_argument(
+    "--no-udpate-repo",
+    action="store_false",
+    default=True,
+    help="whether to update repo file",
+)
+argparser.add_argument(
+    "--no-udpate-dict",
+    action="store_false",
+    default=True,
+    help="whether to update dictionary file",
+)
+argparser.add_argument(
+    "--special-process", action="store_true", help="whether to do special process"
+)
+argparser.add_argument(
+    "--ignore-untranslated",
+    action="store_true",
+    help="whether to ignore untranslated entries",
+)
+
 
 def main():
     args = argparser.parse_args()
 
     branch = args.branch
-    pt_token = args.pt_token if os.environ.get(
-        'PARATRANZ_TOKEN') is None else os.environ.get('PARATRANZ_TOKEN')
+    pt_token = (
+        args.pt_token
+        if os.environ.get("PARATRANZ_TOKEN") is None
+        else os.environ.get("PARATRANZ_TOKEN")
+    )
     if pt_token == "":
-        pt_token = input("请输入Paratranz的Acccess Token，\t或选择设置环境变量“PARATRANZ_TOKEN”/在main.py文件夹中修改--pt-token的default值：")
-    
+        pt_token = input(
+            "请输入Paratranz的Acccess Token，\t或选择设置环境变量“PARATRANZ_TOKEN”/在main.py文件夹中修改--pt-token的default值："
+        )
 
     new_dict_dir = Path(NEW_DICT_DIR)
     old_dict_dir = Path(OLD_DICT_DIR)
@@ -55,7 +79,7 @@ def main():
 
     extractor = Extractor(root, new_dict_dir, repo.latest_commit)
     applier = Applier(root, new_dict_dir)
-    processor = Processor(new_dict_dir,pt_token)
+    processor = Processor(new_dict_dir, pt_token)
 
     logger.info("==== 正在提取翻译条目 ====")
     extractor.extract()
@@ -66,9 +90,11 @@ def main():
     logger.info("==== 正在解压最新字典文件 ====")
     repo.unzip_latest_dict()
 
+    dict_update_splited_htmlContent(old_dict_dir)
+
     logger.info("==== 正在合并字典 ====")
     update_dict(old_dict_dir, new_dict_dir, args.ignore_untranslated)
-    
+
     if args.special_process:
         logger.info("==== 正在应用特殊处理 ====")
         processor.process()
@@ -81,4 +107,4 @@ if __name__ == "__main__":
     start = time.time()
     main()
     end = time.time()
-    logger.info(f"===== 总耗时 {end - start}s =====")
+    logger.info("===== 总耗时 %ss =====", end - start)
