@@ -891,6 +891,8 @@ class JavaExtractor:
     def parse_item(self, line: str):
         if "new AbstractItemType" in line:
             self.interest_line = True
+        elif "new AbstractStatusEffect" in line:
+            self.interest_line = True
 
     def parse_positions(self, line: str):
         if "new AbstractSexPosition" in line:

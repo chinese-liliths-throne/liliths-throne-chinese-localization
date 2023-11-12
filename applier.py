@@ -152,6 +152,28 @@ class Applier:
                         ".getGenderName().getNeutral()",
                         ".getGenderName().getNeutralId()",
                     )
+                    # 调整频率
+                    line = line.replace(
+                        "addMuffle(modifiedSentence, 5);",
+                        "addMuffle(modifiedSentence, 10);",
+                    )
+                    line = line.replace(
+                        "addSexSounds(modifiedSentence, 6);",
+                        "addSexSounds(modifiedSentence, 12);",
+                    )
+                    line = line.replace(
+                        "addBimbo(modifiedSentence, 6);",
+                        "addBimbo(modifiedSentence, 12);",
+                    )
+                    line = line.replace(
+                        "addBimbo(modifiedSentence, 6);",
+                        "addBro(modifiedSentence, 12);",
+                    )
+                    line = line.replace(
+                        "replaceWithMuffle(modifiedSentence, 2);",
+                        "replaceWithMuffle(modifiedSentence, 6);",
+                    )
+
                 elif file.name == "AbstractAttribute.java":
                     # Attribute的name同时被用于逻辑和显示，故使用类似的nameAbbreviation暂时替代
                     line = line.replace("return name;", "return nameAbbreviation;")
