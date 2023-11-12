@@ -374,6 +374,31 @@ class Extractor:
         for pluralFemaleName in root.iter("pluralFemaleName"):
             e = try_xml_entry_text(file, pluralFemaleName)
             insert_entry(e)
+        for nameSillyMode in root.iter("nameSillyMode"):
+            e = try_xml_entry_text(file, nameSillyMode)
+            insert_entry(e)
+        for namePluralSillyMode in root.iter("namePluralSillyMode"):
+            e = try_xml_entry_text(file, namePluralSillyMode)
+            insert_entry(e)
+        for nameHalfDemon in root.iter("nameHalfDemon"):
+            e = try_xml_entry_text(file, nameHalfDemon)
+            insert_entry(e)
+        for namePluralHalfDemon in root.iter("namePluralHalfDemon"):
+            e = try_xml_entry_text(file, namePluralHalfDemon)
+            insert_entry(e)
+        for singularMaleNameHalfDemon in root.iter("singularMaleNameHalfDemon"):
+            e = try_xml_entry_text(file, singularMaleNameHalfDemon)
+            insert_entry(e)
+        for singularFemaleNameHalfDemon in root.iter("singularFemaleNameHalfDemon"):
+            e = try_xml_entry_text(file, singularFemaleNameHalfDemon)
+            insert_entry(e)
+        for pluralMaleNameHalfDemon in root.iter("pluralMaleNameHalfDemon"):
+            e = try_xml_entry_text(file, pluralMaleNameHalfDemon)
+            insert_entry(e)
+        for pluralFemaleNameHalfDemon in root.iter("pluralFemaleNameHalfDemon"):
+            e = try_xml_entry_text(file, pluralFemaleNameHalfDemon)
+            insert_entry(e)
+
         # description
         for feralName in root.iter("feralName"):
             e = try_xml_entry_text(file, feralName)
@@ -817,6 +842,8 @@ class JavaExtractor:
         if "new AbstractRace" in line:
             self.interest_line = True
         elif "new AbstractSubspecies" in line:
+            self.interest_line = True
+        elif "Modified.add" in line:
             self.interest_line = True
 
     def parse_character(self, filename: str, line: str):

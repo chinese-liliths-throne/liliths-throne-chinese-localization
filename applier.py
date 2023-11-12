@@ -392,6 +392,8 @@ class Applier:
             # special process for htmlContent
             if tag == "htmlContent":
                 for entry in entry_cluster:
+                    if entry.stage == 0 or entry.translation == entry.original:  # 无需修改
+                        continue
                     nodes = tree.xpath(f"//htmlContent[@tag='{entry.attribute}']")
                     node = nodes[0]
                     node.text = node.text.replace(
