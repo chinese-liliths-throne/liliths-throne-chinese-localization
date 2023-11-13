@@ -783,6 +783,8 @@ class JavaExtractor:
             self.interest_line = True
         elif ".addSpecialParsingString" in line:
             self.interest_line = True
+        elif "spawnDomGloryHoleNPC" in line or "spawnSubGloryHoleNPC" in line:
+            self.interest_line = True
 
     def parse_tooltips(self, line: str):
         if "tooltipSB.append" in line:
@@ -850,8 +852,11 @@ class JavaExtractor:
         if filename == "StatusEffect.java":
             if "tooDeep.add" in line or "stretching.add" in line:
                 self.interest_line = True
-        if filename == "GameCharacter.java":
+        elif filename == "GameCharacter.java":
             if "target = " in line:
+                self.interest_line = True
+        elif filename == "Litter.java":
+            if "entries.add" in line:
                 self.interest_line = True
         if re.search(r"writing\s*=\s*", line) is not None:
             self.interest_line = True
