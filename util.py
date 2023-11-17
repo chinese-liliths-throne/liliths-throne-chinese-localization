@@ -5,7 +5,23 @@ from pathlib import Path
 from typing import List, Optional, Dict
 
 from lxml import etree
+
+from const import NEW_DICT_DIR
 from logger import logger
+
+
+def count_entry(dict_dir):
+    dict_path = Path(dict_dir)
+
+    total_num = 0
+
+    for file in dict_path.glob("**/*.json"):
+        with open(file, "r", encoding="utf-8") as f:
+            data: List[Dict] = json.load(f)
+
+        total_num += len(data)
+
+    logger.info("There are %s entries in total.", total_num)
 
 
 def split_htmlContent(text: str) -> List[str]:
@@ -67,3 +83,7 @@ def dict_update_splited_htmlContent(old_dict_dir: Path):
 
 
 __all__ = ["split_htmlContent", "dict_update_splited_htmlContent"]
+
+
+if __name__ == "__main__":
+    count_entry(NEW_DICT_DIR)
