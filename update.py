@@ -163,7 +163,11 @@ async def update_data(
 
                 # 引号使用中文双引号，括号使用半角括号
                 zh_character = r"[一-龟]"
-                translation = re.sub(rf"'({zh_character}+)'", r"“\1”", translation)
+                if not (
+                    "effects" in old_dict_data[old_idx]["key"]
+                    or "preParsingEffects" in old_dict_data[old_idx]["key"]
+                ):
+                    translation = re.sub(rf"'({zh_character}+?)'", r"“\1”", translation)
                 translation = re.sub(r"（", "(", translation)
                 translation = re.sub(r"）", ")", translation)
                 translation = re.sub("\t ", "\t", translation)

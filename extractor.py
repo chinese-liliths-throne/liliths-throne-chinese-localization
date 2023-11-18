@@ -787,6 +787,12 @@ class JavaExtractor:
             self.interest_line = True
         elif ".addSpecialParsingString" in line:
             self.interest_line = True
+        elif "spawnDomGloryHoleNPC" in line or "spawnSubGloryHoleNPC" in line:
+            self.interest_line = True
+        elif "getTooltipText" in line:
+            self.interest_line = True
+        # elif line.strip().startswith('"'):
+        #     self.interest_line = True
 
     def parse_tooltips(self, line: str):
         if "tooltipSB.append" in line:
@@ -854,8 +860,11 @@ class JavaExtractor:
         if filename == "StatusEffect.java":
             if "tooDeep.add" in line or "stretching.add" in line:
                 self.interest_line = True
-        if filename == "GameCharacter.java":
+        elif filename == "GameCharacter.java":
             if "target = " in line:
+                self.interest_line = True
+        elif filename == "Litter.java":
+            if "entries.add" in line:
                 self.interest_line = True
         if re.search(r"writing\s*=\s*", line) is not None:
             self.interest_line = True
@@ -901,6 +910,9 @@ class JavaExtractor:
         elif filename == "KaysWarehouse.java":
             if "KaySexResponse(" in line:
                 self.interest_line = True
+        elif filename == "UtilText.java":
+            if "new ParserCommand" in line:
+                self.interest_line = True
 
         if "purchaseAvailability.append" in line:
             self.interest_line = True
@@ -925,6 +937,8 @@ class JavaExtractor:
         elif "Util.newArrayListOfValues" in line:
             self.interest_line = True
         elif "parsed.add" in line:
+            self.interest_line = True
+        elif "new AbstractStatusEffect" in line:
             self.interest_line = True
 
     def parse_positions(self, line: str):
@@ -956,6 +970,8 @@ class JavaExtractor:
         if "new AbstractPlaceType" in line:
             self.interest_line = True
         elif "new AbstractPlaceUpgrade" in line:
+            self.interest_line = True
+        elif "new AbstractGlobalPlaceType" in line:
             self.interest_line = True
 
     def parse_population(self, line: str):
