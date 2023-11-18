@@ -360,6 +360,10 @@ class Extractor:
         # no
 
         # subspecies
+        # bookName
+        for bookName in root.iter("bookName"):
+            e = try_xml_entry_text(file, bookName)
+            insert_entry(e)
         # name
         # namePlural
         for singularMaleName in root.iter("singularMaleName"):
@@ -917,6 +921,10 @@ class JavaExtractor:
 
     def parse_item(self, line: str):
         if "new AbstractItemType" in line:
+            self.interest_line = True
+        elif "Util.newArrayListOfValues" in line:
+            self.interest_line = True
+        elif "parsed.add" in line:
             self.interest_line = True
 
     def parse_positions(self, line: str):

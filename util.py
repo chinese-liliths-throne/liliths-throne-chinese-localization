@@ -11,13 +11,16 @@ from logger import logger
 def split_htmlContent(text: str) -> List[str]:
     extracted_blocks = []
 
-    PARAGRAPH_REGEX = r"(<p.*?>.*?</p>)"
+    PARAGRAPH_REGEX = r"(<p[^>]*?>.*?</p>)"
+    DIV_REGEX = r"(<div[^>]*?>.*?</div>)"
     VAR_REGEX = r"(#VAR.*?#ENDVAR)"
 
     paragraph_matches = re.findall(PARAGRAPH_REGEX, text, re.DOTALL)
+    div_matches = re.findall(DIV_REGEX, text, re.DOTALL)
     var_matches = re.findall(VAR_REGEX, text, re.DOTALL)
 
     extracted_blocks += paragraph_matches
+    extracted_blocks += div_matches
     extracted_blocks += var_matches
 
     if len(extracted_blocks) == 0:
