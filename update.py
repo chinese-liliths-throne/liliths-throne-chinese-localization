@@ -76,6 +76,7 @@ async def update_dict_file(
         outdated_data = list(filter(lambda entry: entry is not None, old_dict_data))
         if len(outdated_data) > 0:
             logger.info("在新提取中该文件存在遗失条目：%s", old_dict_file)
+            print([entry["key"] for entry in outdated_data])
 
     # 过时条目融合
     if outdated_file.exists():

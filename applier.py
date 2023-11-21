@@ -155,23 +155,23 @@ class Applier:
                     # 调整频率
                     line = line.replace(
                         "addMuffle(modifiedSentence, 5);",
-                        "addMuffle(modifiedSentence, 10);",
+                        "addMuffle(modifiedSentence, 8);",
                     )
                     line = line.replace(
                         "addSexSounds(modifiedSentence, 6);",
-                        "addSexSounds(modifiedSentence, 12);",
+                        "addSexSounds(modifiedSentence, 10);",
                     )
                     line = line.replace(
                         "addBimbo(modifiedSentence, 6);",
-                        "addBimbo(modifiedSentence, 12);",
+                        "addBimbo(modifiedSentence, 10);",
                     )
                     line = line.replace(
                         "addBimbo(modifiedSentence, 6);",
-                        "addBro(modifiedSentence, 12);",
+                        "addBro(modifiedSentence, 10);",
                     )
                     line = line.replace(
                         "replaceWithMuffle(modifiedSentence, 2);",
-                        "replaceWithMuffle(modifiedSentence, 6);",
+                        "replaceWithMuffle(modifiedSentence, 5);",
                     )
 
                 elif file.name == "AbstractAttribute.java":
@@ -352,6 +352,11 @@ class Applier:
                         + '\t\t\treturn "Bree";\n'
                         + "\t\telse\n"
                         + '\t\t\treturn "Brax";\n',
+                    )
+                elif file.name == "Sex.java":
+                    line = line.replace(
+                        "positionActionsPlayer.sort((a1, a2) ->",
+                        "positionActionsPlayer.sort((a1, a2) -> true?((a1.getActionType() == a2.getActionType())? (a1.isPositionSwap() == a2.isPositionSwap() ? a1.getActionTitle().compareTo(a2.getActionTitle()) : (a1.isPositionSwap() ? -1 : 1)): (a1.getActionType() == SexActionType.POSITIONING_MENU ? -1 : 1)):",
                     )
                 lines[idx] = line
 

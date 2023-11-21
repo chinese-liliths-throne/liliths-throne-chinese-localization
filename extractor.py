@@ -724,7 +724,10 @@ class JavaExtractor:
         if "return" in line:
             self.interest_line = True
         elif (
-            re.search(rf"({SB_REGEX}|{DESC_REGEX}|[o|O]utput)\.append", line)
+            re.search(
+                rf"({SB_REGEX}|{DESC_REGEX}|{TEXT_REGEX}|{STRING_REGEX}|[o|O]utput)\.append",
+                line,
+            )
             is not None
         ):
             self.interest_line = True
@@ -791,8 +794,8 @@ class JavaExtractor:
             self.interest_line = True
         elif "getTooltipText" in line:
             self.interest_line = True
-        # elif line.strip().startswith('"'):
-        #     self.interest_line = True
+        elif line.strip().startswith('"'):
+            self.interest_line = True
 
     def parse_tooltips(self, line: str):
         if "tooltipSB.append" in line:
