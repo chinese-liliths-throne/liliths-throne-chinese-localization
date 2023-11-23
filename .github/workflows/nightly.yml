@@ -45,7 +45,7 @@ jobs:
         mvn package
     - name: Move to staging
       run: |
-        mv "./liliths-throne-public-dev/target/Lilith's Throne (linux)" "liliths-throne-linux"
+        mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (linux)" "liliths-throne-linux"
     - name: Zip
       run: |
         zip -r "liliths-throne-linux" "liliths-throne-linux"
@@ -90,7 +90,7 @@ jobs:
         mvn package -Dtarget.platform=linux-aarch64 -Dexclude.platform=linux
     - name: Move to staging
       run: |
-        mv "./liliths-throne-public-dev/target/Lilith's Throne (linux-aarch64)" "liliths-throne-linux-aarch64"
+        mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (linux-aarch64)" "liliths-throne-linux-aarch64"
     - name: Zip
       run: |
         zip -r "liliths-throne-linux-aarch64" "liliths-throne-linux-aarch64"
@@ -135,7 +135,7 @@ jobs:
         mvn package -Dtarget.platform=mac -Dexclude.platform=linux
     - name: Move to staging
       run: |
-        mv "./liliths-throne-public-dev/target/Lilith's Throne (mac)" "liliths-throne-mac"
+        mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (mac)" "liliths-throne-mac"
     - name: Zip
       run: |
         zip -r "liliths-throne-mac" "liliths-throne-mac"
@@ -190,11 +190,11 @@ jobs:
   #   - name: Add JRE
   #     shell: bash
   #     run: |
-  #         jlink --module-path $JAVA_HOME/jmods/ --add-modules ALL-MODULE-PATH --output "./liliths-throne-public-dev/target/Lilith's Throne (win)/jre"
+  #         jlink --module-path $JAVA_HOME/jmods/ --add-modules ALL-MODULE-PATH --output "./${{ vars.REPO_PATH }}/target/Lilith's Throne (win)/jre"
   #   - name: Move to staging
   #     shell: bash
   #     run: |
-  #       mv "./liliths-throne-public-dev/target/Lilith's Throne (win)" "liliths-throne-win-x86"
+  #       mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (win)" "liliths-throne-win-x86"
   #   - uses: vimtor/action-zip@v1.1
   #     with:
   #       files: liliths-throne-win
@@ -250,11 +250,11 @@ jobs:
     - name: Add JRE
       shell: bash
       run: |
-          jlink --module-path $JAVA_HOME/jmods/ --add-modules ALL-MODULE-PATH --output "./liliths-throne-public-dev/target/Lilith's Throne (win)/jre"
+          jlink --module-path $JAVA_HOME/jmods/ --add-modules ALL-MODULE-PATH --output "./${{ vars.REPO_PATH }}/target/Lilith's Throne (win)/jre"
     - name: Move to staging
       shell: bash
       run: |
-        mv "./liliths-throne-public-dev/target/Lilith's Throne (win)" "liliths-throne-win"
+        mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (win)" "liliths-throne-win"
     - uses: vimtor/action-zip@v1.1
       with:
         files: liliths-throne-win
