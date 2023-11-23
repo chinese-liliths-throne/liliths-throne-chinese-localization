@@ -18,17 +18,28 @@
 在此附上使用手机游玩的[可能性方案](https://github.com/Agreous/liliths-throne-on-android#readme)，比较复杂，且对手机性能有一定要求。
 
 ### 自行编译
+#### 安装依赖
 通过
 ``` shell
 pip install -r requirements.txt
 ```
 安装所需依赖
 
-首先打开**main.py**在PARATRANZ_ACCESS_TOKEN处填入从paratranz获取的API TOKEN(个人页面-设置)，再使用
+#### 应用汉化
+首先打开**main.py**在PARATRANZ_ACCESS_TOKEN处填入从paratranz获取的API TOKEN(个人页面-设置)，再使用（根据系统或所用终端）
+``` bash
+bash ./bash.sh
+```
+或
+``` powershell
+./bash.bat
+```
+* 由于以上两种方法需要依靠git的submodule，在clone仓库时会出现网络连接问题，若无法使用，也可以选择直接执行
 ``` shell
 python main.py
 ```
 
+#### 编译文件
 若希望同时获得exe文件，请在编译前先运行
 ``` shell
 python exe_bundle.py

@@ -26,7 +26,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Run Update and Apply
       run: |
-        python main.py
+        bash ./pipeline.sh
       env:
         PARATRANZ_TOKEN: ${{ secrets.PARATRANZ_TOKEN }} 
         USE_GITHUB_ACTION: ${{ vars.USE_GITHUB_ACTION }}
@@ -71,7 +71,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Run Update and Apply
       run: |
-        python main.py
+        bash ./pipeline.sh
       env:
         PARATRANZ_TOKEN: ${{ secrets.PARATRANZ_TOKEN }} 
         USE_GITHUB_ACTION: ${{ vars.USE_GITHUB_ACTION }}
@@ -116,7 +116,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Run Update and Apply
       run: |
-        python main.py
+        bash ./pipeline.sh
       env:
         PARATRANZ_TOKEN: ${{ secrets.PARATRANZ_TOKEN }} 
         USE_GITHUB_ACTION: ${{ vars.USE_GITHUB_ACTION }}
@@ -163,7 +163,7 @@ jobs:
   #   - name: Run Update and Apply
   #     shell: bash
   #     run: |
-  #       python main.py
+  #       bash ./pipeline.sh
   #     env:
   #       PARATRANZ_TOKEN: ${{ secrets.PARATRANZ_TOKEN }} 
   #       USE_GITHUB_ACTION: ${{ vars.USE_GITHUB_ACTION }}
@@ -224,7 +224,7 @@ jobs:
     - name: Run Update and Apply
       shell: bash
       run: |
-        python main.py
+        bash ./pipeline.sh
       env:
         PARATRANZ_TOKEN: ${{ secrets.PARATRANZ_TOKEN }} 
         USE_GITHUB_ACTION: ${{ vars.USE_GITHUB_ACTION }}

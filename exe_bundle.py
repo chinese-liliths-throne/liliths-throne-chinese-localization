@@ -31,7 +31,7 @@ def add_plugin(pom_path: Path, plugin_path: Path):
 	pom_tree.write(pom_path, pretty_print=True, encoding="utf-8")
 
 if __name__ == "__main__":
-	pom_path = Path(SOURCE_DIR + REPO_BRANCH) / "pom.xml"
+	pom_path = Path(SOURCE_DIR) / "pom.xml"
 	plugin_path = Path(EXE_PLUGIN_PATH)
 
 	add_plugin(pom_path, plugin_path)

@@ -69,6 +69,7 @@ class Applier:
         shutil.copytree(
             Path(ROOT_DIR) / FONT_DIR / FONT_DIR_NAME,
             self.root / FONT_TARGET_DIR / FONT_DIR_NAME,
+            dirs_exist_ok=True
         )
         shutil.copy(
             Path(ROOT_DIR) / "replace_file" / "GenderNames.java",
@@ -296,6 +297,17 @@ class Applier:
                         + "\t}\n"
                         + "\tpublic static String intToTally(int integer, int max) {",
                     )
+                    line = line.replace(
+                        'private static Pattern endOfSentence = Pattern.compile("[,.!?]");',
+                        'private static Pattern endOfSentence = Pattern.compile("[,.!?，。！？、]");',
+                    )
+                    # line = line.replace(
+                    #     "if(sentence.charAt(i)==' '",
+                    #     "if(true")
+                    # line = line.replace(
+                    #     "&& Character.isLetter(sentence.charAt(i+1))",
+                    #     "&& !isEndOfSentence(sentence.charAt(i+1))"
+                    # )
                 elif file.name == "Units.java":
                     # 调整日期格式
                     line = line.replace(

@@ -69,13 +69,13 @@ def main():
     shutil.rmtree(old_dict_dir, ignore_errors=True)
 
     repo = Repo(branch, pt_token)
+    root = repo.source_dir
+
     if not args.no_udpate_repo:
         logger.info("==== 正在下载最新版本游戏源码 ====")
         repo.fetch_latest_version()
-    logger.info("==== 正在解压最新版本游戏源码 ====")
-    repo.unzip_latest_version()
-
-    root = repo.source_dir
+        logger.info("==== 正在解压最新版本游戏源码 ====")
+        repo.unzip_latest_version()
 
     extractor = Extractor(root, new_dict_dir, repo.latest_commit)
     applier = Applier(root, new_dict_dir)
