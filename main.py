@@ -26,13 +26,13 @@ argparser.add_argument(
     help="paratranz token used to download dictionary, will be override by environment variale",
 )
 argparser.add_argument(
-    "--no-udpate-repo",
+    "--no-update-repo",
     action="store_true",
     default=False,
     help="whether to update repo file",
 )
 argparser.add_argument(
-    "--no-udpate-dict",
+    "--no-update-dict",
     action="store_true",
     default=False,
     help="whether to update dictionary file",
@@ -71,7 +71,7 @@ def main():
     repo = Repo(branch, pt_token)
     root = repo.source_dir
 
-    if not args.no_udpate_repo:
+    if not args.no_update_repo:
         logger.info("==== 正在下载最新版本游戏源码 ====")
         repo.fetch_latest_version()
         logger.info("==== 正在解压最新版本游戏源码 ====")
@@ -84,7 +84,7 @@ def main():
     logger.info("==== 正在提取翻译条目 ====")
     extractor.extract()
 
-    if not args.no_udpate_dict:
+    if not args.no_update_dict:
         logger.info("==== 正在下载最新字典文件 ====")
         repo.fetch_latest_dict()
     logger.info("==== 正在解压最新字典文件 ====")
