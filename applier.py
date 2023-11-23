@@ -69,7 +69,7 @@ class Applier:
         shutil.copytree(
             Path(ROOT_DIR) / FONT_DIR / FONT_DIR_NAME,
             self.root / FONT_TARGET_DIR / FONT_DIR_NAME,
-            dirs_exist_ok=True
+            dirs_exist_ok=True,
         )
         shutil.copy(
             Path(ROOT_DIR) / "replace_file" / "GenderNames.java",
