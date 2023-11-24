@@ -61,10 +61,11 @@ class Repo:
 
         if extract_path.exists():
             shutil.rmtree(extract_path, ignore_errors=True)
-        extract_path.mkdir()
+        # extract_path.mkdir()
 
         with zipfile.ZipFile(zip_path, "r") as zip_ref:
             zip_ref.extractall(extract_path.parent)
+        os.rename("./liliths-throne-public-dev/", extract_path)
 
     def fetch_latest_dict(self) -> None:
         output_url = PARATRANZ_API_URL + "/artifacts"  # use post
