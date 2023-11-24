@@ -916,6 +916,9 @@ class JavaExtractor:
         elif filename == "UtilText.java":
             if "new ParserCommand" in line:
                 self.interest_line = True
+        elif filename == "SlaveDialogue.java":
+            if "legsSpreading = " in line:
+                self.interest_line = True
 
         if "purchaseAvailability.append" in line:
             self.interest_line = True
@@ -991,6 +994,11 @@ class JavaExtractor:
                 self.interest_line = True
         elif filename == "Combat.java":
             if "Content.put" in line or "Content.get" in line:
+                self.interest_line = True
+            elif "critText.append" in line:
+                self.interest_line = True
+        elif filename == "Spell.java":
+            if "cost = " in line:
                 self.interest_line = True
 
     def general_string_parse(self, line: str) -> bool:
