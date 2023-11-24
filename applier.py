@@ -11,6 +11,7 @@ from urllib.parse import quote
 from const import (
     ROOT_DIR,
     FONT_DIR,
+    SVG_DIR,
     FONT_DIR_NAME,
     FONT_TARGET_DIR,
     PARATRANZ_PROJECT_ID,
@@ -55,13 +56,14 @@ class Applier:
         self.dict_dir = Path(dict_dir)
 
     def apply(self) -> None:
-        self.apply_res()
-        self.apply_src()
+        # self.apply_res()
+        # self.apply_src()
         self.apply_special()  # 对于其他优化游戏的文件进行调整
 
     def apply_special(self) -> None:
-        self.modify_css()
-        self.modify_java()
+        # self.modify_css()
+        # self.modify_java()
+        self.modify_xml()
         self.add_files()
 
     def add_files(self) -> None:
@@ -374,6 +376,23 @@ class Applier:
 
             with open(file, "w", encoding="utf-8") as f:
                 f.writelines(lines)
+
+    def modify_xml(self) -> None:
+        for file in self.root.glob("**/*.xml"):
+            if file.name == "eisek_mob_hideout.xml":
+                with open(file, mode="r", encoding="utf-8") as f:
+                    line = f.read()
+                with open(Path(ROOT_DIR) / SVG_DIR / "eisek_mob_hideout.svg", "r", encoding="utf-8") as f:
+                    svg = f.read()
+
+                print(line, svg)
+
+                print(re.findall(r"(<svg.*</svg>)",line,re.DOTALL))
+
+                new_line = re.sub(r"(<svg.*</svg>)", svg, line, flags=re.DOTALL)
+                with open(file, mode="w", encoding="utf-8") as f:
+                    f.write(new_line)
+
 
     def apply_res(self) -> None:
         original_files = [file for file in self.root.glob("**/*.xml")]

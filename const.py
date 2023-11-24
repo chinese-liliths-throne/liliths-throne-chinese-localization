@@ -17,7 +17,8 @@ ROOT_DIR = "./"
 SOURCE_DIR = "./liliths-throne-public"
 NEW_DICT_DIR = "./new_dict"
 OLD_DICT_DIR = "./old_dict"
-FONT_DIR = "./font"
+FONT_DIR = "./resources/font"
+SVG_DIR = "./resources/svg"
 FONT_TARGET_DIR = "./res/fonts"
 
 EXE_PLUGIN_PATH = "./exe-plugin.xml"
@@ -63,6 +64,7 @@ __all__ = [
     "NEW_DICT_DIR",
     "OLD_DICT_DIR",
     "FONT_DIR",
+    "SVG_DIR",
     "FONT_TARGET_DIR",
     "EXE_PLUGIN_PATH",
     "OUTDATE_DIR_NAME",
