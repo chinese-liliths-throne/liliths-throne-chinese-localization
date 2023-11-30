@@ -6,7 +6,7 @@ name: One-way Pipeline (Nightly)
 on:
   workflow_dispatch:
   schedule:
-     - cron: '40 12 * * *'
+     - cron: '50 12 * * *'
 
 permissions: write-all
 
@@ -291,15 +291,23 @@ jobs:
     #   uses: actions/download-artifact@v2.1.1
     #   with:
     #     name: "liliths-throne-win-x86"
-    - name: Set Release version env variable
-      run: |
-        echo "RELEASE_VERSION=$(date "+%y.%m.%d")" >> $GITHUB_ENV
+    # - name: Set Release version env variable
+    #   run: |
+    #     echo "RELEASE_VERSION=$(date "+%y.%m.%d")" >> $GITHUB_ENV
     - name: Automatic Releases
       uses: marvinpinto/action-automatic-releases@v1.2.1
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "${{ env.RELEASE_VERSION }}"
+        # automatic_release_tag: "${{ env.RELEASE_VERSION }}"
         prerelease: true
-        title: "Release ${{ env.RELEASE_VERSION }}"
+        title: "Pre-Release ${{ env.RELEASE_VERSION }}"
         files: |
           *.zip
+    - name: Run latest-tag
+      uses: EndBug/latest-tag@latest
+      with:
+        # You can change the name of the tag or branch with this input.
+        ref: pre-latest
+    
+        # If a description is provided, the action will use it to create an annotated tag. If none is given, the action will create a lightweight tag.
+        description: The latest version of unfinished localized game
