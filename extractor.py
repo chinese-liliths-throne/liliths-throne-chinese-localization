@@ -48,14 +48,16 @@ def try_xml_entry_text(file: str, element: etree._Element) -> Optional[XmlEntry]
 
 def get_splited_htmlContent(
     file: Path, element: etree._Element
-) -> Optional[List[XmlEntry]]:
+) -> List[XmlEntry]:
     if element.text is None:
-        return None
+        return []
 
     if element.text.strip() == "":
-        return None
+        return []
 
     attr = element.get("tag")
+    if attr is None:
+        raise ValueError("htmlContent tag is None")
     if attr in [x["tag"] for x in BLACKLIST_HTMLCONTENT if file.name in x["file"]]:
         return [
             XmlEntry(
@@ -129,7 +131,7 @@ class Extractor:
         with open(entry_path, "w", encoding="utf-8") as f:
             json.dump(entry_list, f, ensure_ascii=False, indent=4)
 
-    async def extract_xml(self, xml_path: Path) -> Dict[str, XmlEntry]:
+    async def extract_xml(self, xml_path: Path) -> List[Dict[str, XmlEntry]]:
         entry_list = []
         entry_cluster: Dict[str, Dict[str, int]] = {}
 
@@ -165,7 +167,8 @@ class Extractor:
             # insert_entry(e)
             # e = try_xml_entry_attrib(file, name, "nameMasculine")
             # insert_entry(e)
-            if name.getparent().tag == "formattingNames":
+            parent = name.getparent()
+            if parent is not None and parent.tag == "formattingNames":
                 continue
             e = try_xml_entry_text(file, name)
             insert_entry(e)
@@ -278,7 +281,8 @@ class Extractor:
             insert_entry(e)
 
         for effects in root.iter("effects"):
-            if effects.getparent().tag == "response":
+            parent = effects.getparent()
+            if parent is not None and parent.tag == "response":
                 e = try_xml_entry_text(file, effects)
                 insert_entry(e)
 
@@ -513,7 +517,8 @@ class Extractor:
         # name
         # description
         for effect in root.iter("effect"):
-            if effect.getparent().tag == "statusEffects":
+            parent = effect.getparent()
+            if parent is not None and parent.tag == "statusEffects":
                 continue
             e = try_xml_entry_text(file, effect)
             insert_entry(e)
@@ -556,6 +561,17 @@ class Extractor:
             insert_entry(e)
         for onCriticalHitEffect in root.iter("onCriticalHitEffect"):
             e = try_xml_entry_text(file, onCriticalHitEffect)
+            insert_entry(e)
+
+        # names
+        for fem in root.iter("fem"):
+            e = try_xml_entry_text(file, fem)
+            insert_entry(e)
+        for _and in root.iter("and"):
+            e = try_xml_entry_text(file, _and)
+            insert_entry(e)
+        for mas in root.iter("mas"):
+            e = try_xml_entry_text(file, mas)
             insert_entry(e)
 
         return entry_list
@@ -684,7 +700,7 @@ class Extractor:
             if java_extractor.general_string_parse(line):
                 entry_list.append(
                     CodeEntry(
-                        file=file,
+                        file=file.as_posix(),
                         original=original_line,
                         translation="",
                         line=idx,

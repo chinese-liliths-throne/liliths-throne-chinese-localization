@@ -6,7 +6,7 @@ from pathlib import Path
 @dataclass
 class Entry:
     file: str
-    original: str
+    original: str | bytes
     translation: str
     stage: int
 
