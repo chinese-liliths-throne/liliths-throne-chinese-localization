@@ -36,7 +36,10 @@ bash ./bash.sh
 ```
 * 由于以上两种方法需要依靠git的submodule，在clone仓库时会出现网络连接问题，若无法使用，也可以选择直接执行
 ``` shell
+# 主体项目
 python main.py
+# mod项目
+python main.py --target mod
 ```
 
 #### 编译文件

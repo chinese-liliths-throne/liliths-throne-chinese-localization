@@ -3,8 +3,10 @@ git submodule update
 
 :: if the submodule folder "liliths-throne-public" exists, discard all the changes to it
 if exist liliths-throne-public (
-	git submodule foreach git reset --hard
-	git submodule foreach git clean -df
+	cd liliths-throne-public
+	git reset --hard
+	git clean -df
+	cd ..
 )
 
 python ./main.py --no-update-repo

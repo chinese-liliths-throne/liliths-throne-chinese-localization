@@ -10,9 +10,10 @@ from logger import logger
 
 
 class Repo:
-    def __init__(self, branch: str, paratranz_access_token: str) -> None:
+    def __init__(self, target: str, branch: str, paratranz_access_token: str) -> None:
+        self.target = target
         self.branch = branch
-        self.source_dir: Path = Path(SOURCE_DIR)
+        self.source_dir: Path = Path(SOURCE_DIR[target])
         self.paratranz_access_token = paratranz_access_token
         self.latest_commit = ""
 
@@ -21,9 +22,9 @@ class Repo:
             download_url = ""
         else:
             download_url = PROXY_URL
-        download_url += REPO_BASE_URL + f"/archive/refs/heads/{self.branch}.zip"
+        download_url += REPO_BASE_URL[self.target] + f"/archive/refs/heads/{self.branch}.zip"
 
-        api_url = REPO_API_URL + f"/commits"
+        api_url = REPO_API_URL[self.target] + f"/commits"
 
         path = Path(DOWNLOAD_DIR)
 
@@ -67,9 +68,11 @@ class Repo:
             zip_ref.extractall(extract_path.parent)
         os.rename("./liliths-throne-public-dev/", extract_path)
 
+    def get_paratranz_api_url(self):
+        return PARATRANZ_API_BASE_URL + "/projects/" + PARATRANZ_PROJECT_ID[self.target]
+
     def fetch_latest_dict(self) -> None:
-        output_url = PARATRANZ_API_URL + "/artifacts"  # use post
-        download_url = PARATRANZ_API_URL + "/artifacts/download"
+        download_url = self.get_paratranz_api_url() + "/artifacts/download"
 
         path = Path(DOWNLOAD_DIR)
 
@@ -86,10 +89,9 @@ class Repo:
 
         request.urlretrieve(download_url, file_path)
 
-    def unzip_latest_dict(self) -> None:
+    def unzip_latest_dict(self, old_dict_dir) -> None:
         zip_path = Path(DOWNLOAD_DIR) / f"dict-latest.zip"
         extract_path = Path(ROOT_DIR)
-        old_dict_dir = Path(OLD_DICT_DIR)
 
         with zipfile.ZipFile(zip_path, "r") as zip_ref:
             zip_ref.extractall(extract_path)

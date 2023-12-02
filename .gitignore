@@ -160,5 +160,4 @@ cython_debug/
 #.idea/
 
 downloads/
-new_dict/
-old_dict/
+*_dict/

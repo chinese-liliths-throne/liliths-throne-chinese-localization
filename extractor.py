@@ -88,7 +88,8 @@ def get_splited_htmlContent(
 
 
 class Extractor:
-    def __init__(self, root: str, new_dict_path: str, commit_sha: str):
+    def __init__(self, target:str , root: str, new_dict_path: str, commit_sha: str):
+        self.target = target
         self.root = Path(root)
         self.target_dir = Path(new_dict_path)
 
@@ -99,12 +100,16 @@ class Extractor:
 
     def extract(self):
         self.extract_res()
-        self.extract_src()
+        if self.target == "main":
+            self.extract_src()
 
     def extract_res(self):
         loop = asyncio.get_event_loop()
 
-        res_path = self.root.joinpath("res")
+        if self.target == "main":
+            res_path = self.root.joinpath("res")
+        elif self.target == "mod":
+            res_path = self.root
 
         file_pairs: List[FilePair] = []
 

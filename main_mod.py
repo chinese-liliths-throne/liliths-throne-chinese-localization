@@ -9,13 +9,16 @@ from extractor import Extractor
 from applier import Applier
 from processor import Processor
 from repo_dump import Repo
-from const import NEW_DICT_DIR, OLD_DICT_DIR, REPO_BRANCH
+from const import NEW_DICT_DIR, OLD_DICT_DIR
 from update import update_dict
 from logger import logger
 from util import dict_update_splited_htmlContent
 
 
 argparser = argparse.ArgumentParser()
+argparser.add_argument(
+    "--branch", type=str, default="dev", help="the specific branch name of the repo"
+)
 argparser.add_argument(
     "--pt-token",
     type=str,
@@ -43,20 +46,11 @@ argparser.add_argument(
     help="whether to ignore untranslated entries",
 )
 
-argparser.add_argument(
-    "--target",
-    type=str,
-    default="main",
-    choices=["main", "mod"],
-    help="determine which project to localize"
-)
-
 
 def main():
     args = argparser.parse_args()
 
-    target = args.target
-
+    branch = args.branch
     pt_token = (
         args.pt_token
         if os.environ.get("PARATRANZ_TOKEN") is None
@@ -67,17 +61,14 @@ def main():
             "请输入Paratranz的Acccess Token，\t或选择设置环境变量“PARATRANZ_TOKEN”/在main.py文件夹中修改--pt-token的default值："
         )
 
-    new_dict_dir = Path(NEW_DICT_DIR[target])
-    old_dict_dir = Path(OLD_DICT_DIR[target])
+    new_dict_dir = Path(NEW_DICT_DIR)
+    old_dict_dir = Path(OLD_DICT_DIR)
 
     logger.info("==== 正在移除临时文件 ====")
     shutil.rmtree(new_dict_dir, ignore_errors=True)
     shutil.rmtree(old_dict_dir, ignore_errors=True)
 
-    repo = Repo(
-        target,
-        REPO_BRANCH[target], 
-        pt_token)
+    repo = Repo(branch, pt_token)
     root = repo.source_dir
 
     if not args.no_update_repo:
@@ -86,8 +77,8 @@ def main():
         logger.info("==== 正在解压最新版本游戏源码 ====")
         repo.unzip_latest_version()
 
-    extractor = Extractor(target, root, new_dict_dir, repo.latest_commit)
-    applier = Applier(target, root, new_dict_dir)
+    extractor = Extractor(root, new_dict_dir, repo.latest_commit)
+    applier = Applier(root, new_dict_dir)
     processor = Processor(new_dict_dir, pt_token)
 
     logger.info("==== 正在提取翻译条目 ====")
@@ -97,7 +88,7 @@ def main():
         logger.info("==== 正在下载最新字典文件 ====")
         repo.fetch_latest_dict()
     logger.info("==== 正在解压最新字典文件 ====")
-    repo.unzip_latest_dict(old_dict_dir)
+    repo.unzip_latest_dict()
 
     logger.info("==== 正在合并字典 ====")
     update_dict(old_dict_dir, new_dict_dir, args.ignore_untranslated)

@@ -51,14 +51,16 @@ def valid_element(element: etree._Element) -> bool:
 
 
 class Applier:
-    def __init__(self, root: str, dict_dir: str) -> None:
+    def __init__(self, target: str, root: str, dict_dir: str) -> None:
+        self.target = target
         self.root = Path(root)
         self.dict_dir = Path(dict_dir)
 
     def apply(self) -> None:
         self.apply_res()
-        self.apply_src()
-        self.apply_special()  # 对于其他优化游戏的文件进行调整
+        if self.target == "main":
+            self.apply_src()
+            self.apply_special()  # 对于其他优化游戏的文件进行调整
 
     def apply_special(self) -> None:
         self.modify_css()
