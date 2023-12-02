@@ -33,7 +33,7 @@ def add_plugin(pom_path: Path, plugin_path: Path):
 
 
 if __name__ == "__main__":
-    pom_path = Path(SOURCE_DIR) / "pom.xml"
+    pom_path = Path(SOURCE_DIR["main"]) / "pom.xml"
     plugin_path = Path(EXE_PLUGIN_PATH)
 
     add_plugin(pom_path, plugin_path)
