@@ -1,3 +1,6 @@
 [submodule "liliths-throne-public"]
 	path = liliths-throne-public
 	url = https://github.com/Innoxia/liliths-throne-public
+[submodule "lilith-mod-pack"]
+	path = lilith-mod-pack
+	url = https://github.com/chinese-liliths-throne/lilith-mod-pack
