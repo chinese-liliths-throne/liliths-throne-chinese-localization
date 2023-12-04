@@ -498,7 +498,7 @@ class Applier:
                 "\t****%s[%s]:翻译文本有奇数个双引号！|https://paratranz.cn/projects/%s/strings?text=%s",
                 file.as_posix(),
                 line,
-                PARATRANZ_PROJECT_ID,
+                PARATRANZ_PROJECT_ID[self.target],
                 quote(original),
             )
             print(text)
@@ -507,7 +507,7 @@ class Applier:
                 "\t****%s[%s]:翻译文本有额外换行符！|https://paratranz.cn/projects/%s/strings?text=%s",
                 file.as_posix(),
                 line,
-                PARATRANZ_PROJECT_ID,
+                PARATRANZ_PROJECT_ID[self.target],
                 quote(original),
             )
             translation = translation.replace("\\n", "")
@@ -521,7 +521,7 @@ class Applier:
                 "\t****%s[%s]:翻译文本末尾无逗号！|https://paratranz.cn/projects/%s/strings?text=%s",
                 file.as_posix(),
                 line,
-                PARATRANZ_PROJECT_ID,
+                PARATRANZ_PROJECT_ID[self.target],
                 quote(original),
             )
             translation += ","
@@ -534,7 +534,7 @@ class Applier:
                 "\t****%s[%s]:翻译文本末尾无分号！|https://paratranz.cn/projects/%s/strings?text=%s",
                 file.as_posix(),
                 line,
-                PARATRANZ_PROJECT_ID,
+                PARATRANZ_PROJECT_ID[self.target],
                 quote(original),
             )
             translation += ";"
