@@ -9,4 +9,4 @@ if exist lilith-mod-pack (
 	cd ..
 )
 
-python ./main.py --no-update-repo --target mod
+python ./main.py --no-update-repo --target mod %*

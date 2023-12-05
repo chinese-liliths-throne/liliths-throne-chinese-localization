@@ -11,4 +11,4 @@ if [ -d "liliths-throne-public" ]; then
 	cd ..
 fi
 
-python ./main.py --no-update-repo
+python ./main.py --no-update-repo $*

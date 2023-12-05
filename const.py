@@ -38,6 +38,14 @@ OLD_DICT_DIR: Dict = {
 	"main": "./old_dict",
 	"mod": "./old_mod_dict"
 }
+ENTRY_DIFF_DIR: Dict = {
+    "main": "./entry_diff",
+    "mod": "./entry_mod_diff"
+}
+TRANS_DIFF_DIR: Dict = {
+    "main": "./translation_diff",
+    "mod": "./translation_mod_diff"
+}
 FONT_DIR = "./resources/font"
 SVG_DIR = "./resources/svg"
 FONT_TARGET_DIR = "./res/fonts"

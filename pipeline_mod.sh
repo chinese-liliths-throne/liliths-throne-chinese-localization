@@ -11,4 +11,4 @@ if [ -d "lilith-mod-pack" ]; then
 	cd ..
 fi
 
-python ./main.py --no-update-repo --target mod
+python ./main.py --no-update-repo --target mod $*

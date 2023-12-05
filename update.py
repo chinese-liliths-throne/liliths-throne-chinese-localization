@@ -62,6 +62,9 @@ async def update_dict_file(
         with open(new_dict_file, "r", encoding="utf-8") as new_dict:
             new_dict_data: List[Dict] = json.load(new_dict)
 
+        old_dict_data.sort(key=lambda item: item["key"])
+        new_dict_data.sort(key=lambda item: item["key"])
+
         old_dict_data = await update_data(old_dict_data, new_dict_data)
 
         if ignore_untranslated:
@@ -171,7 +174,7 @@ async def update_data(
                     translation = re.sub(rf"'({zh_character}+?)'", r"“\1”", translation)
                 translation = re.sub(r"（", "(", translation)
                 translation = re.sub(r"）", ")", translation)
-                translation = re.sub("\t ", "\t", translation)
+                translation = re.sub("\t *", "\t", translation)
                 # 中文与markup代码之间
                 translation = re.sub(rf"\] ({zh_character})", r"]\1", translation)
                 translation = re.sub(rf"({zh_character}) \[", r"\1[", translation)

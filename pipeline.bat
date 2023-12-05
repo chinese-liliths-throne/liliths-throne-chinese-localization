@@ -9,4 +9,4 @@ if exist liliths-throne-public (
 	cd ..
 )
 
-python ./main.py --no-update-repo
+python ./main.py --no-update-repo %*

@@ -99,8 +99,11 @@ class Repo:
         if old_dict_dir.exists():
             shutil.rmtree(old_dict_dir)
 
-        shutil.move(extract_path / "utf8", old_dict_dir)
-        shutil.rmtree(extract_path / "raw", ignore_errors=True)
+        shutil.move(extract_path / "raw", old_dict_dir)
+        shutil.rmtree(extract_path / "utf8", ignore_errors=True)
+
+        for file in Path(old_dict_dir).glob("**/*.json.json"):
+            os.rename(file, file.parent / file.stem)  # 为什么 raw 文件夹里的字典是 .json.json ？
 
     def updata_source_dict(self, dict_path: Path):
         pass

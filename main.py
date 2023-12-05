@@ -48,7 +48,7 @@ argparser.add_argument(
     type=str,
     default="main",
     choices=["main", "mod"],
-    help="determine which project to localize"
+    help="determine which project to localize",
 )
 
 
@@ -74,10 +74,7 @@ def main():
     shutil.rmtree(new_dict_dir, ignore_errors=True)
     shutil.rmtree(old_dict_dir, ignore_errors=True)
 
-    repo = Repo(
-        target,
-        REPO_BRANCH[target], 
-        pt_token)
+    repo = Repo(target, REPO_BRANCH[target], pt_token)
     root = repo.source_dir
 
     if not args.no_update_repo:
@@ -88,7 +85,7 @@ def main():
 
     extractor = Extractor(target, root, new_dict_dir, repo.latest_commit)
     applier = Applier(target, root, new_dict_dir)
-    processor = Processor(new_dict_dir, pt_token)
+    processor = Processor(target, new_dict_dir, old_dict_dir, pt_token)
 
     logger.info("==== 正在提取翻译条目 ====")
     extractor.extract()
