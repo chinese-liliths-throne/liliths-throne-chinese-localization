@@ -384,12 +384,15 @@ class Applier:
             if file.name == "eisek_mob_hideout.xml":
                 with open(file, mode="r", encoding="utf-8") as f:
                     line = f.read()
-                with open(Path(ROOT_DIR) / SVG_DIR / "eisek_mob_hideout.svg", "r", encoding="utf-8") as f:
+                with open(
+                    Path(ROOT_DIR) / SVG_DIR / "eisek_mob_hideout.svg",
+                    "r",
+                    encoding="utf-8",
+                ) as f:
                     svg = f.read()
                 new_line = re.sub(r"(<svg.*</svg>)", svg, line, flags=re.DOTALL)
                 with open(file, mode="w", encoding="utf-8") as f:
                     f.write(new_line)
-
 
     def apply_res(self) -> None:
         original_files = [file for file in self.root.glob("**/*.xml")]

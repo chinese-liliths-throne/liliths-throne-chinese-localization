@@ -22,7 +22,9 @@ class Repo:
             download_url = ""
         else:
             download_url = PROXY_URL
-        download_url += REPO_BASE_URL[self.target] + f"/archive/refs/heads/{self.branch}.zip"
+        download_url += (
+            REPO_BASE_URL[self.target] + f"/archive/refs/heads/{self.branch}.zip"
+        )
 
         api_url = REPO_API_URL[self.target] + f"/commits"
 

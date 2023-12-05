@@ -3,49 +3,28 @@ from typing import Dict
 PROXY_URL = "https://ghproxy.com/"
 
 REPO_BASE_URL: Dict = {
-	"main": "https://github.com/Innoxia/liliths-throne-public",
-	"mod": "https://github.com/chinese-liliths-throne/lilith-mod-pack"
+    "main": "https://github.com/Innoxia/liliths-throne-public",
+    "mod": "https://github.com/chinese-liliths-throne/lilith-mod-pack",
 }
 REPO_API_URL: Dict = {
-	"main": "https://api.github.com/repos/Innoxia/liliths-throne-public",
-	"mod": "https://api.github.com/repos/chinese-liliths-throne/lilith-mod-pack"
+    "main": "https://api.github.com/repos/Innoxia/liliths-throne-public",
+    "mod": "https://api.github.com/repos/chinese-liliths-throne/lilith-mod-pack",
 }
-REPO_BRANCH: Dict = {
-	"main": "dev",
-	"mod": "main"
-}
+REPO_BRANCH: Dict = {"main": "dev", "mod": "main"}
 
 PARATRANZ_API_BASE_URL = "https://paratranz.cn/api"
-PARATRANZ_PROJECT_ID: Dict = {
-	"main": "8288",
-	"mod": "8857"
-}
+PARATRANZ_PROJECT_ID: Dict = {"main": "8288", "mod": "8857"}
 
 GITHUB_PUBLIC_ACCESS_TOKEN = "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"
 
 
 DOWNLOAD_DIR = "./downloads"
 ROOT_DIR = "./"
-SOURCE_DIR: Dict = {
-	"main": "./liliths-throne-public",
-	"mod": "./lilith-mod-pack"
-}
-NEW_DICT_DIR: Dict = {
-	"main": "./new_dict",
-	"mod": "./new_mod_dict"
-}
-OLD_DICT_DIR: Dict = {
-	"main": "./old_dict",
-	"mod": "./old_mod_dict"
-}
-ENTRY_DIFF_DIR: Dict = {
-    "main": "./entry_diff",
-    "mod": "./entry_mod_diff"
-}
-TRANS_DIFF_DIR: Dict = {
-    "main": "./translation_diff",
-    "mod": "./translation_mod_diff"
-}
+SOURCE_DIR: Dict = {"main": "./liliths-throne-public", "mod": "./lilith-mod-pack"}
+NEW_DICT_DIR: Dict = {"main": "./new_dict", "mod": "./new_mod_dict"}
+OLD_DICT_DIR: Dict = {"main": "./old_dict", "mod": "./old_mod_dict"}
+ENTRY_DIFF_DIR: Dict = {"main": "./entry_diff", "mod": "./entry_mod_diff"}
+TRANS_DIFF_DIR: Dict = {"main": "./translation_diff", "mod": "./translation_mod_diff"}
 FONT_DIR = "./resources/font"
 SVG_DIR = "./resources/svg"
 FONT_TARGET_DIR = "./res/fonts"
