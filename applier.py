@@ -427,15 +427,30 @@ class Applier:
         for tag, entry_cluster in entry_dict.items():
             # special process for htmlContent
             if tag == "htmlContent":
+                entry_dict: Dict[str, List[XmlEntry]] = {}
                 for entry in entry_cluster:
-                    if entry.stage == 0 or entry.translation == entry.original:  # 无需修改
-                        continue
-                    nodes = tree.xpath(f"//htmlContent[@tag='{entry.attribute}']")
-                    node = nodes[0]
-                    node.text = node.text.replace(
-                        entry.original, entry.translation.replace("\\n", "\n")
-                    )
-                    node.text = etree.CDATA(node.text)
+                    if entry_dict.get(entry.attribute):
+                        entry_dict[entry.attribute].append(entry)
+                    else:
+                        entry_dict[entry.attribute] = [entry]
+
+                for entry_attribute, entries in entry_dict.items():
+                    nodes = tree.xpath(f"//htmlContent[@tag='{entry_attribute}']")
+                    if len(nodes) > 1:
+                        for idx, node in enumerate(nodes):
+                            node.text = node.text.replace(
+                                entries[idx].original,
+                                entries[idx].translation.replace("\\n", "\n"),
+                            )
+                            node.text = etree.CDATA(node.text)
+                    else:
+                        node = nodes[0]
+                        for entry in entries:
+                            node.text = node.text.replace(
+                                entry.original,
+                                entry.translation.replace("\\n", "\n"),
+                            )
+                            node.text = etree.CDATA(node.text)
             else:
                 nodes: List[etree._Element] = list(tree.iter(tag))
                 nodes = list(filter(valid_element, nodes))

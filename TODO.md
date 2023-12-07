@@ -3,6 +3,9 @@
  - AbstractAttribute
  - AbstractSubspecies
 
+## 原版错误
+ - 部分htmlContent中<p>标签不匹配
+
 ## 语言相关特效
  - 口吃
  - 发音模糊

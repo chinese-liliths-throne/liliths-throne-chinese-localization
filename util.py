@@ -27,17 +27,25 @@ def count_entry(dict_dir):
 def split_htmlContent(text: str) -> List[str]:
     extracted_blocks = []
 
+    TAG_REGEX = r"(?:div|p)"
+
     PARAGRAPH_REGEX = r"(<p[^>]*?>.*?</p>)"
     DIV_REGEX = r"(<div[^>]*?>.*?</div>)"
+    HALF_BLOCK_F_REGEX = rf"(<{TAG_REGEX}[^>]*?>[^<>]*?\Z)"
+    HALF_BLOCK_B_REGEX = rf"(\A[^<>]*?</{TAG_REGEX}>)"
     VAR_REGEX = r"(#VAR.*?#ENDVAR)"
 
     paragraph_matches = re.findall(PARAGRAPH_REGEX, text, re.DOTALL)
     div_matches = re.findall(DIV_REGEX, text, re.DOTALL)
     var_matches = re.findall(VAR_REGEX, text, re.DOTALL)
+    half_block_f_matches = re.findall(HALF_BLOCK_F_REGEX, text, re.DOTALL)
+    half_block_b_matches = re.findall(HALF_BLOCK_B_REGEX, text, re.DOTALL)
 
     extracted_blocks += paragraph_matches
     extracted_blocks += div_matches
     extracted_blocks += var_matches
+    extracted_blocks += half_block_f_matches
+    extracted_blocks += half_block_b_matches
 
     if len(extracted_blocks) == 0:
         extracted_blocks.extend(text.split("<br/><br/>"))

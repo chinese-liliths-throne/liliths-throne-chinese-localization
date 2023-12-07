@@ -96,6 +96,7 @@ class Processor:
 
         for path in entry_diff:
             out_path = Path(ENTRY_DIFF_DIR[self.target], path)
+            path = Path(self.dict_path, path)
             os.makedirs(out_path.parent, exist_ok=True)
             shutil.copy(path, out_path)
 

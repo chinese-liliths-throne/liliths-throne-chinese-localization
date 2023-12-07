@@ -111,7 +111,7 @@ async def update_data(
     old_dict_map: Dict[str, List[int]] = {}  # [原文文本, old_dict_data列表中对应序号]
 
     for idx, data in enumerate(new_dict_data):
-        original = data["original"]
+        original = data["original"].strip()
         if not new_dict_map.get(original):
             new_dict_map[original] = [idx]
         else:
@@ -125,6 +125,7 @@ async def update_data(
         # 是否为xml文件
         if not data["key"][0].isdigit():
             original = original.replace("\\n", "\n")
+        original = original.strip()
         if not old_dict_map.get(original):
             old_dict_map[original] = [idx]
         else:
@@ -148,7 +149,7 @@ async def update_data(
                     continue
                 new_dict_data[new_idx_list[idx]]["translation"] = old_dict_data[
                     old_idx
-                ]["translation"]
+                ]["translation"].strip()
                 new_dict_data[new_idx_list[idx]]["stage"] = old_dict_data[old_idx][
                     "stage"
                 ]
