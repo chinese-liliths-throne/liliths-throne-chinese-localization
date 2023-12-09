@@ -8,6 +8,7 @@ import shutil
 from data import XmlEntry, CodeEntry
 from logger import logger
 from urllib.parse import quote
+from util import xml_node_replace_translation
 from const import (
     ROOT_DIR,
     FONT_DIR,
@@ -439,35 +440,19 @@ class Applier:
                     if len(nodes) > 1:
                         for idx, node in enumerate(nodes):
                             entry = entries[idx]
-                            if entry.stage == 0 or entry.translation == entry.original:  # 无需修改
-                                continue
-                            node.text = node.text.replace(
-                                entry.original,
-                                entry.translation.replace("\\n", "\n"),
-                            )
-                            node.text = etree.CDATA(node.text)
+                            xml_node_replace_translation(node, entry)
                     else:
                         node = nodes[0]
                         for entry in entries:
-                            if entry.stage == 0 or entry.translation == entry.original:  # 无需修改
-                                continue
-                            node.text = node.text.replace(
-                                entry.original,
-                                entry.translation.replace("\\n", "\n"),
-                            )
-                            node.text = etree.CDATA(node.text)
+                            xml_node_replace_translation(node, entry)
             else:
-                nodes: List[etree._Element] = list(tree.iter(tag))
-                nodes = list(filter(valid_element, nodes))
+                # nodes: List[etree._Element] = list()
+                nodes: List[etree._Element] = list(
+                    filter(valid_element, tree.iter(tag))
+                )
                 for entry in entry_cluster:
-                    if entry.stage == 0 or entry.translation == entry.original:  # 无需修改
-                        continue
                     node = nodes[entry.node_idx]
-                    if entry.attribute is not None:
-                        node.set(entry.attribute, entry.translation)
-                    else:
-                        node.text = entry.translation.replace("\\n", "\n")
-                        node.text = etree.CDATA(node.text)
+                    xml_node_replace_translation(node, entry)
 
         tree.write(
             original_file.as_posix(),
@@ -547,7 +532,6 @@ class Applier:
                 PARATRANZ_PROJECT_ID[self.target],
                 quote(original),
             )
-            translation += ","
         elif (
             original.endswith(";")
             and not translation.endswith(";")
@@ -560,7 +544,6 @@ class Applier:
                 PARATRANZ_PROJECT_ID[self.target],
                 quote(original),
             )
-            translation += ";"
 
         index = text.find(original)
         if index == -1:

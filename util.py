@@ -7,6 +7,7 @@ from typing import List, Optional, Dict
 from lxml import etree
 
 from const import NEW_DICT_DIR
+from data import XmlEntry
 from logger import logger
 
 
@@ -91,6 +92,20 @@ def dict_update_splited_htmlContent(old_dict_dir: Path):
             data.extend(new_items)
         with open(file, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
+
+
+def xml_node_replace_translation(node: etree._Element, entry: XmlEntry) -> str:
+    if entry.stage == 0 or entry.translation == entry.original:  # 无需修改
+        return
+    # htmlContent的属性用于存储文本的对应id，并不需要替换属性文本
+    if entry.attribute is not None and entry.node_tag != "htmlContent":
+        node.set(entry.attribute, entry.translation)
+    else:
+        node.text = node.text.replace(
+            entry.original,
+            entry.translation.replace("\\n", "\n"),
+        )
+    node.text = etree.CDATA(node.text)
 
 
 __all__ = ["split_htmlContent", "dict_update_splited_htmlContent"]
