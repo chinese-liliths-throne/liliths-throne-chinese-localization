@@ -438,14 +438,19 @@ class Applier:
                     nodes = tree.xpath(f"//htmlContent[@tag='{entry_attribute}']")
                     if len(nodes) > 1:
                         for idx, node in enumerate(nodes):
+                            entry = entries[idx]
+                            if entry.stage == 0 or entry.translation == entry.original:  # 无需修改
+                                continue
                             node.text = node.text.replace(
-                                entries[idx].original,
-                                entries[idx].translation.replace("\\n", "\n"),
+                                entry.original,
+                                entry.translation.replace("\\n", "\n"),
                             )
                             node.text = etree.CDATA(node.text)
                     else:
                         node = nodes[0]
                         for entry in entries:
+                            if entry.stage == 0 or entry.translation == entry.original:  # 无需修改
+                                continue
                             node.text = node.text.replace(
                                 entry.original,
                                 entry.translation.replace("\\n", "\n"),
