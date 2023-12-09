@@ -375,6 +375,8 @@ class Applier:
                         "positionActionsPlayer.sort((a1, a2) ->",
                         "positionActionsPlayer.sort((a1, a2) -> true?((a1.getActionType() == a2.getActionType())? (a1.isPositionSwap() == a2.isPositionSwap() ? a1.getActionTitle().compareTo(a2.getActionTitle()) : (a1.isPositionSwap() ? -1 : 1)): (a1.getActionType() == SexActionType.POSITIONING_MENU ? -1 : 1)):",
                     )
+                elif file.name == "SexActionManager.java":
+                    line = line.replace("Value<>", "Value<String, Field[]>")
                 lines[idx] = line
 
             with open(file, "w", encoding="utf-8") as f:
@@ -520,11 +522,7 @@ class Applier:
             )
             translation = translation.replace("\\n", "")
 
-        if (
-            original.endswith(",")
-            and not translation.endswith(",")
-            and not translation.strip().endswith(",")
-        ):
+        if original.endswith(",") and not translation.strip().endswith(","):
             logger.warning(
                 "\t****%s[%s]:翻译文本末尾无逗号！|https://paratranz.cn/projects/%s/strings?text=%s",
                 file.as_posix(),
@@ -532,11 +530,7 @@ class Applier:
                 PARATRANZ_PROJECT_ID[self.target],
                 quote(original),
             )
-        elif (
-            original.endswith(";")
-            and not translation.endswith(";")
-            and not translation.strip().endswith(";")
-        ):
+        elif original.endswith(";") and not translation.strip().endswith(";"):
             logger.warning(
                 "\t****%s[%s]:翻译文本末尾无分号！|https://paratranz.cn/projects/%s/strings?text=%s",
                 file.as_posix(),
