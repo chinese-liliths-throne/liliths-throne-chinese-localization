@@ -41,6 +41,7 @@ jobs:
         cache: 'maven'
     - name: Run the Maven
       run: |
+        cat "/home/runner/work/liliths-throne-chinese-localization/liliths-throne-chinese-localization/liliths-throne-public/src/com/lilithsthrone/game/sex/sexActions/SexActionManager.java"
         cd ${{ vars.REPO_PATH }}
         mvn package
     - name: Move to staging
