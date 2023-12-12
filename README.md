@@ -50,7 +50,7 @@ python exe_bundle.py
 
 程序运行完毕后，进入liliths-throne-public-dev路径下，通过命令完成编译。
 ``` shell
-cd liliths-throne-public-dev
+cd liliths-throne-public
 mvn package
 ```
 

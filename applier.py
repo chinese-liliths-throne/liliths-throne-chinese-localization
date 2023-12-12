@@ -5,7 +5,7 @@ import json
 import re
 import shutil
 
-from data import XmlEntry, CodeEntry
+from data import XmlEntry, CodeEntry, WholeDictionary, SingleDictionary
 from logger import logger
 from urllib.parse import quote
 from util import xml_node_replace_translation
@@ -52,10 +52,13 @@ def valid_element(element: etree._Element) -> bool:
 
 
 class Applier:
-    def __init__(self, target: str, root: str, dict_dir: str) -> None:
+    def __init__(
+        self, target: str, root: str, dict_dir: str, new_data: WholeDictionary = {}
+    ) -> None:
         self.target = target
         self.root = Path(root)
         self.dict_dir = Path(dict_dir)
+        self.new_data: WholeDictionary = new_data
 
     def apply(self) -> None:
         self.apply_res()
@@ -411,10 +414,18 @@ class Applier:
             self.apply_xml(original_file, dict_file)
 
     def apply_xml(self, original_file: Path, dict_file: Path) -> None:
-        with open(dict_file, "r", encoding="utf-8") as f:
-            entry_list = json.load(f)
+        # with open(dict_file, "r", encoding="utf-8") as f:
+        #     entry_list = json.load(f)
 
-        entry_list = [XmlEntry.from_json(original_file, entry) for entry in entry_list]
+        # entry_list = [XmlEntry.from_json(original_file, entry) for entry in entry_list]
+
+        json_dict: SingleDictionary = self.new_data[
+            dict_file.relative_to(self.dict_dir).as_posix()
+        ]
+
+        entry_list = [
+            XmlEntry.from_json(original_file, entry) for _, entry in json_dict.items()
+        ]
 
         parser = etree.XMLParser(strip_cdata=False)
 
@@ -478,12 +489,16 @@ class Applier:
             self.apply_java(original_file, dict_file)
 
     def apply_java(self, original_file: Path, dict_file: Path) -> None:
-        with open(dict_file, "r", encoding="utf-8") as f:
-            entry_list = json.load(f)
         with open(original_file, "r", encoding="utf-8") as f:
             text = f.readlines()
 
-        entry_list = [CodeEntry.from_json(original_file, entry) for entry in entry_list]
+        json_dict: SingleDictionary = self.new_data[
+            dict_file.relative_to(self.dict_dir).as_posix()
+        ]
+
+        entry_list = [
+            CodeEntry.from_json(original_file, entry) for _, entry in json_dict.items()
+        ]
 
         for entry in entry_list:
             line_text = text[entry.line]

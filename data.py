@@ -2,6 +2,10 @@ from dataclasses import dataclass
 from typing import Optional, Dict, List
 from pathlib import Path
 
+JsonEntry = Dict
+WholeDictionary = Dict[Path, Dict[str, JsonEntry]]
+SingleDictionary = Dict[str, JsonEntry]
+
 
 @dataclass
 class Entry:

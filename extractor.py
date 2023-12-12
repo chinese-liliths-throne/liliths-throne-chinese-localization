@@ -6,7 +6,7 @@ import asyncio
 
 from lxml import etree
 
-from data import XmlEntry, CodeEntry, FilePair
+from data import XmlEntry, CodeEntry, FilePair, WholeDictionary, SingleDictionary
 from const import BLACKLIST_FILE, BLACKLIST_HTMLCONTENT
 from util import split_htmlContent
 
@@ -46,9 +46,7 @@ def try_xml_entry_text(file: str, element: etree._Element) -> Optional[XmlEntry]
     )
 
 
-def get_splited_htmlContent(
-    file: Path, element: etree._Element
-) -> List[XmlEntry]:
+def get_splited_htmlContent(file: Path, element: etree._Element) -> List[XmlEntry]:
     if element.text is None:
         return []
 
@@ -88,10 +86,11 @@ def get_splited_htmlContent(
 
 
 class Extractor:
-    def __init__(self, target:str , root: str, new_dict_path: str, commit_sha: str):
+    def __init__(self, target: str, root: str, new_dict_path: str, commit_sha: str):
         self.target = target
         self.root = Path(root)
         self.target_dir = Path(new_dict_path)
+        self.new_data: WholeDictionary = {}
 
         if not self.root.is_dir():
             raise NotADirectoryError("Invalid root directory")
@@ -119,8 +118,8 @@ class Extractor:
                 file.relative_to(self.root)
             ).with_suffix(".json")
             file_pairs.append(FilePair(file, result_path))
-            if not result_path.parent.exists():
-                result_path.parent.mkdir(parents=True)
+            # if not result_path.parent.exists():
+            #     result_path.parent.mkdir(parents=True)
 
         tasks = [
             self.extract_xml_gather(file.original_file, file.entry_file)
@@ -130,14 +129,17 @@ class Extractor:
         loop.run_until_complete(asyncio.gather(*tasks))
 
     async def extract_xml_gather(self, xml_path, entry_path):
-        entry_list = await self.extract_xml(xml_path)
-        if len(entry_list) <= 0:
+        entry_dict = await self.extract_xml(xml_path)
+        if len(entry_dict) <= 0:
             return
-        with open(entry_path, "w", encoding="utf-8") as f:
-            json.dump(entry_list, f, ensure_ascii=False, indent=4)
+
+        self.new_data[entry_path.relative_to(self.target_dir).as_posix()] = entry_dict
+
+        # with open(entry_path, "w", encoding="utf-8") as f:
+        #     json.dump(entry_list, f, ensure_ascii=False, indent=4)
 
     async def extract_xml(self, xml_path: Path) -> List[Dict[str, XmlEntry]]:
-        entry_list = []
+        entry_dict: SingleDictionary = {}
         entry_cluster: Dict[str, Dict[str, int]] = {}
 
         def insert_entry(entry: Optional[XmlEntry]):
@@ -147,16 +149,15 @@ class Extractor:
             attrib = entry.attribute if entry.attribute is not None else "text"
 
             entry_json = entry.to_json()
-            if (
-                entry_cluster.get(tag, None) is None
-                or entry_cluster[tag].get(attrib, None) is None
-            ):
+            if entry_cluster.get(tag) is None:
                 entry_cluster[tag] = {attrib: 0}
+            elif entry_cluster[tag].get(attrib) is None:
+                entry_cluster[tag][attrib] = 0
             else:
                 entry_cluster[tag][attrib] += 1
 
             entry_json["key"] += "_" + str(entry_cluster[tag][attrib])
-            entry_list.append(entry_json)
+            entry_dict[entry_json["key"]] = entry_json
 
         file = xml_path.as_posix()
 
@@ -579,7 +580,7 @@ class Extractor:
             e = try_xml_entry_text(file, mas)
             insert_entry(e)
 
-        return entry_list
+        return entry_dict
 
     def extract_src(self):
         loop = asyncio.get_event_loop()
@@ -594,8 +595,8 @@ class Extractor:
                 file.relative_to(self.root)
             ).with_suffix(".json")
             file_pairs.append(FilePair(file, result_path))
-            if not result_path.parent.exists():
-                result_path.parent.mkdir(parents=True)
+            # if not result_path.parent.exists():
+            #     result_path.parent.mkdir(parents=True)
 
         tasks = [
             self.extract_java_gather(file.original_file, file.entry_file)
@@ -605,17 +606,18 @@ class Extractor:
         loop.run_until_complete(asyncio.gather(*tasks))
 
     async def extract_java_gather(self, java_path: Path, entry_path: Path):
-        entry_list = await self.extract_java(java_path)
-        if len(entry_list) <= 0:
+        entry_dict = await self.extract_java(java_path)
+        if len(entry_dict) <= 0:
             return
-        with open(entry_path, "w", encoding="utf-8") as f:
-            json.dump(entry_list, f, ensure_ascii=False, indent=4)
+        self.new_data[entry_path.relative_to(self.target_dir).as_posix()] = entry_dict
+        # with open(entry_path, "w", encoding="utf-8") as f:
+        #     json.dump(entry_list, f, ensure_ascii=False, indent=4)
 
     async def extract_java(self, file: Path):
         if file.name in BLACKLIST_FILE:
             return []
         java_extractor = JavaExtractor()
-        entry_list = []
+        entry_dict: SingleDictionary = {}
 
         with open(file, "r", encoding="utf-8") as f:
             lines = f.readlines()
@@ -703,17 +705,17 @@ class Extractor:
             java_extractor.parse_normal(line)
 
             if java_extractor.general_string_parse(line):
-                entry_list.append(
-                    CodeEntry(
-                        file=file.as_posix(),
-                        original=original_line,
-                        translation="",
-                        line=idx,
-                        stage=0,
-                    ).to_json()
+                entry = CodeEntry(
+                    file=file.as_posix(),
+                    original=original_line,
+                    translation="",
+                    line=idx,
+                    stage=0,
                 )
+                entry_json = entry.to_json()
+                entry_dict[entry_json["key"]] = entry_json
 
-        return entry_list
+        return entry_dict
 
 
 SB_REGEX = r"([sS][bB]|StringBuilder)(\(\))?"

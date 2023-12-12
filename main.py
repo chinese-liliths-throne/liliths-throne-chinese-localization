@@ -9,8 +9,8 @@ from extractor import Extractor
 from applier import Applier
 from processor import Processor
 from repo_dump import Repo
+from update import Updater
 from const import NEW_DICT_DIR, OLD_DICT_DIR, REPO_BRANCH
-from update import update_dict
 from logger import logger
 from util import dict_update_splited_htmlContent
 
@@ -72,7 +72,11 @@ def main():
 
     logger.info("==== 正在移除临时文件 ====")
     shutil.rmtree(new_dict_dir, ignore_errors=True)
-    shutil.rmtree(old_dict_dir, ignore_errors=True)
+    if not args.no_update_dict:
+        shutil.rmtree(old_dict_dir, ignore_errors=True)
+
+    new_dict_dir.mkdir(parents=True, exist_ok=True)
+    old_dict_dir.mkdir(parents=True, exist_ok=True)
 
     repo = Repo(target, REPO_BRANCH[target], pt_token)
     root = repo.source_dir
@@ -84,27 +88,48 @@ def main():
         repo.unzip_latest_version()
 
     extractor = Extractor(target, root, new_dict_dir, repo.latest_commit)
-    applier = Applier(target, root, new_dict_dir)
-    processor = Processor(target, new_dict_dir, old_dict_dir, pt_token)
 
     logger.info("==== 正在提取翻译条目 ====")
     extractor.extract()
 
+    new_data = extractor.new_data
+
     if not args.no_update_dict:
         logger.info("==== 正在下载最新字典文件 ====")
         repo.fetch_latest_dict()
-    logger.info("==== 正在解压最新字典文件 ====")
-    repo.unzip_latest_dict(old_dict_dir)
+        logger.info("==== 正在解压最新字典文件 ====")
+        repo.unzip_latest_dict(old_dict_dir)
+
+    updater = Updater(old_dict_dir, new_dict_dir, new_data)
 
     logger.info("==== 正在合并字典 ====")
-    update_dict(old_dict_dir, new_dict_dir, args.ignore_untranslated)
+    updater.update_dict(new_data, args.ignore_untranslated)
+
+    old_data = updater.old_data
+
+    processor = Processor(
+        target, new_dict_dir, old_dict_dir, pt_token, new_data, old_data
+    )
 
     if args.special_process:
         logger.info("==== 正在应用特殊处理 ====")
         processor.process()
 
+    dump(new_data, new_dict_dir)
+
+    applier = Applier(target, root, new_dict_dir, new_data)
+
     logger.info("==== 正在应用字典 ====")
     applier.apply()
+
+
+def dump(new_data, new_dict_dir):
+    import json
+
+    for path, new_dict in new_data.items():
+        (new_dict_dir / path).parent.mkdir(parents=True, exist_ok=True)
+        with open(new_dict_dir / path, "w", encoding="utf-8") as f:
+            json.dump(new_dict, f, ensure_ascii=False, indent=2)
 
 
 if __name__ == "__main__":
