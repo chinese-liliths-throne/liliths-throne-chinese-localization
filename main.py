@@ -29,10 +29,10 @@ argparser.add_argument(
     help="whether to update repo file",
 )
 argparser.add_argument(
-    "--no-update-dict",
+    "--no-download-dict",
     action="store_true",
     default=False,
-    help="whether to update dictionary file",
+    help="whether to download latest dictionary file (you must ensure that there is a dictionary zip)",
 )
 argparser.add_argument(
     "--special-process", action="store_true", help="whether to do special process"
@@ -72,7 +72,7 @@ def main():
 
     logger.info("==== 正在移除临时文件 ====")
     shutil.rmtree(new_dict_dir, ignore_errors=True)
-    if not args.no_update_dict:
+    if not args.no_download_dict:
         shutil.rmtree(old_dict_dir, ignore_errors=True)
 
     new_dict_dir.mkdir(parents=True, exist_ok=True)
@@ -97,6 +97,7 @@ def main():
     if not args.no_update_dict:
         logger.info("==== 正在下载最新字典文件 ====")
         repo.fetch_latest_dict()
+    if not new_dict_dir.exists():
         logger.info("==== 正在解压最新字典文件 ====")
         repo.unzip_latest_dict(old_dict_dir)
 

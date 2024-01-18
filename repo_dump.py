@@ -112,7 +112,20 @@ class Repo:
 
 
 if __name__ == "__main__":
-    repo = Repo("dev", "")
+    import argparse
+    from const import REPO_BRANCH
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument(
+        "--target",
+        type=str,
+        default="main",
+        choices=["main", "mod"],
+        help="determine which project to localize",
+    )
+
+    args = argparser.parse_args()
+    
+    repo = Repo(args.target, REPO_BRANCH[args.target], os.environ.get("PARATRANZ_TOKEN"))
 
     repo.fetch_latest_dict()
     # repo.unzip_latest_dict()

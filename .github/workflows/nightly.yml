@@ -11,7 +11,7 @@ on:
 permissions: write-all
 
 jobs:
-  build-linux:
+  download-dict:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,9 +24,39 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: download dictionary
+      run: |
+        python repo_dump.py
+    - name: Upload a Dict Artifact
+      uses: actions/upload-artifact@v3.1.3
+      with: 
+        name: "dict-latest"
+        path: "downloads/dict-latest.zip"
+        retention-days: 7
+
+  build-linux:
+    runs-on: ubuntu-latest
+    needs: ["download-dict"]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        mkdir downloads
+    - name: Download Dict
+      uses: actions/download-artifact@v2.1.1
+      with:
+        name: "dict-latest"
+        path: "$GITHUB_WORKSPACE/downloads"
     - name: Run Update and Apply
       run: |
-        bash ./pipeline.sh
+        bash ./pipeline.sh --no-download-dict
       env:
         PARATRANZ_TOKEN: ${{ secrets.PARATRANZ_TOKEN }} 
         USE_GITHUB_ACTION: ${{ vars.USE_GITHUB_ACTION }}
@@ -59,6 +89,7 @@ jobs:
         
   build-aarch64:
     runs-on: ubuntu-latest
+    needs: ["download-dict"]
 
     steps:
     - uses: actions/checkout@v3
@@ -70,9 +101,15 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        mkdir downloads
+    - name: Download Dict
+      uses: actions/download-artifact@v2.1.1
+      with:
+        name: "dict-latest"
+        path: "$GITHUB_WORKSPACE/downloads"
     - name: Run Update and Apply
       run: |
-        bash ./pipeline.sh
+        bash ./pipeline.sh --no-download-dict
       env:
         PARATRANZ_TOKEN: ${{ secrets.PARATRANZ_TOKEN }} 
         USE_GITHUB_ACTION: ${{ vars.USE_GITHUB_ACTION }}
@@ -104,6 +141,7 @@ jobs:
 
   build-mac:
     runs-on: ubuntu-latest
+    needs: ["download-dict"]
 
     steps:
     - uses: actions/checkout@v3
@@ -115,9 +153,15 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        mkdir downloads
+    - name: Download Dict
+      uses: actions/download-artifact@v2.1.1
+      with:
+        name: "dict-latest"
+        path: "$GITHUB_WORKSPACE/downloads"
     - name: Run Update and Apply
       run: |
-        bash ./pipeline.sh
+        bash ./pipeline.sh --no-download-dict
       env:
         PARATRANZ_TOKEN: ${{ secrets.PARATRANZ_TOKEN }} 
         USE_GITHUB_ACTION: ${{ vars.USE_GITHUB_ACTION }}
@@ -161,10 +205,16 @@ jobs:
   #     run: |
   #       python -m pip install --upgrade pip
   #       if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+  #       mkdir downloads
+  #   - name: Download Dict
+  #     uses: actions/download-artifact@v2.1.1
+  #     with:
+  #       name: "dict-latest"
+  #       path: "$GITHUB_WORKSPACE/downloads"
   #   - name: Run Update and Apply
   #     shell: bash
   #     run: |
-  #       bash ./pipeline.sh
+  #       bash ./pipeline.sh --no-download-dict
   #     env:
   #       PARATRANZ_TOKEN: ${{ secrets.PARATRANZ_TOKEN }} 
   #       USE_GITHUB_ACTION: ${{ vars.USE_GITHUB_ACTION }}
@@ -210,6 +260,7 @@ jobs:
 
   build-win:
     runs-on: windows-latest
+    needs: ["download-dict"]
 
     steps:
     - uses: actions/checkout@v3
@@ -222,10 +273,16 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        mkdir downloads
+    - name: Download Dict
+      uses: actions/download-artifact@v2.1.1
+      with:
+        name: "dict-latest"
+        path: "$GITHUB_WORKSPACE/downloads"
     - name: Run Update and Apply
       shell: bash
       run: |
-        bash ./pipeline.sh
+        bash ./pipeline.sh --no-download-dict
       env:
         PARATRANZ_TOKEN: ${{ secrets.PARATRANZ_TOKEN }} 
         USE_GITHUB_ACTION: ${{ vars.USE_GITHUB_ACTION }}
