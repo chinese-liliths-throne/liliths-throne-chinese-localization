@@ -94,7 +94,7 @@ def main():
 
     new_data = extractor.new_data
 
-    if not args.no_update_dict:
+    if not args.no_download_dict:
         logger.info("==== 正在下载最新字典文件 ====")
         repo.fetch_latest_dict()
     if not new_dict_dir.exists():
