@@ -76,7 +76,7 @@ def main():
         shutil.rmtree(old_dict_dir, ignore_errors=True)
 
     new_dict_dir.mkdir(parents=True, exist_ok=True)
-    old_dict_dir.mkdir(parents=True, exist_ok=True)
+    # old_dict_dir.mkdir(parents=True, exist_ok=True) # will be created by unzip_latest_dict
 
     repo = Repo(target, REPO_BRANCH[target], pt_token)
     root = repo.source_dir
@@ -97,7 +97,7 @@ def main():
     if not args.no_download_dict:
         logger.info("==== 正在下载最新字典文件 ====")
         repo.fetch_latest_dict()
-    if not new_dict_dir.exists():
+    if not old_dict_dir.exists():
         logger.info("==== 正在解压最新字典文件 ====")
         repo.unzip_latest_dict(old_dict_dir)
 

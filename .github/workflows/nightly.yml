@@ -55,7 +55,7 @@ jobs:
       uses: actions/download-artifact@v2.1.1
       with:
         name: "dict-latest"
-        path: "$GITHUB_WORKSPACE/downloads"
+        path: "./downloads"
     - name: Run Update and Apply
       run: |
         bash ./pipeline.sh --no-download-dict
@@ -108,7 +108,7 @@ jobs:
       uses: actions/download-artifact@v2.1.1
       with:
         name: "dict-latest"
-        path: "$GITHUB_WORKSPACE/downloads"
+        path: "./downloads"
     - name: Run Update and Apply
       run: |
         bash ./pipeline.sh --no-download-dict
@@ -160,7 +160,7 @@ jobs:
       uses: actions/download-artifact@v2.1.1
       with:
         name: "dict-latest"
-        path: "$GITHUB_WORKSPACE/downloads"
+        path: "./downloads"
     - name: Run Update and Apply
       run: |
         bash ./pipeline.sh --no-download-dict
@@ -212,7 +212,7 @@ jobs:
   #     uses: actions/download-artifact@v2.1.1
   #     with:
   #       name: "dict-latest"
-  #       path: "$GITHUB_WORKSPACE/downloads"
+  #       path: "./downloads"
   #   - name: Run Update and Apply
   #     shell: bash
   #     run: |
@@ -280,7 +280,7 @@ jobs:
       uses: actions/download-artifact@v2.1.1
       with:
         name: "dict-latest"
-        path: "$GITHUB_WORKSPACE/downloads"
+        path: "./downloads"
     - name: Run Update and Apply
       shell: bash
       run: |
