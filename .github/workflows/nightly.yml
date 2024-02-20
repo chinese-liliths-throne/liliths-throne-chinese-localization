@@ -363,7 +363,7 @@ jobs:
     #     # If a description is provided, the action will use it to create an annotated tag. If none is given, the action will create a lightweight tag.
     #     description: The latest version of unfinished localized game
     - name: Automatic Releases
-      uses: release-action@v1
+      uses: ncipollo/release-action@v1
       with:
         tag: "pre-latest"
         prerelease: true
