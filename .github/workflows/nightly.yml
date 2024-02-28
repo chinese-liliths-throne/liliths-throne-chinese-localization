@@ -306,7 +306,7 @@ jobs:
       shell: bash
       run: |
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (win-x86)" "liliths-throne-win-x86"
-    - uses: vimtor/action-zip@v1.1
+    - uses: vimtor/action-zip@v1
       with:
         files: liliths-throne-win-x86
         dest: liliths-throne-win-x86.zip
@@ -373,7 +373,7 @@ jobs:
       shell: bash
       run: |
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (win)" "liliths-throne-win"
-    - uses: vimtor/action-zip@v1.1
+    - uses: vimtor/action-zip@v1
       with:
         files: liliths-throne-win
         dest: liliths-throne-win.zip
