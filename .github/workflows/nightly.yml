@@ -286,6 +286,7 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+        architecture: 'x64'
         cache: 'maven'
     - name: Run the Maven
       shell: bash
@@ -302,8 +303,8 @@ jobs:
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (win)" "liliths-throne-win-x86"
     - uses: vimtor/action-zip@v1.1
       with:
-        files: liliths-throne-win
-        dest: liliths-throne-win.zip
+        files: liliths-throne-win-x86
+        dest: liliths-throne-win-x86.zip
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.1
       with: 
