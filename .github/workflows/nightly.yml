@@ -286,7 +286,7 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        architecture: 'x64'
+        architecture: 'x86'
         cache: 'maven'
     - name: Run the Maven
       shell: bash
