@@ -298,7 +298,6 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         architecture: 'x86'
-        cache: 'maven'
     - name: Add JRE
       shell: bash
       run: |
