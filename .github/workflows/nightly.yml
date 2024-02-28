@@ -367,6 +367,7 @@ jobs:
       with:
         tag: "pre-latest"
         prerelease: true
-        title: "Pre-Release ${{ env.RELEASE_VERSION }}"
+        name: "Pre-Release ${{ env.RELEASE_VERSION }}"
+        allowUpdates: true
         artifacts: |
           *.zip
