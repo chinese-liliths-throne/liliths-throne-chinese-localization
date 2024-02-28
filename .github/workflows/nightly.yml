@@ -244,6 +244,7 @@ jobs:
         name: "liliths-throne-mac-aarch64"
         path: "liliths-throne-mac-aarch64.zip"
         retention-days: 7        
+        
   build-win-x86:
     runs-on: windows-latest
 
@@ -289,7 +290,7 @@ jobs:
       shell: bash
       run: |
         cd ${{ vars.REPO_PATH }}
-        mvn package --Dtarget.platform win-x86
+        mvn package -Dtarget.platform=win-x86
     - name: Add JRE
       shell: bash
       run: |
@@ -378,7 +379,7 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    needs: [build-linux, build-win, build-aarch64, build-mac, build-mac-aarch64]
+    needs: [build-linux, build-win, build-win-x86, build-aarch64, build-mac, build-mac-aarch64]
     
     steps:
     - name: Download a Linux Artifact
