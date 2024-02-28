@@ -302,7 +302,6 @@ jobs:
     - name: Add JRE
       shell: bash
       run: |
-          echo $JAVA_HOME
           jlink --module-path $JAVA_HOME/jmods/ --add-modules ALL-MODULE-PATH --output "./${{ vars.REPO_PATH }}/target/Lilith's Throne (win-x86)/jre"
     - name: Move to staging
       shell: bash
@@ -395,6 +394,7 @@ jobs:
       uses: actions/download-artifact@v4.1.2
       with:
         pattern: liliths-throne-*
+        merge-multiple: true
         
     # - name: Set Release version env variable
     #   run: |
