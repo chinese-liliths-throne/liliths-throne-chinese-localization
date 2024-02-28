@@ -296,11 +296,11 @@ jobs:
     - name: Add JRE
       shell: bash
       run: |
-          jlink --module-path $JAVA_HOME/jmods/ --add-modules ALL-MODULE-PATH --output "./${{ vars.REPO_PATH }}/target/Lilith's Throne (win)/jre"
+          jlink --module-path $JAVA_HOME/jmods/ --add-modules ALL-MODULE-PATH --output "./${{ vars.REPO_PATH }}/target/Lilith's Throne (win-x86)/jre"
     - name: Move to staging
       shell: bash
       run: |
-        mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (win)" "liliths-throne-win-x86"
+        mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (win-x86)" "liliths-throne-win-x86"
     - uses: vimtor/action-zip@v1.1
       with:
         files: liliths-throne-win-x86
@@ -384,30 +384,10 @@ jobs:
     needs: [build-linux, build-win, build-win-x86, build-aarch64, build-mac, build-mac-aarch64]
     
     steps:
-    - name: Download a Linux Artifact
+    - name: Download release built
       uses: actions/download-artifact@v4.1.2
       with:
-        name: "liliths-throne-linux"
-    - name: Download a Aarch64 Artifact
-      uses: actions/download-artifact@v4.1.2
-      with:
-        name: "liliths-throne-linux-aarch64"
-    - name: Download a MacOs Artifact
-      uses: actions/download-artifact@v4.1.2
-      with:
-        name: "liliths-throne-mac-aarch64"
-    - name: Download a MacOs Aarch64 Artifact
-      uses: actions/download-artifact@v4.1.2
-      with:
-        name: "liliths-throne-mac"
-    - name: Download a Win Artifact
-      uses: actions/download-artifact@v4.1.2
-      with:
-        name: "liliths-throne-win"
-    - name: Download a Win x86 Artifact
-      uses: actions/download-artifact@v4.1.2
-      with:
-        name: "liliths-throne-win-x86"
+        pattern: liliths-throne-*
         
     # - name: Set Release version env variable
     #   run: |
