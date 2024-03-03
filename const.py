@@ -13,7 +13,7 @@ REPO_API_URL: Dict = {
 REPO_BRANCH: Dict = {"main": "dev", "mod": "main"}
 
 PARATRANZ_API_BASE_URL = "https://paratranz.cn/api"
-PARATRANZ_PROJECT_ID: Dict = {"main": "8288", "mod": "8857"}
+PARATRANZ_PROJECT_ID: Dict = {"main": "8288", "mod": "9191"}
 
 GITHUB_PUBLIC_ACCESS_TOKEN = "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"
 

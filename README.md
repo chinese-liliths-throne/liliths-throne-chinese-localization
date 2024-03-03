@@ -10,10 +10,9 @@
 当前Windows可以直接解压后点击exe文件开始游戏，**请注意不要使用中文路径**，会导致路径识别问题！
 
 目前支持：
- - Windows
- - Linux
- - Aarch64
- - Mac
+ - Windows(64位 32位)
+ - Linux(x64 aarch64)
+ - Mac(x64 aarch64)
 
 在此附上使用手机游玩的[可能性方案](https://github.com/Agreous/liliths-throne-on-android#readme)，比较复杂，且对手机性能有一定要求。
 

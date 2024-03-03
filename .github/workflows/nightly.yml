@@ -376,12 +376,12 @@ jobs:
     - uses: vimtor/action-zip@v1
       with:
         files: liliths-throne-win
-        dest: liliths-throne-win.zip
+        dest: liliths-throne-win-x64.zip
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.1
       with: 
-        name: "liliths-throne-win"
-        path: "liliths-throne-win.zip"
+        name: "liliths-throne-win-x64"
+        path: "liliths-throne-win-x64.zip"
         retention-days: 7
 
   release:
@@ -413,5 +413,6 @@ jobs:
         prerelease: true
         name: "Pre-Release ${{ env.RELEASE_VERSION }}"
         allowUpdates: true
+        bodyFile: "release.md"
         artifacts: |
           *.zip
