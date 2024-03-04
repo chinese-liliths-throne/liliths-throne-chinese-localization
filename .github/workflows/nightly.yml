@@ -413,6 +413,6 @@ jobs:
         prerelease: true
         name: "Pre-Release ${{ env.RELEASE_VERSION }}"
         allowUpdates: true
-        bodyFile: "${{ vars.GITHUB_WORKSPACE }}/release.md"
+        bodyFile: "${{ GITHUB_WORKSPACE }}/release.md"
         artifacts: |
           *.zip
