@@ -410,7 +410,7 @@ jobs:
       run: |
         ls
         pwd
-        cp .github/release.md release.md
+        cp ../.github/release.md release.md
     - name: Automatic Releases
       uses: ncipollo/release-action@v1
       with:
