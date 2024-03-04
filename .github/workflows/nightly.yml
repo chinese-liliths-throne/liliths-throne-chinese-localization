@@ -406,6 +406,11 @@ jobs:
     
     #     # If a description is provided, the action will use it to create an annotated tag. If none is given, the action will create a lightweight tag.
     #     description: The latest version of unfinished localized game
+    - name: release note generate
+      run: |
+        ls
+        pwd
+        cp .github/release.md release.md
     - name: Automatic Releases
       uses: ncipollo/release-action@v1
       with:
@@ -413,6 +418,6 @@ jobs:
         prerelease: true
         name: "Pre-Release ${{ env.RELEASE_VERSION }}"
         allowUpdates: true
-        bodyFile: "release.md"
+        bodyFile: release.md
         artifacts: |
           *.zip
