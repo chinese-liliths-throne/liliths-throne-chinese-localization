@@ -881,6 +881,8 @@ class JavaExtractor:
             self.interest_line = True
         elif "Modified.add" in line:
             self.interest_line = True
+        elif "names.put" in line:
+            self.interest_line = True
 
     def parse_character(self, filename: str, line: str):
         if filename == "StatusEffect.java":

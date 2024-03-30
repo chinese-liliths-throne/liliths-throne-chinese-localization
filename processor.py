@@ -64,6 +64,7 @@ class Processor:
 
             for key, entry in entries.items():
                 old_entry = self.old_data[file].get(key, None)
+                entry["stage"] = 1
                 if old_entry is None:
                     if entry["translation"] != "":
                         # print(key, self.old_data[file][key])
