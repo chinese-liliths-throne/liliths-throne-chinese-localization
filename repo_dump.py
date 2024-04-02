@@ -74,6 +74,9 @@ class Repo:
         return PARATRANZ_API_BASE_URL + "/projects/" + PARATRANZ_PROJECT_ID[self.target]
 
     def fetch_latest_dict(self) -> None:
+        def reporthook(block_count, block_size, file_size):
+            print(round(block_count * block_size / file_size *100,2), end="\r")
+
         download_url = self.get_paratranz_api_url() + "/artifacts/download"
 
         path = Path(DOWNLOAD_DIR)
@@ -89,7 +92,7 @@ class Repo:
         opener.addheaders = [("Authorization", self.paratranz_access_token)]
         request.install_opener(opener)
 
-        request.urlretrieve(download_url, file_path)
+        request.urlretrieve(download_url, file_path, reporthook=reporthook)
 
     def unzip_latest_dict(self, old_dict_dir) -> None:
         zip_path = Path(DOWNLOAD_DIR) / f"dict-latest.zip"

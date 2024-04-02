@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Optional
 import json
 import shutil
 import asyncio
@@ -60,7 +60,7 @@ class Updater:
     async def update_dict_file(
         self,
         old_dict_file: Path,
-        new_dict_data: SingleDictionary or None,
+        new_dict_data: Optional[SingleDictionary],
         outdated_file: Path,
         ignore_untranslated: bool = False,
     ):
@@ -109,8 +109,8 @@ class Updater:
         else:
             prev_outdated_data = {}
 
-        await self.update_data(outdated_data, prev_outdated_data, version="0.4.8.9")
-
+        await self.update_data(outdated_data, prev_outdated_data, version="0.4.9")
+        
         if len(prev_outdated_data) <= 0:
             if no_file:
                 logger.warning(" - 文件不再包含任何条目：%s", outdated_file)
@@ -120,7 +120,7 @@ class Updater:
             outdated_file.parent.mkdir(parents=True)
 
         with open(outdated_file, "w", encoding="utf-8") as f:
-            json.dump(prev_outdated_data, f, ensure_ascii=False, indent=4)
+            json.dump(list(prev_outdated_data.values()), f, ensure_ascii=False, indent=4)
 
     async def update_data(
         self,
@@ -151,11 +151,9 @@ class Updater:
                 old_dict_map[original] = [key]
             else:
                 old_dict_map[original].append(key)
-
+        
         for key, value in old_dict_map.items():
             new_idx_list = new_dict_map.get(key)
-            if new_idx_list is None:
-                continue
             if version != "":
                 for idx, old_key in enumerate(value):
                     # 若旧字典的汉化与原文一致（即无需汉化）则无视
@@ -165,8 +163,8 @@ class Updater:
                     ):
                         continue
                     if new_idx_list is None or len(new_idx_list) == 0:
-                        new_dict_data.append(old_dict_data[old_key])
-                        new_dict_data[-1]["key"] += f"_{version}"
+                        new_dict_data[f"{old_key}"] = old_dict_data[old_key]
+                        new_dict_data[f"{old_key}"]["key"] = f"{old_key}_{version}"
                         continue
                     new_dict_data[new_idx_list[idx]]["translation"] = old_dict_data[
                         old_key
@@ -183,6 +181,8 @@ class Updater:
                     else:
                         new_dict_data[new_idx_list[idx]]["key"] += f"_{version}"
             else:
+                if new_idx_list is None:
+                    continue
                 for idx, old_key in enumerate(
                     value[: min(len(value), len(new_idx_list))]
                 ):

@@ -83,7 +83,7 @@ class Processor:
             out_path = Path(ENTRY_DIFF_DIR[self.target], path)
             os.makedirs(out_path.parent, exist_ok=True)
             with open(out_path, "w", encoding="utf-8") as f:
-                json.dump(self.new_data[path], f, indent=2, ensure_ascii=False)
+                json.dump(list(self.new_data[path].values()), f, indent=2, ensure_ascii=False)
 
         for path, entries in trans_diff.items():
             out_path = Path(TRANS_DIFF_DIR[self.target], path)

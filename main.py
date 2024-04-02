@@ -72,8 +72,7 @@ def main():
 
     logger.info("==== 正在移除临时文件 ====")
     shutil.rmtree(new_dict_dir, ignore_errors=True)
-    if not args.no_download_dict:
-        shutil.rmtree(old_dict_dir, ignore_errors=True)
+    shutil.rmtree(old_dict_dir, ignore_errors=True)
 
     new_dict_dir.mkdir(parents=True, exist_ok=True)
     # old_dict_dir.mkdir(parents=True, exist_ok=True) # will be created by unzip_latest_dict
@@ -130,7 +129,7 @@ def dump(new_data, new_dict_dir):
     for path, new_dict in new_data.items():
         (new_dict_dir / path).parent.mkdir(parents=True, exist_ok=True)
         with open(new_dict_dir / path, "w", encoding="utf-8") as f:
-            json.dump(new_dict, f, ensure_ascii=False, indent=2)
+            json.dump(list(new_dict.values()), f, ensure_ascii=False, indent=2)
 
 
 if __name__ == "__main__":
