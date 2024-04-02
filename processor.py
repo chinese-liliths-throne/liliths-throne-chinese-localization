@@ -57,21 +57,24 @@ class Processor:
             if self.old_data.get(file, None) is None:
                 entry_diff.append(file)
                 continue
-            if len(entries) != len(self.old_data[file]):
+            if len(entries) != len(self.old_data[file]) or set(entries.keys() != set(self.old_data[file].keys())) > 0:
                 entry_diff.append(file)
 
             file_trans_diff: List[JsonEntry] = []
 
             for key, entry in entries.items():
                 old_entry = self.old_data[file].get(key, None)
-                entry["stage"] = 1
                 if old_entry is None:
                     if entry["translation"] != "":
                         # print(key, self.old_data[file][key])
                         file_trans_diff.append(entry)
+                        entry["stage"] = 1
                     continue
                 if entry["translation"] != old_entry["translation"]:
                     file_trans_diff.append(entry)
+                    entry["stage"] = 1
+
+
 
             if len(file_trans_diff) > 0:
                 trans_diff[file] = file_trans_diff
