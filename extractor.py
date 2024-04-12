@@ -517,7 +517,12 @@ class Extractor:
             insert_entry(e)
 
         # sexManager
-        # no
+        for deskName in root.iter("deskName"):
+            e = try_xml_entry_text(file, deskName)
+            insert_entry(e)
+        for wallName in root.iter("wallName"):
+            e = try_xml_entry_text(file, wallName)
+            insert_entry(e)
 
         # statusEffect
         # name

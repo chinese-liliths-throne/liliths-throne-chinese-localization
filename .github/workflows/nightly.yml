@@ -73,7 +73,7 @@ jobs:
         cache: 'maven'
     - name: Run the Maven
       run: |
-        cat "/home/runner/work/liliths-throne-chinese-localization/liliths-throne-chinese-localization/liliths-throne-public/src/com/lilithsthrone/game/sex/sexActions/SexActionManager.java"
+        cp pom.xml ${{ vars.REPO_PATH }}
         cd ${{ vars.REPO_PATH }}
         mvn package
     - name: Move to staging
@@ -126,6 +126,7 @@ jobs:
         cache: 'maven'
     - name: Run the Maven
       run: |
+        cp pom.xml ${{ vars.REPO_PATH }}
         cd ${{ vars.REPO_PATH }}
         mvn package -Dtarget.platform=linux-aarch64 -Dexclude.platform=linux
     - name: Move to staging
@@ -178,6 +179,7 @@ jobs:
         cache: 'maven'
     - name: Run the Maven
       run: |
+        cp pom.xml ${{ vars.REPO_PATH }}
         cd ${{ vars.REPO_PATH }}
         mvn package -Dtarget.platform=mac -Dexclude.platform=linux
     - name: Move to staging
@@ -230,6 +232,7 @@ jobs:
         cache: 'maven'
     - name: Run the Maven
       run: |
+        cp pom.xml ${{ vars.REPO_PATH }}
         cd ${{ vars.REPO_PATH }}
         mvn package -Dtarget.platform=mac-aarch64 -Dexclude.platform=linux
     - name: Move to staging
@@ -290,6 +293,7 @@ jobs:
     - name: Run the Maven
       shell: bash
       run: |
+        cp pom.xml ${{ vars.REPO_PATH }}
         cd ${{ vars.REPO_PATH }}
         mvn package -Dtarget.platform=win-x86
     - name: Set up JDK 17
@@ -363,6 +367,7 @@ jobs:
     - name: Run the Maven
       shell: bash
       run: |
+        cp pom.xml ${{ vars.REPO_PATH }}
         cd ${{ vars.REPO_PATH }}
         mvn package
     - name: Add JRE
