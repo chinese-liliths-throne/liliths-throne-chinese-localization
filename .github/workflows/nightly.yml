@@ -124,9 +124,10 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: 'maven'
+    # no 17.0.10 at linux aarch64 yet
     - name: Run the Maven
       run: |
-        cp pom.xml ${{ vars.REPO_PATH }}
+        cp pom_late.xml ${{ vars.REPO_PATH }}/pom.xml
         cd ${{ vars.REPO_PATH }}
         mvn package -Dtarget.platform=linux-aarch64 -Dexclude.platform=linux
     - name: Move to staging
@@ -290,10 +291,11 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: 'maven'
+    # no 17.0.10 at windows x86 yet
     - name: Run the Maven
       shell: bash
       run: |
-        cp pom.xml ${{ vars.REPO_PATH }}
+        cp pom_late.xml ${{ vars.REPO_PATH }}/pom.xml
         cd ${{ vars.REPO_PATH }}
         mvn package -Dtarget.platform=win-x86
     - name: Set up JDK 17
