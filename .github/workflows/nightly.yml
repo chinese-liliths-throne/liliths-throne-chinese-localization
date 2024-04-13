@@ -284,6 +284,7 @@ jobs:
     - name: Modify pom file
       shell: bash
       run: |
+        cp pom_late.xml ${{ vars.REPO_PATH }}/pom.xml
         python exe_bundle.py
     - name: Set up JDK 17
       uses: actions/setup-java@v4.0.0
@@ -295,7 +296,6 @@ jobs:
     - name: Run the Maven
       shell: bash
       run: |
-        cp pom_late.xml ${{ vars.REPO_PATH }}/pom.xml
         cd ${{ vars.REPO_PATH }}
         mvn package -Dtarget.platform=win-x86
     - name: Set up JDK 17
@@ -359,6 +359,7 @@ jobs:
     - name: Modify pom file
       shell: bash
       run: |
+        cp pom.xml ${{ vars.REPO_PATH }}
         python exe_bundle.py
     - name: Set up JDK 17
       uses: actions/setup-java@v4.0.0
@@ -369,7 +370,6 @@ jobs:
     - name: Run the Maven
       shell: bash
       run: |
-        cp pom.xml ${{ vars.REPO_PATH }}
         cd ${{ vars.REPO_PATH }}
         mvn package
     - name: Add JRE
