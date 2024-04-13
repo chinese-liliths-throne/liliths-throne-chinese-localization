@@ -73,7 +73,6 @@ jobs:
         cache: 'maven'
     - name: Run the Maven
       run: |
-        cp pom.xml ${{ vars.REPO_PATH }}
         cd ${{ vars.REPO_PATH }}
         mvn package
     - name: Move to staging
@@ -127,7 +126,6 @@ jobs:
     # no 17.0.10 at linux aarch64 yet
     - name: Run the Maven
       run: |
-        cp pom_late.xml ${{ vars.REPO_PATH }}/pom.xml
         cd ${{ vars.REPO_PATH }}
         mvn package -Dtarget.platform=linux-aarch64 -Dexclude.platform=linux
     - name: Move to staging
@@ -180,7 +178,6 @@ jobs:
         cache: 'maven'
     - name: Run the Maven
       run: |
-        cp pom.xml ${{ vars.REPO_PATH }}
         cd ${{ vars.REPO_PATH }}
         mvn package -Dtarget.platform=mac -Dexclude.platform=linux
     - name: Move to staging
@@ -233,7 +230,6 @@ jobs:
         cache: 'maven'
     - name: Run the Maven
       run: |
-        cp pom.xml ${{ vars.REPO_PATH }}
         cd ${{ vars.REPO_PATH }}
         mvn package -Dtarget.platform=mac-aarch64 -Dexclude.platform=linux
     - name: Move to staging
@@ -284,7 +280,6 @@ jobs:
     - name: Modify pom file
       shell: bash
       run: |
-        cp pom_late.xml ${{ vars.REPO_PATH }}/pom.xml
         python exe_bundle.py
     - name: Set up JDK 17
       uses: actions/setup-java@v4.0.0
@@ -359,7 +354,6 @@ jobs:
     - name: Modify pom file
       shell: bash
       run: |
-        cp pom.xml ${{ vars.REPO_PATH }}
         python exe_bundle.py
     - name: Set up JDK 17
       uses: actions/setup-java@v4.0.0
