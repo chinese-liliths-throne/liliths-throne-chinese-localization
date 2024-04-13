@@ -57,7 +57,7 @@ class Processor:
             if self.old_data.get(file, None) is None:
                 entry_diff.append(file)
                 continue
-            if len(entries) != len(self.old_data[file]) or set(entries.keys()) != set(self.old_data[file].keys()) > 0:
+            if len(entries) != len(self.old_data[file]) or set(entries.keys()) != set(self.old_data[file].keys()):
                 entry_diff.append(file)
 
             file_trans_diff: List[JsonEntry] = []
