@@ -77,7 +77,7 @@ class Processor:
                     continue
                 if entry["translation"] != old_entry["translation"]:
                     file_trans_diff.append(entry)
-                    entry["stage"] = 1
+                    entry["stage"] = 1 if old_entry["stage"] != 0 else 0
 
 
 

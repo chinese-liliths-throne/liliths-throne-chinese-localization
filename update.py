@@ -109,7 +109,7 @@ class Updater:
         else:
             prev_outdated_data = {}
 
-        await self.update_data(outdated_data, prev_outdated_data, version="0.4.9.5")
+        await self.update_data(outdated_data, prev_outdated_data, version="0.4.9.8")
         
         if len(prev_outdated_data) <= 0:
             if no_file:
