@@ -130,6 +130,10 @@ class Updater:
     ) -> SingleDictionary:
         new_dict_map: Dict[str, List[str]] = {}  # [原文文本, new_dict_data词典中对应的key]
         old_dict_map: Dict[str, List[str]] = {}  # [原文文本, old_dict_data词典中对应的key]
+        
+        # sort the new data and old data
+        new_dict_data = dict(sorted(new_dict_data.items(), key=lambda x: x[1]["key"]))
+        old_dict_data = dict(sorted(old_dict_data.items(), key=lambda x: x[1]["key"]))
 
         for key, data in new_dict_data.items():
             original = data["original"].strip()

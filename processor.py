@@ -41,6 +41,11 @@ class Processor:
                 else:
                     self.untranslated[path + ":" + key] = entry
 
+        # sort the translated data
+        self.translated = dict(sorted(
+            self.translated.items(), key=lambda x: x[0]
+        ))
+
     def process(self):
         self.load()
         self.check_same()
@@ -75,7 +80,9 @@ class Processor:
                         entry_diff.append(file)
                     file_trans_diff.append(entry)
                     continue
-                if entry["translation"] != old_entry["translation"]:
+                if old_entry["stage"] == 0 and entry["stage"] != 0:
+                    file_trans_diff.append(entry)
+                elif entry["translation"] != old_entry["translation"]:
                     file_trans_diff.append(entry)
                     entry["stage"] = 1 if old_entry["stage"] != 0 else 0
 
@@ -101,6 +108,7 @@ class Processor:
 
     def check_same(self):
         same_checker: Dict[str, str] = {}  # Dict[original_text, first_key]
+        
 
         for key, value in self.translated.items():
             if same_checker.get(value["original"], None) is None:
@@ -112,6 +120,7 @@ class Processor:
             translated_key = same_checker.get(value["original"])
             if translated_key is not None:
                 value["translation"] = self.translated[translated_key]["translation"]
+                value["stage"] = self.translated[translated_key]["stage"]
                 fill_count += 1
 
         logger.info(f"共有{fill_count}个词条会被填充！")
