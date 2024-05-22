@@ -523,6 +523,9 @@ class Extractor:
         for wallName in root.iter("wallName"):
             e = try_xml_entry_text(file, wallName)
             insert_entry(e)
+        for startingDescription in root.iter("startingDescription"):
+            e = try_xml_entry_text(file, startingDescription)
+            insert_entry(e)
 
         # statusEffect
         # name
@@ -543,6 +546,9 @@ class Extractor:
 
         # txt / dialogue
         # htmlContent
+        for tab in root.iter("tab"):
+            e = try_xml_entry_text(file, tab)
+            insert_entry(e)
 
         # weapon
         # determiner
@@ -822,6 +828,8 @@ class JavaExtractor:
             self.interest_line = True
         elif "getTooltipText" in line:
             self.interest_line = True
+        elif "appendToTextEndStringBuilder" in line:
+            self.interest_line = True
         elif line.strip().startswith('"'):
             self.interest_line = True
 
@@ -986,6 +994,9 @@ class JavaExtractor:
     def parse_sex(self, filename: str, line: str):
         if filename == "SadisticActions.java":
             if "tailSpecial1 = " in line or "tailSpecial2 = " in line:
+                self.interest_line = True
+        if filename == "PenisAnus.java":
+            if "assTargeting = " in line:
                 self.interest_line = True
 
     def parse_main(self, line: str):
