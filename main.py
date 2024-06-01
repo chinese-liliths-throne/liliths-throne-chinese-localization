@@ -106,6 +106,7 @@ def main():
     updater.update_dict(new_data, args.ignore_untranslated)
 
     old_data = updater.old_data
+    new_data = updater.new_data
 
     processor = Processor(
         target, new_dict_dir, old_dict_dir, pt_token, new_data, old_data

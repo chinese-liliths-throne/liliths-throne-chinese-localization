@@ -66,6 +66,8 @@ class Updater:
     ):
         with open(old_dict_file, "r", encoding="utf-8") as old_dict:
             old_dict_data: List[Dict] = json.load(old_dict)
+            
+        path_key = old_dict_file.relative_to(self.old_dict_path).as_posix()
 
         hashed_old_dict_data: SingleDictionary = {}
         for old_dict_item in old_dict_data:
@@ -82,7 +84,7 @@ class Updater:
             outdated_data = hashed_old_dict_data
             no_file = True
         else:
-            outdated_data = await self.update_data(
+            outdated_data, self.new_data[path_key] = await self.update_data(
                 copy.deepcopy(hashed_old_dict_data), new_dict_data
             )
 
@@ -109,7 +111,10 @@ class Updater:
         else:
             prev_outdated_data = {}
 
-        await self.update_data(outdated_data, prev_outdated_data, version="0.4.9.8")
+        if len(outdated_data) > 0:
+            _, prev_outdated_data = await self.update_data(outdated_data, prev_outdated_data, version="0.4.9.9")
+        else:
+            prev_outdated_data = outdated_data
         
         if len(prev_outdated_data) <= 0:
             if no_file:
@@ -169,13 +174,12 @@ class Updater:
                     if new_idx_list is None or len(new_idx_list) == 0:
                         new_dict_data[f"{old_key}"] = old_dict_data[old_key]
                         new_dict_data[f"{old_key}"]["key"] = f"{old_key}_{version}"
+                        new_dict_data[f"{old_key}"]["stage"] = 9 # locked
                         continue
                     new_dict_data[new_idx_list[idx]]["translation"] = old_dict_data[
                         old_key
                     ]["translation"].strip()
-                    new_dict_data[new_idx_list[idx]]["stage"] = old_dict_data[old_key][
-                        "stage"
-                    ]
+                    new_dict_data[new_idx_list[idx]]["stage"] = 9 # locked
 
                     if "." in new_dict_data[new_idx_list[idx]]["key"].split("_")[-1]:
                         new_dict_data[new_idx_list[idx]]["key"] = "_".join(
@@ -208,7 +212,7 @@ class Updater:
         for key in to_delete:
             old_dict_data.pop(key)
 
-        return old_dict_data
+        return old_dict_data, new_dict_data
 
 
 ZH_CHARACTER = r"[一-龟]"
