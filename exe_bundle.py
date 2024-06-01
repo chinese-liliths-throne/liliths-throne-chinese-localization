@@ -27,7 +27,7 @@ def add_plugin(pom_path: Path, plugin_path: Path):
     # find version
     plugin_version = list(pom_tree.iterfind("//version", namespaces=namespace))[0].text
 
-    padding = max(0, 3 - len(plugin_version.split('.')))
+    padding = max(0, 4 - len(plugin_version.split('.')))
     plugin_version = f"${{project.version}}{''.join(['.0'] * padding)}"
     
     plugin_tree.getroot().find(".//fileVersion").text = plugin_version
