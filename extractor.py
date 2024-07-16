@@ -843,6 +843,8 @@ class JavaExtractor:
     def parse_controller(self, line: str):
         if "tooltipDescriptionSB.append" in line:
             self.interest_line = True
+        elif "getTextStartStringBuilder()" in line:
+            self.interest_line = True
 
     def parse_attributes(self, line: str):
         if "new AbstractAttribute" in line:
@@ -874,6 +876,8 @@ class JavaExtractor:
 
     def parse_fetishs(self, line: str):
         if "new AbstractFetish" in line:
+            self.interest_line = True
+        elif "perkRequirementsList.add" in line:
             self.interest_line = True
 
     def parse_npc(self, filename: str, line: str):
@@ -912,6 +916,8 @@ class JavaExtractor:
         elif "new GenderAppearance" in line:
             self.interest_line = True
         elif "_CALCULATION = " in line:
+            self.interest_line = True
+        elif "newArrayListOfValues" in line:
             self.interest_line = True
 
     def parse_moves(self, line: str):

@@ -31,22 +31,37 @@ def split_htmlContent(text: str) -> List[str]:
     TAG_REGEX = r"(?:div|p)"
 
     PARAGRAPH_REGEX = r"(<p[^>]*?>.*?</p>)"
+    BOTH_START_P_REGEX = r"<p>[^<>]*?<p>"
+    BOTH_END_P_REGEX = r"</p>[^<>]*?</p>"
     DIV_REGEX = r"(<div[^>]*?>.*?</div>)"
     HALF_BLOCK_F_REGEX = rf"(<{TAG_REGEX}[^>]*?>[^<>]*?\Z)"
     HALF_BLOCK_B_REGEX = rf"(\A[^<>]*?</{TAG_REGEX}>)"
     VAR_REGEX = r"(#VAR.*?#ENDVAR)"
+    CUT_END_TAG_REGEX = rf"(#[A-Z]+[^<>]*?</{TAG_REGEX}>)"
+    # CUT_START_TAG_REGEX = rf"(<{TAG_REGEX}[^>]*?>[^<>]*?#[A-Z]+.*?\n)"
 
     paragraph_matches = re.findall(PARAGRAPH_REGEX, text, re.DOTALL)
     div_matches = re.findall(DIV_REGEX, text, re.DOTALL)
     var_matches = re.findall(VAR_REGEX, text, re.DOTALL)
     half_block_f_matches = re.findall(HALF_BLOCK_F_REGEX, text, re.DOTALL)
     half_block_b_matches = re.findall(HALF_BLOCK_B_REGEX, text, re.DOTALL)
+    cut_end_tag_matches = re.findall(CUT_END_TAG_REGEX, text, re.DOTALL)
+    both_start_p_matches = re.findall(BOTH_START_P_REGEX, text, re.DOTALL)
+    both_end_p_matches = re.findall(BOTH_END_P_REGEX, text, re.DOTALL)
+    # cut_start_tag_matches = re.findall(CUT_START_TAG_REGEX, text, re.DOTALL)
 
     extracted_blocks += paragraph_matches
     extracted_blocks += div_matches
     extracted_blocks += var_matches
     extracted_blocks += half_block_f_matches
     extracted_blocks += half_block_b_matches
+    filtered_cut_end_tag_matches = filter(lambda x: not any([x in block for block in extracted_blocks]), cut_end_tag_matches)
+    extracted_blocks += filtered_cut_end_tag_matches
+    filtered_both_start_p_matches = filter(lambda x: not any([x in block for block in extracted_blocks]), both_start_p_matches)
+    extracted_blocks += filtered_both_start_p_matches
+    filtered_both_end_p_matches = filter(lambda x: not any([x in block for block in extracted_blocks]), both_end_p_matches)
+    extracted_blocks += filtered_both_end_p_matches
+    # extracted_blocks += cut_start_tag_matches
 
     if len(extracted_blocks) == 0:
         extracted_blocks.extend(text.split("<br/><br/>"))

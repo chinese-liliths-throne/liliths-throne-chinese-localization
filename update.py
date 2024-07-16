@@ -161,8 +161,21 @@ class Updater:
             else:
                 old_dict_map[original].append(key)
         
+        # check = False
+        # if "00555" in old_dict_data:
+        #     check = True
+
         for key, value in old_dict_map.items():
             new_idx_list = new_dict_map.get(key)
+            # if check and "down against [npc2.her] [npc2.lips+]" in key:
+            #     with open("test.json", "w") as f:
+            #         json.dump(new_dict_map, f, indent=2)
+            #     for _k, _v in new_dict_map.items():
+            #         if "down against [npc2.her] [npc2.lips+]" in _k:
+            #             print(_k, _v)
+            #     print(key)
+            #     print(value, new_idx_list)
+            #     input()
             if version != "":
                 for idx, old_key in enumerate(value):
                     # 若旧字典的汉化与原文一致（即无需汉化）则无视
