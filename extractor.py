@@ -908,6 +908,8 @@ class JavaExtractor:
         elif filename == "GameCharacter.java":
             if "target = " in line:
                 self.interest_line = True
+            elif "additional = " in line:
+                self.interest_line = True
         elif filename == "Litter.java":
             if "entries.add" in line:
                 self.interest_line = True
@@ -962,6 +964,9 @@ class JavaExtractor:
                 self.interest_line = True
         elif filename == "SlaveDialogue.java":
             if "legsSpreading = " in line:
+                self.interest_line = True
+        elif filename == "DominionExpress.java":
+            if "new FillyReward" in line:
                 self.interest_line = True
 
         if "purchaseAvailability.append" in line:
