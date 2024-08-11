@@ -452,8 +452,8 @@ class Applier:
                     nodes = tree.xpath(f"//htmlContent[@tag='{entry_attribute}']")
                     if len(nodes) > 1:
                         for idx, node in enumerate(nodes):
-                            entry = entries[idx]
-                            xml_node_replace_translation(node, entry)
+                            for entry in entries:
+                                xml_node_replace_translation(node, entry)
                     else:
                         node = nodes[0]
                         for entry in entries:

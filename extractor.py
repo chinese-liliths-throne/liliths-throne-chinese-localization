@@ -890,6 +890,8 @@ class JavaExtractor:
             self.interest_line = True
         elif "getSurname().endsWith" in line:
             self.interest_line = True
+        elif "speech.add" in line:
+            self.interest_line = True
 
     def parse_race(self, line: str):
         if "new AbstractRace" in line:
@@ -977,6 +979,10 @@ class JavaExtractor:
             self.interest_line = True
         elif "OffspringHeaderDisplay" in line:
             self.interest_line = True
+        elif "map.put" in line:
+            self.interest_line = True
+        elif "responses.add" in line:
+            self.interest_line = True
 
     def parse_clothing(self, line: str):
         if "new AbstractClothingType" in line:
@@ -1006,8 +1012,11 @@ class JavaExtractor:
         if filename == "SadisticActions.java":
             if "tailSpecial1 = " in line or "tailSpecial2 = " in line:
                 self.interest_line = True
-        if filename == "PenisAnus.java":
+        elif filename == "PenisAnus.java":
             if "assTargeting = " in line:
+                self.interest_line = True
+        elif filename == "GenericOrgasms.java":
+            if "breasts = " in line:
                 self.interest_line = True
 
     def parse_main(self, line: str):
