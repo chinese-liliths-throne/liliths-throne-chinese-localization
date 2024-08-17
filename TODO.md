@@ -3,8 +3,13 @@
  - AbstractAttribute
  - AbstractSubspecies
 
+##
+ - xml中的populationType需要抓吗？
+
 ## 原版错误
  - 部分htmlContent中<p>标签不匹配
+ - MERAXIS_APPROACH
+ - produce, STALL
 
 ## 语言相关特效
  - 口吃

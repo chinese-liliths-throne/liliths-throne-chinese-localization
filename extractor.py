@@ -915,6 +915,12 @@ class JavaExtractor:
         elif filename == "Litter.java":
             if "entries.add" in line:
                 self.interest_line = True
+        elif filename == "Heather.java":
+            if "ingredientMap.put" in line:
+                self.interest_line = True
+        elif filename == "Angelixx.java":
+            if "adjectivesUsed =" in line:
+                self.interest_line = True
         if re.search(r"writing\s*=\s*", line) is not None:
             self.interest_line = True
         elif "new GenderAppearance" in line:
@@ -983,6 +989,8 @@ class JavaExtractor:
             self.interest_line = True
         elif "responses.add" in line:
             self.interest_line = True
+        elif "failEffects" in line:
+            self.interest_line = True
 
     def parse_clothing(self, line: str):
         if "new AbstractClothingType" in line:
@@ -1017,6 +1025,8 @@ class JavaExtractor:
                 self.interest_line = True
         elif filename == "GenericOrgasms.java":
             if "breasts = " in line:
+                self.interest_line = True
+            elif "areas.add" in line:
                 self.interest_line = True
 
     def parse_main(self, line: str):
