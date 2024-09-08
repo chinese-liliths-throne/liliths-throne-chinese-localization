@@ -192,16 +192,6 @@ class Applier:
                     )
                 elif file.name == "MainController.java":
                     line = line.replace(
-                        "webviewTooltip.setMaxHeight(height);",
-                        "webviewTooltip.setMaxHeight(height);\n"
-                        + "\t\twebviewTooltip.setPrefHeight(height);",
-                    )
-                    line = line.replace(
-                        "tooltip.setMaxHeight(height);",
-                        "tooltip.setMaxHeight(height);\n"
-                        + "\t\ttooltip.setPrefHeight(height);",
-                    )
-                    line = line.replace(
                         'Main.mainController.getWebEngine().getDocument().getElementById("hiddenFieldName").getTextContent().length() < 2',
                         'Main.mainController.getWebEngine().getDocument().getElementById("hiddenFieldName").getTextContent().length() < 1',
                     )

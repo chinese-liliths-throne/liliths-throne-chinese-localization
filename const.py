@@ -20,7 +20,7 @@ GITHUB_PUBLIC_ACCESS_TOKEN = "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"
 
 DOWNLOAD_DIR = "./downloads"
 ROOT_DIR = "./"
-SOURCE_DIR: Dict = {"main": "./liliths-throne-public", "mod": "./lilith-mod-pack"}
+SOURCE_DIR: Dict = {"main": "./liliths-throne-chinese", "mod": "./lilith-mod-pack"}
 NEW_DICT_DIR: Dict = {"main": "./new_dict", "mod": "./new_mod_dict"}
 OLD_DICT_DIR: Dict = {"main": "./old_dict", "mod": "./old_mod_dict"}
 ENTRY_DIFF_DIR: Dict = {"main": "./entry_diff", "mod": "./entry_mod_diff"}
