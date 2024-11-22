@@ -112,7 +112,7 @@ class Updater:
             prev_outdated_data = {}
 
         if len(outdated_data) > 0:
-            _, prev_outdated_data = await self.update_data(outdated_data, prev_outdated_data, version="0.4.9.9")
+            _, prev_outdated_data = await self.update_data(outdated_data, prev_outdated_data, version="0.4.10.0")
         else:
             prev_outdated_data = outdated_data
         
