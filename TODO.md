@@ -10,6 +10,7 @@
  - 部分htmlContent中<p>标签不匹配
  - MERAXIS_APPROACH
  - produce, STALL
+ - src\com\lilithsthrone\game\dialogue\places\dominion\nyansApartment\NyanApartment.java 对于多个PERFORMING_ORAL的角色无法处理
 
 ## 语言相关特效
  - 口吃
