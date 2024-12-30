@@ -145,10 +145,10 @@ class Applier:
                     )
                 elif file.name == "UtilText.java":
                     # 高版本jdk不再自带nashorn
-                    if "import jdk.nashorn" in line:
-                        line = "//" + line
-                    if "import org.openjdk.nashorn" in line:
-                        line = line[2:]
+                    # if "import jdk.nashorn" in line:
+                    #     line = "//" + line
+                    # if "import org.openjdk.nashorn" in line:
+                    #     line = line[2:]
                     line = line.replace(
                         ".getGenderName().getFeminine()",
                         ".getGenderName().getFeminineId()",
