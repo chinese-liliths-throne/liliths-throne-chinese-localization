@@ -19,6 +19,7 @@ class Updater:
         self.new_dict_path: Path = new_dict_path
         self.new_data: WholeDictionary = new_data
         self.old_data: WholeDictionary = {}
+        self.file_with_missing_entry: List[Path] = []
 
     def update_dict(
         self,
@@ -96,6 +97,7 @@ class Updater:
 
             if len(outdated_data) > 0:
                 logger.info("在新提取中该文件存在遗失条目：%s", old_dict_file)
+                self.file_with_missing_entry.append(old_dict_file.relative_to(self.old_dict_path).as_posix())
                 print([key for key, data in outdated_data.items()])
 
         # 过时条目融合

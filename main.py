@@ -108,11 +108,10 @@ def main():
     old_data = updater.old_data
     new_data = updater.new_data
 
-    processor = Processor(
-        target, new_dict_dir, old_dict_dir, pt_token, new_data, old_data
-    )
-
     if args.special_process:
+        processor = Processor(
+            target, new_dict_dir, old_dict_dir, pt_token, updater, new_data, old_data
+        )
         logger.info("==== 正在应用特殊处理 ====")
         processor.process()
 

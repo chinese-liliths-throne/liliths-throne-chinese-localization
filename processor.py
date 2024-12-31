@@ -3,11 +3,12 @@ import os
 import shutil
 
 from pathlib import Path
-from typing import Dict, Union, List, Tuple
+from typing import Dict, Union, List, Tuple, Set
 
 from logger import logger
 from data import JsonEntry, WholeDictionary, SingleDictionary
 from const import ENTRY_DIFF_DIR, TRANS_DIFF_DIR
+from update import Updater
 
 
 class Processor:
@@ -17,6 +18,7 @@ class Processor:
         dict_path: Path,
         old_dict_path: Path,
         pt_token: str,
+        updater: Updater,
         new_data: WholeDictionary = {},
         old_data: WholeDictionary = {},
     ):
@@ -32,6 +34,9 @@ class Processor:
 
         self.new_data: WholeDictionary = new_data
         self.old_data: WholeDictionary = old_data
+        
+        self.updater = updater
+        print(updater.file_with_missing_entry)
 
     def load(self):
         for path, fileDict in self.new_data.items():
@@ -55,15 +60,17 @@ class Processor:
         shutil.rmtree(ENTRY_DIFF_DIR[self.target], ignore_errors=True)
         shutil.rmtree(TRANS_DIFF_DIR[self.target], ignore_errors=True)
 
-        entry_diff: List[str] = []
+        entry_diff: Set[str] = set()
         trans_diff: Dict[str, List[JsonEntry]] = {}
 
         for file, entries in self.new_data.items():
             if self.old_data.get(file, None) is None:
-                entry_diff.append(file)
+                entry_diff.add(file)
                 continue
+            if file in self.updater.file_with_missing_entry:
+                entry_diff.add(file)
             if len(entries) != len(self.old_data[file]) or set(entries.keys()) != set(self.old_data[file].keys()):
-                entry_diff.append(file)
+                entry_diff.add(file)
 
             file_trans_diff: List[JsonEntry] = []
 
@@ -76,8 +83,7 @@ class Processor:
                         entry["stage"] = 1
                     continue
                 if old_entry["stage"] != 0 and entry["stage"] == 0:
-                    if len(entry_diff) == 0 or entry_diff[-1] != file:
-                        entry_diff.append(file)
+                    entry_diff.add(file)
                     file_trans_diff.append(entry)
                     continue
                 if old_entry["stage"] == 0 and entry["stage"] != 0:
