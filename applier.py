@@ -282,19 +282,19 @@ class Applier:
                         + "\tpublic static String intToPositionOld(int integer) {",
                     )
                     # 添加正字标记使用的intToZheng
-                    line = line.replace(
-                        "public static String intToTally(int integer, int max) {",
-                        "public static String intToZheng(int integer, int max) {\n"
-                        + '\t\tString[] zhengPhase = {"丨","丄","上","止"};\n'
-                        + "\t\tStringBuilder numeralSB = new StringBuilder();\n"
-                        + "\t\tint limit = Math.min(integer, max);\n"
-                        + '\t\tfor(int i=0; i<limit/5; i++) numeralSB.append("正");\n'
-                        + "\t\tif(limit%5 != 0) numeralSB.append(zhengPhase[limit%5-1]);\n"
-                        + '\t\tif(limit<integer) numeralSB.append("…… (共计："+integer+")");\n'
-                        + "\t\treturn numeralSB.toString();\n"
-                        + "\t}\n"
-                        + "\tpublic static String intToTally(int integer, int max) {",
-                    )
+                    # line = line.replace(
+                    #     "public static String intToTally(int integer, int max) {",
+                    #     "public static String intToZheng(int integer, int max) {\n"
+                    #     + '\t\tString[] zhengPhase = {"丨","丄","上","止"};\n'
+                    #     + "\t\tStringBuilder numeralSB = new StringBuilder();\n"
+                    #     + "\t\tint limit = Math.min(integer, max);\n"
+                    #     + '\t\tfor(int i=0; i<limit/5; i++) numeralSB.append("正");\n'
+                    #     + "\t\tif(limit%5 != 0) numeralSB.append(zhengPhase[limit%5-1]);\n"
+                    #     + '\t\tif(limit<integer) numeralSB.append("…… (共计："+integer+")");\n'
+                    #     + "\t\treturn numeralSB.toString();\n"
+                    #     + "\t}\n"
+                    #     + "\tpublic static String intToTally(int integer, int max) {",
+                    # )
                     line = line.replace(
                         'private static Pattern endOfSentence = Pattern.compile("[,.!?]");',
                         'private static Pattern endOfSentence = Pattern.compile("[,.!?，。！？、]");',
