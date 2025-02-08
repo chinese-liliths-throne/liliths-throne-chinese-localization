@@ -859,6 +859,8 @@ class JavaExtractor:
             self.interest_line = True
         elif "faceBodyDescriptionFeral = " in line:
             self.interest_line = True
+        elif "stage = " in line or "areaEgged = " in line:
+            self.interest_line = True
 
     def parse_effects(self, filename: str, line: str):
         if filename == "AbstractStatusEffect.java":
