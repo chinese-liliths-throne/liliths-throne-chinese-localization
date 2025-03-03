@@ -845,6 +845,8 @@ class JavaExtractor:
             self.interest_line = True
         elif "getTextStartStringBuilder()" in line:
             self.interest_line = True
+        elif "verb = " in line:
+            self.interest_line = True
 
     def parse_attributes(self, line: str):
         if "new AbstractAttribute" in line:
@@ -936,6 +938,8 @@ class JavaExtractor:
         if "new AbstractCombatMove" in line:
             self.interest_line = True
         elif "formatAttackOutcome" in line:
+            self.interest_line = True
+        elif "reason = " in line:
             self.interest_line = True
 
     def parse_dialogue(self, filename: str, line: str):
