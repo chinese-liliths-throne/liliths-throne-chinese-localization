@@ -4,3 +4,4 @@
 [submodule "liliths-throne-chinese"]
 	path = liliths-throne-chinese
 	url = https://github.com/chinese-liliths-throne/liliths-throne-chinese
+	branch = fix
