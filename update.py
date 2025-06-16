@@ -7,7 +7,7 @@ import re
 import copy
 
 from data import WholeDictionary, SingleDictionary
-from const import OUTDATE_DIR_NAME
+from const import OUTDATE_DIR_NAME, PREVIOUS_GAME_VERSION
 from logger import logger
 
 
@@ -114,9 +114,7 @@ class Updater:
             prev_outdated_data = {}
 
         if len(outdated_data) > 0:
-            _, prev_outdated_data = await self.update_data(outdated_data, prev_outdated_data, version="0.4.10.7")
-        else:
-            prev_outdated_data = outdated_data
+            _, prev_outdated_data = await self.update_data(outdated_data, prev_outdated_data, version=PREVIOUS_GAME_VERSION)
         
         if len(prev_outdated_data) <= 0:
             if no_file:
@@ -167,8 +165,8 @@ class Updater:
         # if "00555" in old_dict_data:
         #     check = True
 
-        for key, value in old_dict_map.items():
-            new_idx_list = new_dict_map.get(key)
+        for ori, keys in old_dict_map.items():
+            new_idx_list = new_dict_map.get(ori)
             # if check and "down against [npc2.her] [npc2.lips+]" in key:
             #     with open("test.json", "w") as f:
             #         json.dump(new_dict_map, f, indent=2)
@@ -178,15 +176,16 @@ class Updater:
             #     print(key)
             #     print(value, new_idx_list)
             #     input()
+            # outdated file merge
             if version != "":
-                for idx, old_key in enumerate(value):
+                for idx, old_key in enumerate(keys):
                     # 若旧字典的汉化与原文一致（即无需汉化）则无视
                     if (
                         old_dict_data[old_key]["original"]
                         == old_dict_data[old_key]["translation"]
                     ):
                         continue
-                    if new_idx_list is None or len(new_idx_list) == 0:
+                    if new_idx_list is None or len(new_idx_list) == 0 or idx >= len(new_idx_list):
                         new_dict_data[f"{old_key}"] = old_dict_data[old_key]
                         new_dict_data[f"{old_key}"]["key"] = f"{old_key}_{version}"
                         new_dict_data[f"{old_key}"]["stage"] = 9 # locked
@@ -207,7 +206,7 @@ class Updater:
                 if new_idx_list is None:
                     continue
                 for idx, old_key in enumerate(
-                    value[: min(len(value), len(new_idx_list))]
+                    keys[: min(len(keys), len(new_idx_list))]
                 ):
                     # 保留汉化内容及当前阶段
                     translation = old_dict_data[old_key]["translation"]
