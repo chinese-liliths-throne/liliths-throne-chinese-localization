@@ -863,6 +863,8 @@ class JavaExtractor:
             self.interest_line = True
         elif "stage = " in line or "areaEgged = " in line:
             self.interest_line = True
+        elif "extraEffectsLsit.add" in line:
+            self.interest_line = True
 
     def parse_effects(self, filename: str, line: str):
         if filename == "AbstractStatusEffect.java":
@@ -980,7 +982,7 @@ class JavaExtractor:
             if "legsSpreading = " in line:
                 self.interest_line = True
         elif filename == "DominionExpress.java":
-            if "new FillyReward" in line:
+            if "new MuleReward" in line:
                 self.interest_line = True
 
         if "purchaseAvailability.append" in line:
