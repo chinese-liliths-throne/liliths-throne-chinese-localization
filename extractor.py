@@ -1007,6 +1007,8 @@ class JavaExtractor:
     def parse_enchanting(self, line: str):
         if "new AbstractItemEffectType" in line:
             self.interest_line = True
+        elif "area = " in line:
+            self.interest_line = True
 
     def parse_item(self, line: str):
         if "new AbstractItemType" in line:

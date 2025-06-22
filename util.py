@@ -31,6 +31,7 @@ def split_htmlContent(text: str) -> List[str]:
     TAG_REGEX = r"(?:div|p)"
 
     PARAGRAPH_REGEX = r"(<p[^>]*?>.*?</p>)"
+    TITLE_REGEX = r"(<h[1-9][^>]*?>.*?</h[1-9]>)"
     BOTH_START_P_REGEX = r"<p>\n[^<>]*?\n\s*<p>"
     BOTH_END_P_REGEX = r"</p>\n[^<>]*?\n\s*</p>"
     DIV_REGEX = r"(<div[^>]*?>.*?</div>)"
@@ -41,6 +42,7 @@ def split_htmlContent(text: str) -> List[str]:
     # CUT_START_TAG_REGEX = rf"(<{TAG_REGEX}[^>]*?>[^<>]*?#[A-Z]+.*?\n)"
 
     paragraph_matches = re.findall(PARAGRAPH_REGEX, text, re.DOTALL)
+    title_regex = re.findall(TITLE_REGEX, text, re.DOTALL)
     div_matches = re.findall(DIV_REGEX, text, re.DOTALL)
     var_matches = re.findall(VAR_REGEX, text, re.DOTALL)
     half_block_f_matches = re.findall(HALF_BLOCK_F_REGEX, text, re.DOTALL)
@@ -54,6 +56,7 @@ def split_htmlContent(text: str) -> List[str]:
     #     input()
     
     extracted_blocks += paragraph_matches
+    extracted_blocks += title_regex
     extracted_blocks += div_matches
     extracted_blocks += var_matches
     extracted_blocks += half_block_f_matches
