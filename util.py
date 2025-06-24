@@ -122,12 +122,38 @@ def xml_node_replace_translation(node: etree._Element, entry: XmlEntry) -> str:
     if entry.attribute is not None and entry.node_tag != "htmlContent":
         node.set(entry.attribute, entry.translation)
     else:
-        node.text = node.text.replace(
+        text = ""
+        for child in node.itertext():
+            if child.strip() == "":
+                continue
+            text += child
+        node.text = text.replace(
             entry.original,
             entry.translation.replace("\\n", "\n"),
         )
     node.text = etree.CDATA(node.text)
 
+def get_element_CDATA(element: etree._Element) -> str:
+    if element.text is None:
+        return None
+    
+    have_child = len([child for child in element if not isinstance(child, etree._Comment)]) > 0
+    
+    
+    if have_child:
+        return None
+    else:
+        text = ""
+        # if there is comments before CDATA, element.text will get nothing
+        for child in element.itertext():
+            if child.strip() == "":
+                continue
+            text += child
+
+    if text.strip() == "":
+        return None
+    
+    return text
 
 __all__ = ["split_htmlContent", "dict_update_splited_htmlContent"]
 

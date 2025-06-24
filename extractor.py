@@ -8,7 +8,7 @@ from lxml import etree
 
 from data import XmlEntry, CodeEntry, FilePair, WholeDictionary, SingleDictionary
 from const import BLACKLIST_FILE, BLACKLIST_HTMLCONTENT
-from util import split_htmlContent
+from util import split_htmlContent, get_element_CDATA
 
 
 def try_xml_entry_attrib(
@@ -29,15 +29,14 @@ def try_xml_entry_attrib(
 
 
 def try_xml_entry_text(file: str, element: etree._Element) -> Optional[XmlEntry]:
-    if element.text is None:
-        return None
+    text = get_element_CDATA(element)
 
-    if element.text.strip() == "":
+    if text is None:
         return None
 
     return XmlEntry(
         file=file,
-        original=element.text,
+        original=text,
         translation="",
         node_tag=element.tag,
         attribute=None,

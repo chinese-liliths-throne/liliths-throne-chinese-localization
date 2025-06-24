@@ -8,7 +8,7 @@ import shutil
 from data import XmlEntry, CodeEntry, WholeDictionary, SingleDictionary
 from logger import logger
 from urllib.parse import quote
-from util import xml_node_replace_translation
+from util import xml_node_replace_translation, get_element_CDATA
 from const import (
     ROOT_DIR,
     FONT_DIR,
@@ -41,7 +41,10 @@ def ui_value_modify(line: str, regex: str, multiplier: float) -> str:
 
 
 def valid_element(element: etree._Element) -> bool:
-    if element.text is None or len(element.text.strip()) == 0:
+    text = get_element_CDATA(element)
+    if text is None:
+        return False
+    if text.strip() == "":
         return False
     elif element.getparent().tag == "formattingNames":
         return False
@@ -454,7 +457,18 @@ class Applier:
                     filter(valid_element, tree.iter(tag))
                 )
                 for entry in entry_cluster:
-                    node = nodes[entry.node_idx]
+                    try:
+                        node = nodes[entry.node_idx]
+                    except Exception:
+                        logger.error(
+                            "****%s[%s]:节点索引超出范围！",
+                            entry.node_idx,
+                            nodes,
+                            tag
+                        )
+                        for node in nodes:
+                            logger.error(node.text)
+                        raise Exception
                     xml_node_replace_translation(node, entry)
 
         tree.write(

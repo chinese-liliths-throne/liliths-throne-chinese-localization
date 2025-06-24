@@ -3,7 +3,7 @@
  - AbstractAttribute
  - AbstractSubspecies
 
-##
+## 漏抓等
  - xml中的populationType需要抓吗？
 
 ## 原版错误
