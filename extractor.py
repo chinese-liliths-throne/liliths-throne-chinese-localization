@@ -1008,6 +1008,8 @@ class JavaExtractor:
             self.interest_line = True
         elif "area = " in line:
             self.interest_line = True
+        elif "descriptionToReturn = " in line:
+            self.interest_line = True
 
     def parse_item(self, line: str):
         if "new AbstractItemType" in line:

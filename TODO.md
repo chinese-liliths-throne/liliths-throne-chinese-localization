@@ -5,6 +5,7 @@
 
 ## 漏抓等
  - xml中的populationType需要抓吗？
+ - 需要支持 xml 中 attr 的提取与应用
 
 ## 原版错误
  - 部分htmlContent中<p>标签不匹配
