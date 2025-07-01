@@ -78,8 +78,8 @@ jobs:
     - name: Move to staging
       run: |
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (linux)" "liliths-throne-linux"
-        cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-win/
-        cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-win/
+        cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-linux/
+        cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-linux/
     - name: Zip
       run: |
         zip -r "liliths-throne-linux.zip" "liliths-throne-linux/*"
@@ -133,8 +133,8 @@ jobs:
     - name: Move to staging
       run: |
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (linux-aarch64)" "liliths-throne-linux-aarch64"
-        cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-win/
-        cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-win/
+        cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-linux-aarch64/
+        cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-linux-aarch64/
     - name: Zip
       run: |
         zip -r "liliths-throne-linux-aarch64.zip" "liliths-throne-linux-aarch64/*"
@@ -187,8 +187,8 @@ jobs:
     - name: Move to staging
       run: |
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (mac)" "liliths-throne-mac"
-        cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-win/
-        cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-win/
+        cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-mac/
+        cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-mac/
     - name: Zip
       run: |
         zip -r "liliths-throne-mac.zip" "liliths-throne-mac/*"
@@ -241,8 +241,8 @@ jobs:
     - name: Move to staging
       run: |
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (mac-aarch64)" "liliths-throne-mac-aarch64"
-        cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-win/
-        cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-win/
+        cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-mac-aarch64/
+        cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-aarch64/
     - name: Zip
       run: |
         zip -r "liliths-throne-mac-aarch64.zip" "liliths-throne-mac-aarch64/*"
@@ -315,8 +315,8 @@ jobs:
       shell: bash
       run: |
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (win-x86)" "liliths-throne-win-x86"
-        cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-win/
-        cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-win/
+        cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-win-x86/
+        cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-win-x86/
     - uses: vimtor/action-zip@v1
       with:
         files: liliths-throne-win-x86
