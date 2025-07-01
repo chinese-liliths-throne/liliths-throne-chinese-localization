@@ -78,9 +78,11 @@ jobs:
     - name: Move to staging
       run: |
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (linux)" "liliths-throne-linux"
+        cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-win/
+        cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-win/
     - name: Zip
       run: |
-        zip -r "liliths-throne-linux" "liliths-throne-linux"
+        zip -r "liliths-throne-linux.zip" "liliths-throne-linux/*"
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.1
       with: 
@@ -131,9 +133,11 @@ jobs:
     - name: Move to staging
       run: |
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (linux-aarch64)" "liliths-throne-linux-aarch64"
+        cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-win/
+        cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-win/
     - name: Zip
       run: |
-        zip -r "liliths-throne-linux-aarch64" "liliths-throne-linux-aarch64"
+        zip -r "liliths-throne-linux-aarch64.zip" "liliths-throne-linux-aarch64/*"
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.1
       with: 
@@ -183,9 +187,11 @@ jobs:
     - name: Move to staging
       run: |
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (mac)" "liliths-throne-mac"
+        cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-win/
+        cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-win/
     - name: Zip
       run: |
-        zip -r "liliths-throne-mac" "liliths-throne-mac"
+        zip -r "liliths-throne-mac.zip" "liliths-throne-mac/*"
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.1
       with: 
@@ -235,9 +241,11 @@ jobs:
     - name: Move to staging
       run: |
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (mac-aarch64)" "liliths-throne-mac-aarch64"
+        cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-win/
+        cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-win/
     - name: Zip
       run: |
-        zip -r "liliths-throne-mac-aarch64" "liliths-throne-mac-aarch64"
+        zip -r "liliths-throne-mac-aarch64.zip" "liliths-throne-mac-aarch64/*"
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.1
       with: 
@@ -307,6 +315,8 @@ jobs:
       shell: bash
       run: |
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (win-x86)" "liliths-throne-win-x86"
+        cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-win/
+        cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-win/
     - uses: vimtor/action-zip@v1
       with:
         files: liliths-throne-win-x86
@@ -317,7 +327,6 @@ jobs:
         name: "liliths-throne-win-x86"
         path: "liliths-throne-win-x86.zip"
         retention-days: 7
-
 
   build-win:
     runs-on: windows-latest
@@ -374,6 +383,8 @@ jobs:
       shell: bash
       run: |
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (win)" "liliths-throne-win"
+        cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-win/
+        cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-win/
     - uses: vimtor/action-zip@v1
       with:
         files: liliths-throne-win
