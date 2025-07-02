@@ -80,9 +80,10 @@ jobs:
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (linux)" "liliths-throne-linux"
         cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-linux/
         cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-linux/
-    - name: Zip
-      run: |
-        zip -r "liliths-throne-linux.zip" "liliths-throne-linux/*"
+    - uses: vimtor/action-zip@v1
+      with:
+        file: liliths-throne-linux
+        name: liliths-throne-linux.zip
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.1
       with: 
@@ -135,9 +136,10 @@ jobs:
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (linux-aarch64)" "liliths-throne-linux-aarch64"
         cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-linux-aarch64/
         cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-linux-aarch64/
-    - name: Zip
-      run: |
-        zip -r "liliths-throne-linux-aarch64.zip" "liliths-throne-linux-aarch64/*"
+    - uses: vimtor/action-zip@v1
+      with:
+        file: liliths-throne-linux-aarch64
+        name: liliths-throne-linux-aarch64.zip
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.1
       with: 
@@ -189,6 +191,10 @@ jobs:
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (mac)" "liliths-throne-mac"
         cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-mac/
         cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-mac/
+    - uses: vimtor/action-zip@v1
+      with:
+        file: liliths-throne-mac
+        name: liliths-throne-mac.zip
     - name: Zip
       run: |
         zip -r "liliths-throne-mac.zip" "liliths-throne-mac/*"
@@ -243,9 +249,10 @@ jobs:
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (mac-aarch64)" "liliths-throne-mac-aarch64"
         cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-mac-aarch64/
         cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-aarch64/
-    - name: Zip
-      run: |
-        zip -r "liliths-throne-mac-aarch64.zip" "liliths-throne-mac-aarch64/*"
+    - uses: vimtor/action-zip@v1
+      with:
+        file: liliths-throne-mac-aarch64
+        name: liliths-throne-mac-aarch64.zip
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.1
       with: 
