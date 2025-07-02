@@ -195,9 +195,6 @@ jobs:
       with:
         file: liliths-throne-mac
         name: liliths-throne-mac.zip
-    - name: Zip
-      run: |
-        zip -r "liliths-throne-mac.zip" "liliths-throne-mac/*"
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.1
       with: 
@@ -248,7 +245,7 @@ jobs:
       run: |
         mv "./${{ vars.REPO_PATH }}/target/Lilith's Throne (mac-aarch64)" "liliths-throne-mac-aarch64"
         cp ./${{ vars.REPO_PATH }}/disclaimer.md ./liliths-throne-mac-aarch64/
-        cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-aarch64/
+        cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-mac-aarch64/
     - uses: vimtor/action-zip@v1
       with:
         file: liliths-throne-mac-aarch64
