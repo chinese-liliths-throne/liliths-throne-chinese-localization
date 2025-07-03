@@ -82,8 +82,8 @@ jobs:
         cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-linux/
     - uses: vimtor/action-zip@v1
       with:
-        file: liliths-throne-linux
-        name: liliths-throne-linux.zip
+        files: liliths-throne-linux
+        dest: liliths-throne-linux.zip
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.1
       with: 
@@ -138,8 +138,8 @@ jobs:
         cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-linux-aarch64/
     - uses: vimtor/action-zip@v1
       with:
-        file: liliths-throne-linux-aarch64
-        name: liliths-throne-linux-aarch64.zip
+        files: liliths-throne-linux-aarch64
+        dest: liliths-throne-linux-aarch64.zip
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.1
       with: 
@@ -193,8 +193,8 @@ jobs:
         cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-mac/
     - uses: vimtor/action-zip@v1
       with:
-        file: liliths-throne-mac
-        name: liliths-throne-mac.zip
+        files: liliths-throne-mac
+        dest: liliths-throne-mac.zip
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.1
       with: 
@@ -248,8 +248,8 @@ jobs:
         cp ./${{ vars.REPO_PATH }}/README.md ./liliths-throne-mac-aarch64/
     - uses: vimtor/action-zip@v1
       with:
-        file: liliths-throne-mac-aarch64
-        name: liliths-throne-mac-aarch64.zip
+        files: liliths-throne-mac-aarch64
+        dest: liliths-throne-mac-aarch64.zip
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.1
       with: 
