@@ -977,6 +977,8 @@ class JavaExtractor:
         elif filename == "UtilText.java":
             if "new ParserCommand" in line:
                 self.interest_line = True
+            elif "input = " in line:
+                self.interest_line = True
         elif filename == "SlaveDialogue.java":
             if "legsSpreading = " in line:
                 self.interest_line = True
